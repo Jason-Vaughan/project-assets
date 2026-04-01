@@ -1,2 +1,2 @@
-# puberty-labs-assets
-pages hosting for puberty-labs projects
+# project-assets
+Shared logos, screenshots, and static assets for Jason Vaughan's projects.
