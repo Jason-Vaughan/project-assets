@@ -45,6 +45,14 @@ overrides:
   OnDeck-V9:
     branch: ci/stats-workflow
 
+  # Cierre Sensei lives on Replit, not GitHub. The Jason-Vaughan/cierre-sensei
+  # repo only contains data files; the actual source + commit history is on
+  # Replit, which exposes a stats endpoint we fetch instead of cloning.
+  cierre-sensei:
+    remoteStats: https://cierresensei.com/api/stats.json
+    fixedFields:
+      firstCommit: "2024-09-01"
+
 defaultLoc:
   include: ['*.js', '*.ts', '*.jsx', '*.tsx', '*.mjs']
   exclude: ['node_modules', '.next', 'dist', '.min.']

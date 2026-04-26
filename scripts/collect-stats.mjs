@@ -49,6 +49,8 @@ function applyOverride(repoName, defaultBranch) {
     loc: ov.loc || defaultLoc,
     counters: ov.counters || [],
     branch: ov.branch || defaultBranch,
+    remoteStats: ov.remoteStats || null,
+    fixedFields: ov.fixedFields || null,
   };
 }
 
@@ -132,44 +134,64 @@ async function main() {
 
   for (const r of filtered) {
     const slug = slugMap[r.name.toLowerCase()] || defaultSlug(r.name);
-    const { loc, counters, branch } = applyOverride(r.name, r.default_branch);
-    const branchNote = branch !== r.default_branch ? ` [override branch=${branch}]` : '';
-    const banner = `\n=== [${slug}] ${r.full_name}@${branch} (private=${r.private})${r.archived ? ' [archived]' : ''}${branchNote} ===`;
+    const { loc, counters, branch, remoteStats, fixedFields } = applyOverride(r.name, r.default_branch);
+    const sourceLabel = remoteStats ? `remote=${remoteStats}` : `${branch}`;
+    const branchNote = !remoteStats && branch !== r.default_branch ? ` [override branch=${branch}]` : '';
+    const banner = `\n=== [${slug}] ${r.full_name}@${sourceLabel} (private=${r.private})${r.archived ? ' [archived]' : ''}${branchNote} ===`;
     console.log(banner);
 
     let workDir;
+    let source = 'git';
     try {
-      if (localPath && filtered.length === 1) {
-        workDir = path.resolve(localPath);
-        console.log(`[${slug}] using local path ${workDir}`);
+      let stats;
+      if (remoteStats) {
+        source = 'remote';
+        console.log(`[${slug}] fetching remote stats from ${remoteStats}`);
+        const res = await fetch(remoteStats, { headers: { 'User-Agent': 'collect-stats' } });
+        if (!res.ok) throw new Error(`HTTP ${res.status} from ${remoteStats}`);
+        stats = await res.json();
       } else {
-        workDir = path.join(tmpRoot, r.name);
-        const token = process.env.STATS_COLLECTOR_TOKEN;
-        const url = r.private
-          ? `https://x-access-token:${token}@github.com/${r.full_name}.git`
-          : `https://github.com/${r.full_name}.git`;
-        if (r.private && !token) {
-          throw new Error('STATS_COLLECTOR_TOKEN not set; cannot clone private repo');
+        if (localPath && filtered.length === 1) {
+          workDir = path.resolve(localPath);
+          console.log(`[${slug}] using local path ${workDir}`);
+        } else {
+          workDir = path.join(tmpRoot, r.name);
+          const token = process.env.STATS_COLLECTOR_TOKEN;
+          const url = r.private
+            ? `https://x-access-token:${token}@github.com/${r.full_name}.git`
+            : `https://github.com/${r.full_name}.git`;
+          if (r.private && !token) {
+            throw new Error('STATS_COLLECTOR_TOKEN not set; cannot clone private repo');
+          }
+          execSync(
+            `git clone --branch ${branch} --no-single-branch ${url} ${workDir}`,
+            { stdio: 'inherit' },
+          );
         }
-        execSync(
-          `git clone --branch ${branch} --no-single-branch ${url} ${workDir}`,
-          { stdio: 'inherit' },
-        );
+
+        stats = { ...coreStats(workDir, loc) };
+
+        for (const counterName of counters) {
+          const counter = CUSTOM_COUNTERS[counterName];
+          if (!counter) {
+            console.warn(`[${slug}] unknown counter "${counterName}", skipping`);
+            continue;
+          }
+          Object.assign(stats, counter(workDir));
+        }
       }
 
-      const stats = { ...coreStats(workDir, loc) };
-
-      for (const counterName of counters) {
-        const counter = CUSTOM_COUNTERS[counterName];
-        if (!counter) {
-          console.warn(`[${slug}] unknown counter "${counterName}", skipping`);
-          continue;
+      // Apply fixedFields override (e.g. firstCommit when source can't compute it)
+      if (fixedFields) {
+        for (const [k, v] of Object.entries(fixedFields)) {
+          if (!stats[k]) stats[k] = v;
         }
-        Object.assign(stats, counter(workDir));
       }
 
       stats.repo = r.full_name;
-      stats.branch = branch;
+      stats.branch = remoteStats ? null : branch;
+      stats.source = source;
+      if (remoteStats) stats.sourceUrl = remoteStats;
       stats.private = !!r.private;
       stats.archived = !!r.archived;
       stats.updatedAt = new Date().toISOString();
@@ -178,7 +200,7 @@ async function main() {
       fs.writeFileSync(outPath, JSON.stringify(stats, null, 2) + '\n');
       console.log(`[${slug}] wrote ${path.basename(outPath)}:`, JSON.stringify(stats));
 
-      meta.projects[slug] = { ok: true, repo: r.full_name, branch, private: r.private, stats };
+      meta.projects[slug] = { ok: true, repo: r.full_name, branch: stats.branch, source, private: r.private, stats };
       okCount++;
     } catch (err) {
       console.error(`[${slug}] FAILED: ${err.message}`);
