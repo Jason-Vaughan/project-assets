@@ -1,57 +1,42 @@
-projects:
-  - name: tangleclaw
-    repo: Jason-Vaughan/TangleClaw
-    branch: main
-    private: false
+# Centralized stats collector config.
+#
+# Strategy: collector auto-discovers every Jason-Vaughan repo via the GitHub API.
+# This file only contains exclusions, slug renames, and per-project overrides.
+# Adding a new repo requires NO change here — sane defaults apply automatically.
+
+# Repos to skip entirely.
+# Add slugs (case-insensitive match against repo name) for: archived experiments,
+# dotfiles, scratch repos, anything you don't want in the totals.
+exclude:
+  - project-assets          # collector's own repo (assets only, would self-track)
+  - OnDeck                  # superseded V1 of OnDeck-V9 (would double-count)
+  - tilt-v1-archive         # archived TiLT predecessor
+  - tilt-v1-wrapper-archive # archived TiLT predecessor
+  - barcoach-assets         # assets-only repo
+  - rentalclaw-bunker       # archive/storage
+
+# Forks are skipped by default. Add repo names here to track despite being a fork.
+includeForks: []
+
+# Map a GitHub repo name to a custom slug used for the stats JSON filename.
+# Without an entry, the slug is the repo name lowercased.
+slugs:
+  OnDeck-V9: ondeck
+
+# Per-project counter / LOC profile overrides.
+# Key is the repo name (case-insensitive). Without an entry, defaults apply.
+overrides:
+  TangleClaw:
     loc:
       include: ['*.js', '*.mjs']
       exclude: ['node_modules', '.min.']
     counters: [tangleclaw]
 
-  - name: tilt
-    repo: Jason-Vaughan/TiLT
-    branch: main
-    private: true
+  TiLT:
     loc:
       include: ['*.js', '*.ts', '*.jsx', '*.tsx']
       exclude: ['node_modules', '.next', '.min.']
     counters: [tilt]
-
-  - name: ondeck
-    repo: Jason-Vaughan/OnDeck-V9
-    branch: main
-    private: true
-    counters: []
-
-  - name: notse
-    repo: Jason-Vaughan/Notse
-    branch: main
-    private: true
-    counters: []
-
-  - name: clawbridge
-    repo: Jason-Vaughan/ClawBridge
-    branch: main
-    private: false
-    counters: []
-
-  - name: medusa
-    repo: Jason-Vaughan/Medusa
-    branch: main
-    private: false
-    counters: []
-
-  - name: scrapegoat
-    repo: Jason-Vaughan/ScrapeGoat
-    branch: main
-    private: false
-    counters: []
-
-  - name: porthub
-    repo: Jason-Vaughan/PortHub
-    branch: main
-    private: false
-    counters: []
 
 defaultLoc:
   include: ['*.js', '*.ts', '*.jsx', '*.tsx', '*.mjs']

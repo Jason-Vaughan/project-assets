@@ -20,94 +20,188 @@ const arg = (k) => {
   const i = args.indexOf(k);
   return i >= 0 ? args[i + 1] : undefined;
 };
-const onlyProject = arg('--project');
+const onlyRepo = arg('--repo'); // Jason-Vaughan/foo or just foo
 const localPath = arg('--local-path');
+const dryRun = args.includes('--dry-run');
+const owner = arg('--owner') || 'Jason-Vaughan';
 
-const cfgPath = path.join(REPO_ROOT, 'projects.yml');
-const cfg = yaml.load(fs.readFileSync(cfgPath, 'utf8'));
+const cfg = yaml.load(fs.readFileSync(path.join(REPO_ROOT, 'projects.yml'), 'utf8'));
 const defaultLoc = cfg.defaultLoc || {
   include: ['*.js', '*.ts', '*.jsx', '*.tsx', '*.mjs'],
   exclude: ['node_modules', '.next', 'dist', '.min.'],
 };
+const excludeSet = new Set((cfg.exclude || []).map((s) => s.toLowerCase()));
+const includeForkSet = new Set((cfg.includeForks || []).map((s) => s.toLowerCase()));
+const slugMap = Object.fromEntries(
+  Object.entries(cfg.slugs || {}).map(([k, v]) => [k.toLowerCase(), v]),
+);
+const overrides = Object.fromEntries(
+  Object.entries(cfg.overrides || {}).map(([k, v]) => [k.toLowerCase(), v]),
+);
 
-const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'collect-stats-'));
-const meta = { runStartedAt: new Date().toISOString(), projects: {} };
-let okCount = 0;
-let attemptedCount = 0;
-
-const targets = onlyProject
-  ? cfg.projects.filter((p) => p.name === onlyProject)
-  : cfg.projects;
-
-if (targets.length === 0) {
-  console.error(`No projects matched. onlyProject=${onlyProject}`);
-  process.exit(1);
+function defaultSlug(repoName) {
+  return repoName.toLowerCase();
 }
 
-for (const p of targets) {
-  attemptedCount++;
-  const banner = `\n=== [${p.name}] ${p.repo}@${p.branch} ===`;
-  console.log(banner);
+function applyOverride(repoName) {
+  const ov = overrides[repoName.toLowerCase()] || {};
+  return {
+    loc: ov.loc || defaultLoc,
+    counters: ov.counters || [],
+  };
+}
 
-  let workDir;
-  try {
-    if (localPath && targets.length === 1) {
-      workDir = path.resolve(localPath);
-      console.log(`[${p.name}] using local path ${workDir}`);
-    } else {
-      workDir = path.join(tmpRoot, p.name);
-      const token = process.env.STATS_COLLECTOR_TOKEN;
-      const url = p.private
-        ? `https://x-access-token:${token}@github.com/${p.repo}.git`
-        : `https://github.com/${p.repo}.git`;
-      if (p.private && !token) {
-        throw new Error('STATS_COLLECTOR_TOKEN not set; cannot clone private repo');
-      }
-      execSync(`git clone --branch ${p.branch} --no-single-branch ${url} ${workDir}`, {
-        stdio: 'inherit',
-      });
+async function discoverRepos() {
+  if (onlyRepo && localPath) {
+    // Single-repo local smoke test — synthesize one entry.
+    const repoName = onlyRepo.includes('/') ? onlyRepo.split('/')[1] : onlyRepo;
+    return [
+      {
+        name: repoName,
+        full_name: onlyRepo.includes('/') ? onlyRepo : `${owner}/${repoName}`,
+        private: false,
+        archived: false,
+        fork: false,
+        default_branch: 'main',
+      },
+    ];
+  }
+
+  const token = process.env.STATS_COLLECTOR_TOKEN || process.env.GITHUB_TOKEN;
+  const headers = { 'User-Agent': 'collect-stats', Accept: 'application/vnd.github+json' };
+  if (token) headers.Authorization = `Bearer ${token}`;
+
+  const repos = [];
+  // Authenticated /user/repos returns repos the token can see (owned + collab).
+  // Filter to owner-matching ones below.
+  const useUserEndpoint = !!token;
+  let url = useUserEndpoint
+    ? `https://api.github.com/user/repos?per_page=100&affiliation=owner&sort=pushed`
+    : `https://api.github.com/users/${owner}/repos?per_page=100&sort=pushed`;
+  while (url) {
+    const res = await fetch(url, { headers });
+    if (!res.ok) {
+      throw new Error(`GitHub API ${res.status}: ${await res.text()}`);
     }
-
-    const loc = p.loc || defaultLoc;
-    const stats = { ...coreStats(workDir, loc) };
-
-    for (const counterName of p.counters || []) {
-      const counter = CUSTOM_COUNTERS[counterName];
-      if (!counter) {
-        console.warn(`[${p.name}] unknown counter "${counterName}", skipping`);
-        continue;
-      }
-      Object.assign(stats, counter(workDir));
+    const page = await res.json();
+    for (const r of page) {
+      if (r.owner?.login?.toLowerCase() !== owner.toLowerCase()) continue;
+      repos.push(r);
     }
+    const link = res.headers.get('link') || '';
+    const next = link.match(/<([^>]+)>;\s*rel="next"/);
+    url = next ? next[1] : null;
+  }
+  return repos;
+}
 
-    stats.updatedAt = new Date().toISOString();
+function shouldInclude(r) {
+  if (excludeSet.has(r.name.toLowerCase())) return { ok: false, reason: 'in exclude list' };
+  if (r.fork && !includeForkSet.has(r.name.toLowerCase()))
+    return { ok: false, reason: 'fork' };
+  if (r.disabled) return { ok: false, reason: 'disabled' };
+  if (r.size === 0) return { ok: false, reason: 'empty repo' };
+  return { ok: true };
+}
 
-    const outPath = path.join(REPO_ROOT, `${p.name}-stats.json`);
-    fs.writeFileSync(outPath, JSON.stringify(stats, null, 2) + '\n');
-    console.log(`[${p.name}] wrote ${path.basename(outPath)}:`, JSON.stringify(stats));
+async function main() {
+  const allRepos = await discoverRepos();
+  const filtered = onlyRepo
+    ? allRepos.filter((r) => r.name.toLowerCase() === (onlyRepo.split('/').pop()).toLowerCase())
+    : allRepos.filter((r) => shouldInclude(r).ok);
 
-    meta.projects[p.name] = { ok: true, stats };
-    okCount++;
-  } catch (err) {
-    console.error(`[${p.name}] FAILED: ${err.message}`);
-    meta.projects[p.name] = { ok: false, error: err.message };
+  console.log(
+    `Discovered ${allRepos.length} repos; ${filtered.length} eligible after filters.`,
+  );
+
+  if (dryRun) {
+    for (const r of filtered) console.log(`  - ${r.full_name} (default branch ${r.default_branch})`);
+    process.exit(0);
+  }
+
+  const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'collect-stats-'));
+  const meta = {
+    runStartedAt: new Date().toISOString(),
+    owner,
+    discoveredCount: allRepos.length,
+    eligibleCount: filtered.length,
+    projects: {},
+  };
+  let okCount = 0;
+
+  for (const r of filtered) {
+    const slug = slugMap[r.name.toLowerCase()] || defaultSlug(r.name);
+    const banner = `\n=== [${slug}] ${r.full_name}@${r.default_branch} (private=${r.private})${r.archived ? ' [archived]' : ''} ===`;
+    console.log(banner);
+
+    let workDir;
+    try {
+      if (localPath && filtered.length === 1) {
+        workDir = path.resolve(localPath);
+        console.log(`[${slug}] using local path ${workDir}`);
+      } else {
+        workDir = path.join(tmpRoot, r.name);
+        const token = process.env.STATS_COLLECTOR_TOKEN;
+        const url = r.private
+          ? `https://x-access-token:${token}@github.com/${r.full_name}.git`
+          : `https://github.com/${r.full_name}.git`;
+        if (r.private && !token) {
+          throw new Error('STATS_COLLECTOR_TOKEN not set; cannot clone private repo');
+        }
+        execSync(
+          `git clone --branch ${r.default_branch} --no-single-branch ${url} ${workDir}`,
+          { stdio: 'inherit' },
+        );
+      }
+
+      const { loc, counters } = applyOverride(r.name);
+      const stats = { ...coreStats(workDir, loc) };
+
+      for (const counterName of counters) {
+        const counter = CUSTOM_COUNTERS[counterName];
+        if (!counter) {
+          console.warn(`[${slug}] unknown counter "${counterName}", skipping`);
+          continue;
+        }
+        Object.assign(stats, counter(workDir));
+      }
+
+      stats.repo = r.full_name;
+      stats.private = !!r.private;
+      stats.archived = !!r.archived;
+      stats.updatedAt = new Date().toISOString();
+
+      const outPath = path.join(REPO_ROOT, `${slug}-stats.json`);
+      fs.writeFileSync(outPath, JSON.stringify(stats, null, 2) + '\n');
+      console.log(`[${slug}] wrote ${path.basename(outPath)}:`, JSON.stringify(stats));
+
+      meta.projects[slug] = { ok: true, repo: r.full_name, private: r.private, stats };
+      okCount++;
+    } catch (err) {
+      console.error(`[${slug}] FAILED: ${err.message}`);
+      meta.projects[slug] = { ok: false, repo: r.full_name, error: err.message };
+    }
+  }
+
+  meta.runFinishedAt = new Date().toISOString();
+  meta.okCount = okCount;
+
+  if (!onlyRepo) {
+    fs.writeFileSync(
+      path.join(REPO_ROOT, '_collect-meta.json'),
+      JSON.stringify(meta, null, 2) + '\n',
+    );
+  }
+
+  console.log(`\nSummary: ${okCount}/${filtered.length} repos collected.`);
+
+  if (okCount === 0) {
+    console.error('Zero repos succeeded — failing the run.');
+    process.exit(1);
   }
 }
 
-meta.runFinishedAt = new Date().toISOString();
-meta.okCount = okCount;
-meta.attemptedCount = attemptedCount;
-
-if (!onlyProject) {
-  fs.writeFileSync(
-    path.join(REPO_ROOT, '_collect-meta.json'),
-    JSON.stringify(meta, null, 2) + '\n',
-  );
-}
-
-console.log(`\nSummary: ${okCount}/${attemptedCount} projects collected.`);
-
-if (okCount === 0) {
-  console.error('Zero projects succeeded — failing the run.');
-  process.exit(1);
-}
+main().catch((err) => {
+  console.error('Fatal:', err);
+  process.exit(2);
+});
