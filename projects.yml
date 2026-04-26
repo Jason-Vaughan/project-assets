@@ -23,8 +23,9 @@ includeForks: []
 slugs:
   OnDeck-V9: ondeck
 
-# Per-project counter / LOC profile overrides.
-# Key is the repo name (case-insensitive). Without an entry, defaults apply.
+# Per-project counter / LOC profile / branch overrides.
+# Key is the repo name (case-insensitive). Without an entry, defaults apply
+# (default branch from the GitHub API, standard LOC profile, no custom counters).
 overrides:
   TangleClaw:
     loc:
@@ -37,6 +38,12 @@ overrides:
       include: ['*.js', '*.ts', '*.jsx', '*.tsx']
       exclude: ['node_modules', '.next', '.min.']
     counters: [tilt]
+
+  # OnDeck-V9 main is frozen at June 2025; active V2.1+ work lives on
+  # ci/stats-workflow (test suite stabilization, V9->V2 cleanup, DB restoration).
+  # Remove this branch override when ci/stats-workflow is merged into main.
+  OnDeck-V9:
+    branch: ci/stats-workflow
 
 defaultLoc:
   include: ['*.js', '*.ts', '*.jsx', '*.tsx', '*.mjs']

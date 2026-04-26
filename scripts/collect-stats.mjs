@@ -43,11 +43,12 @@ function defaultSlug(repoName) {
   return repoName.toLowerCase();
 }
 
-function applyOverride(repoName) {
+function applyOverride(repoName, defaultBranch) {
   const ov = overrides[repoName.toLowerCase()] || {};
   return {
     loc: ov.loc || defaultLoc,
     counters: ov.counters || [],
+    branch: ov.branch || defaultBranch,
   };
 }
 
@@ -131,7 +132,9 @@ async function main() {
 
   for (const r of filtered) {
     const slug = slugMap[r.name.toLowerCase()] || defaultSlug(r.name);
-    const banner = `\n=== [${slug}] ${r.full_name}@${r.default_branch} (private=${r.private})${r.archived ? ' [archived]' : ''} ===`;
+    const { loc, counters, branch } = applyOverride(r.name, r.default_branch);
+    const branchNote = branch !== r.default_branch ? ` [override branch=${branch}]` : '';
+    const banner = `\n=== [${slug}] ${r.full_name}@${branch} (private=${r.private})${r.archived ? ' [archived]' : ''}${branchNote} ===`;
     console.log(banner);
 
     let workDir;
@@ -149,12 +152,11 @@ async function main() {
           throw new Error('STATS_COLLECTOR_TOKEN not set; cannot clone private repo');
         }
         execSync(
-          `git clone --branch ${r.default_branch} --no-single-branch ${url} ${workDir}`,
+          `git clone --branch ${branch} --no-single-branch ${url} ${workDir}`,
           { stdio: 'inherit' },
         );
       }
 
-      const { loc, counters } = applyOverride(r.name);
       const stats = { ...coreStats(workDir, loc) };
 
       for (const counterName of counters) {
@@ -167,6 +169,7 @@ async function main() {
       }
 
       stats.repo = r.full_name;
+      stats.branch = branch;
       stats.private = !!r.private;
       stats.archived = !!r.archived;
       stats.updatedAt = new Date().toISOString();
@@ -175,7 +178,7 @@ async function main() {
       fs.writeFileSync(outPath, JSON.stringify(stats, null, 2) + '\n');
       console.log(`[${slug}] wrote ${path.basename(outPath)}:`, JSON.stringify(stats));
 
-      meta.projects[slug] = { ok: true, repo: r.full_name, private: r.private, stats };
+      meta.projects[slug] = { ok: true, repo: r.full_name, branch, private: r.private, stats };
       okCount++;
     } catch (err) {
       console.error(`[${slug}] FAILED: ${err.message}`);
