@@ -1,0 +1,58 @@
+projects:
+  - name: tangleclaw
+    repo: Jason-Vaughan/TangleClaw
+    branch: main
+    private: false
+    loc:
+      include: ['*.js', '*.mjs']
+      exclude: ['node_modules', '.min.']
+    counters: [tangleclaw]
+
+  - name: tilt
+    repo: Jason-Vaughan/TiLT
+    branch: main
+    private: true
+    loc:
+      include: ['*.js', '*.ts', '*.jsx', '*.tsx']
+      exclude: ['node_modules', '.next', '.min.']
+    counters: [tilt]
+
+  - name: ondeck
+    repo: Jason-Vaughan/OnDeck-V9
+    branch: main
+    private: true
+    counters: []
+
+  - name: notse
+    repo: Jason-Vaughan/Notse
+    branch: main
+    private: true
+    counters: []
+
+  - name: clawbridge
+    repo: Jason-Vaughan/ClawBridge
+    branch: main
+    private: false
+    counters: []
+
+  - name: medusa
+    repo: Jason-Vaughan/Medusa
+    branch: main
+    private: false
+    counters: []
+
+  - name: scrapegoat
+    repo: Jason-Vaughan/ScrapeGoat
+    branch: main
+    private: false
+    counters: []
+
+  - name: porthub
+    repo: Jason-Vaughan/PortHub
+    branch: main
+    private: false
+    counters: []
+
+defaultLoc:
+  include: ['*.js', '*.ts', '*.jsx', '*.tsx', '*.mjs']
+  exclude: ['node_modules', '.next', 'dist', '.min.']

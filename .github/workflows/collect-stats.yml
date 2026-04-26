@@ -1,0 +1,44 @@
+name: collect-stats
+
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: collect-stats
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install runtime deps
+        run: npm i js-yaml --no-save --no-audit --no-fund
+
+      - name: Run collector
+        env:
+          STATS_COLLECTOR_TOKEN: ${{ secrets.STATS_COLLECTOR_TOKEN }}
+        run: node scripts/collect-stats.mjs
+
+      - name: Commit updated stats
+        run: |
+          git config user.name  "stats-bot"
+          git config user.email "stats-bot@users.noreply.github.com"
+          git add '*-stats.json' _collect-meta.json
+          if git diff --cached --quiet; then
+            echo "No stats changes."
+          else
+            git commit -m "chore(stats): refresh $(date -u +%FT%TZ)"
+            git push
+          fi
