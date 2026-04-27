@@ -96,11 +96,35 @@ async function fetchOpenAITokens() {
   return { ok: true, total };
 }
 
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const REPO_ROOT = path.resolve(__dirname, '..', '..');
+const ANTHROPIC_USAGE_FILE = path.join(REPO_ROOT, 'anthropic-usage.json');
+
+/**
+ * Read the anthropic-usage.json file pushed by the local agent
+ * (~/.claude-stats/refresh.sh on Cursatory). Returns the total token count
+ * across all logged Claude Code machines, or null if file missing.
+ */
+function readAnthropicAgentTotal() {
+  if (!fs.existsSync(ANTHROPIC_USAGE_FILE)) return null;
+  try {
+    const data = JSON.parse(fs.readFileSync(ANTHROPIC_USAGE_FILE, 'utf8'));
+    return typeof data.total === 'number' ? data : null;
+  } catch {
+    return null;
+  }
+}
+
 /**
  * @param {{ manual?: { anthropic?: number, openai?: number, copilot?: number, cursor?: number, gemini?: number } }} cfg
  */
 export async function aggregateTokens(cfg = {}) {
   const manual = cfg.manual || {};
+  const agentAnthropic = readAnthropicAgentTotal();
   const errors = [];
   const sources = {}; // per-provider: 'api' | 'manual'
 
@@ -123,13 +147,20 @@ export async function aggregateTokens(cfg = {}) {
   // TypingMind which OpenAI's usage report may not include in retention).
   // When you set manual.<provider> > 0, it stacks on top of the API number.
 
+  // Anthropic gets contributions from up to three sources:
+  //   1. admin API (currently unavailable for personal accounts)
+  //   2. local agent JSON file (ccusage on Cursatory + habitat) — auto-refreshed
+  //   3. manual.anthropic in projects.yml (TypingMind prepaid, etc.)
   const anthApi = anth.ok ? anth.total : 0;
+  const anthAgent = agentAnthropic?.total || 0;
   const anthManual = manual.anthropic || 0;
-  breakdown.anthropic = anthApi + anthManual;
-  if (anth.ok && anthManual > 0) sources.anthropic = 'api+manual';
-  else if (anth.ok) sources.anthropic = 'api';
-  else if (anthManual > 0) sources.anthropic = 'manual';
-  else sources.anthropic = 'unavailable';
+  breakdown.anthropic = anthApi + anthAgent + anthManual;
+
+  const anthSourceParts = [];
+  if (anth.ok) anthSourceParts.push('api');
+  if (anthAgent > 0) anthSourceParts.push('agent');
+  if (anthManual > 0) anthSourceParts.push('manual');
+  sources.anthropic = anthSourceParts.length ? anthSourceParts.join('+') : 'unavailable';
   if (!anth.ok) errors.push(`anthropic: ${anth.reason}`);
 
   const oaiApi = oai.ok ? oai.total : 0;
@@ -142,16 +173,21 @@ export async function aggregateTokens(cfg = {}) {
   if (!oai.ok) errors.push(`openai: ${oai.reason}`);
 
   const verified = anthApi + oaiApi;
+  const agentTotal = anthAgent;
   const manualTotal = anthManual + oaiManual + breakdown.copilot + breakdown.cursor + breakdown.gemini;
-  const total = verified + manualTotal;
+  const total = verified + agentTotal + manualTotal;
 
   return {
     total,
     verified,
+    agent: agentTotal,
     manual: manualTotal,
     breakdown,
     sources,
     errors,
+    agentMeta: agentAnthropic
+      ? { byMachine: agentAnthropic.byMachine, fetchedAt: agentAnthropic.fetchedAt }
+      : null,
     fetchedAt: new Date().toISOString(),
   };
 }
