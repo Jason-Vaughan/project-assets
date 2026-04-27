@@ -107,6 +107,28 @@ function shouldInclude(r) {
   return { ok: true };
 }
 
+const LANGUAGE_THRESHOLD_PCT = 5;
+
+async function fetchLanguages(fullName) {
+  const token = process.env.STATS_COLLECTOR_TOKEN || process.env.GITHUB_TOKEN;
+  const headers = { 'User-Agent': 'collect-stats', Accept: 'application/vnd.github+json' };
+  if (token) headers.Authorization = `Bearer ${token}`;
+  try {
+    const res = await fetch(`https://api.github.com/repos/${fullName}/languages`, { headers });
+    if (!res.ok) return null;
+    const raw = await res.json();
+    const total = Object.values(raw).reduce((a, b) => a + b, 0);
+    if (total === 0) return [];
+    return Object.entries(raw)
+      .map(([name, bytes]) => ({ name, bytes, percent: Math.round((bytes / total) * 100) }))
+      .filter((l) => l.percent >= LANGUAGE_THRESHOLD_PCT)
+      .sort((a, b) => b.bytes - a.bytes);
+  } catch (e) {
+    console.warn(`[${fullName}] languages fetch failed:`, e.message);
+    return null;
+  }
+}
+
 async function main() {
   const allRepos = await discoverRepos();
   const filtered = onlyRepo
@@ -186,6 +208,13 @@ async function main() {
         for (const [k, v] of Object.entries(fixedFields)) {
           if (!stats[k]) stats[k] = v;
         }
+      }
+
+      // Language breakdown from GitHub languages API (skip for remote-stats
+      // projects since their GitHub repo isn't representative of the source).
+      if (!remoteStats) {
+        const languages = await fetchLanguages(r.full_name);
+        if (languages !== null) stats.languages = languages;
       }
 
       stats.repo = r.full_name;
