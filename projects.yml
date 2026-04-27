@@ -54,5 +54,5 @@ overrides:
       firstCommit: "2024-09-01"
 
 defaultLoc:
-  include: ['*.js', '*.ts', '*.jsx', '*.tsx', '*.mjs']
-  exclude: ['node_modules', '.next', 'dist', '.min.']
+  include: ['*.js', '*.ts', '*.jsx', '*.tsx', '*.mjs', '*.py']
+  exclude: ['node_modules', '.next', 'dist', '.min.', '__pycache__', '.venv', 'venv', 'site-packages', '.pytest_cache', 'egg-info']
