@@ -58,11 +58,18 @@ defaultLoc:
   exclude: ['node_modules', '.next', 'dist', '.min.', '__pycache__', '.venv', 'venv', 'site-packages', '.pytest_cache', 'egg-info']
 
 # AI token usage aggregation. Pulled from provider admin APIs where available,
-# topped up with manual estimates for tools that don't expose usage publicly.
+# falling back to manual entries for tools without public per-user usage APIs
+# OR providers where admin API access isn't available (e.g. personal accounts).
 # Manual values are lifetime estimates — bump them periodically.
+#
+# For Anthropic without org-account admin API access, run `ccusage monthly`
+# locally (https://github.com/ryoppippi/ccusage) and plug in the lifetime
+# total here. Re-run + update periodically.
 tokens:
   manual:
-    copilot: 0   # GitHub Copilot (no public per-user API)
-    cursor:  0   # Cursor Pro (no public per-user API; lifetime estimate)
-    gemini:  0   # Google Gemini AI Studio (no aggregate usage API for casual tier)
+    anthropic: 0   # Claude Code lifetime total from `ccusage monthly` (or admin API)
+    openai:    0   # Optional manual override if admin API unavailable
+    copilot:   0   # GitHub Copilot (no public per-user API)
+    cursor:    0   # Cursor Pro (no public per-user API; lifetime estimate)
+    gemini:    0   # Google Gemini AI Studio (no aggregate usage API for casual tier)
 

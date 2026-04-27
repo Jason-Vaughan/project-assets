@@ -97,29 +97,50 @@ async function fetchOpenAITokens() {
 }
 
 /**
- * @param {{ manual?: { copilot?: number, cursor?: number, gemini?: number } }} cfg
+ * @param {{ manual?: { anthropic?: number, openai?: number, copilot?: number, cursor?: number, gemini?: number } }} cfg
  */
 export async function aggregateTokens(cfg = {}) {
   const manual = cfg.manual || {};
   const errors = [];
+  const sources = {}; // per-provider: 'api' | 'manual'
+
   const breakdown = {
-    anthropic: null,
-    openai: null,
+    anthropic: 0,
+    openai: 0,
     copilot: manual.copilot || 0,
     cursor: manual.cursor || 0,
     gemini: manual.gemini || 0,
   };
+  sources.copilot = 'manual';
+  sources.cursor = 'manual';
+  sources.gemini = 'manual';
 
   const [anth, oai] = await Promise.all([fetchAnthropicTokens(), fetchOpenAITokens()]);
 
-  if (anth.ok) breakdown.anthropic = anth.total;
-  else errors.push(`anthropic: ${anth.reason}`);
+  if (anth.ok) {
+    breakdown.anthropic = anth.total;
+    sources.anthropic = 'api';
+  } else {
+    breakdown.anthropic = manual.anthropic || 0;
+    sources.anthropic = breakdown.anthropic > 0 ? 'manual' : 'unavailable';
+    errors.push(`anthropic: ${anth.reason}`);
+  }
 
-  if (oai.ok) breakdown.openai = oai.total;
-  else errors.push(`openai: ${oai.reason}`);
+  if (oai.ok) {
+    breakdown.openai = oai.total;
+    sources.openai = 'api';
+  } else {
+    breakdown.openai = manual.openai || 0;
+    sources.openai = breakdown.openai > 0 ? 'manual' : 'unavailable';
+    errors.push(`openai: ${oai.reason}`);
+  }
 
-  const verified = (breakdown.anthropic || 0) + (breakdown.openai || 0);
-  const manualTotal = breakdown.copilot + breakdown.cursor + breakdown.gemini;
+  const verified = Object.entries(breakdown)
+    .filter(([k]) => sources[k] === 'api')
+    .reduce((sum, [, v]) => sum + v, 0);
+  const manualTotal = Object.entries(breakdown)
+    .filter(([k]) => sources[k] === 'manual')
+    .reduce((sum, [, v]) => sum + v, 0);
   const total = verified + manualTotal;
 
   return {
@@ -127,6 +148,7 @@ export async function aggregateTokens(cfg = {}) {
     verified,
     manual: manualTotal,
     breakdown,
+    sources,
     errors,
     fetchedAt: new Date().toISOString(),
   };
