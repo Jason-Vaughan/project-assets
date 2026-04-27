@@ -56,3 +56,13 @@ overrides:
 defaultLoc:
   include: ['*.js', '*.ts', '*.jsx', '*.tsx', '*.mjs', '*.py']
   exclude: ['node_modules', '.next', 'dist', '.min.', '__pycache__', '.venv', 'venv', 'site-packages', '.pytest_cache', 'egg-info']
+
+# AI token usage aggregation. Pulled from provider admin APIs where available,
+# topped up with manual estimates for tools that don't expose usage publicly.
+# Manual values are lifetime estimates — bump them periodically.
+tokens:
+  manual:
+    copilot: 0   # GitHub Copilot (no public per-user API)
+    cursor:  0   # Cursor Pro (no public per-user API; lifetime estimate)
+    gemini:  0   # Google Gemini AI Studio (no aggregate usage API for casual tier)
+

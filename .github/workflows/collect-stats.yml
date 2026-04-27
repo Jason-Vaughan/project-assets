@@ -29,6 +29,8 @@ jobs:
       - name: Run collector
         env:
           STATS_COLLECTOR_TOKEN: ${{ secrets.STATS_COLLECTOR_TOKEN }}
+          ANTHROPIC_ADMIN_KEY: ${{ secrets.ANTHROPIC_ADMIN_KEY }}
+          OPENAI_ADMIN_KEY: ${{ secrets.OPENAI_ADMIN_KEY }}
         run: node scripts/collect-stats.mjs
 
       - name: Commit updated stats

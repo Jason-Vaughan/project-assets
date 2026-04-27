@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 import yaml from 'js-yaml';
 
 import { coreStats } from './lib/git-stats.mjs';
+import { aggregateTokens } from './lib/tokens.mjs';
 import tangleclaw from './counters/tangleclaw.mjs';
 import tilt from './counters/tilt.mjs';
 
@@ -234,6 +235,26 @@ async function main() {
     } catch (err) {
       console.error(`[${slug}] FAILED: ${err.message}`);
       meta.projects[slug] = { ok: false, repo: r.full_name, error: err.message };
+    }
+  }
+
+  // Aggregate AI token usage from provider APIs + manual estimates.
+  // Skipped when running for a single repo (--repo) since aggregate doesn't
+  // belong in a per-project stats JSON.
+  if (!onlyRepo) {
+    console.log(`\n=== aggregating AI token usage ===`);
+    try {
+      const tokenCfg = cfg.tokens || {};
+      meta.aggregateTokens = await aggregateTokens(tokenCfg);
+      const t = meta.aggregateTokens;
+      console.log(
+        `Tokens: total=${t.total.toLocaleString()} ` +
+          `(verified=${t.verified.toLocaleString()}, manual=${t.manual.toLocaleString()})`,
+      );
+      if (t.errors.length) console.warn(`Token errors: ${t.errors.join(' | ')}`);
+    } catch (err) {
+      console.error(`Token aggregation FAILED: ${err.message}`);
+      meta.aggregateTokens = { error: err.message };
     }
   }
 
