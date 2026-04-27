@@ -117,30 +117,32 @@ export async function aggregateTokens(cfg = {}) {
 
   const [anth, oai] = await Promise.all([fetchAnthropicTokens(), fetchOpenAITokens()]);
 
-  if (anth.ok) {
-    breakdown.anthropic = anth.total;
-    sources.anthropic = 'api';
-  } else {
-    breakdown.anthropic = manual.anthropic || 0;
-    sources.anthropic = breakdown.anthropic > 0 ? 'manual' : 'unavailable';
-    errors.push(`anthropic: ${anth.reason}`);
-  }
+  // Manual values are ADDITIVE to the API totals. Use case: a provider's
+  // admin API may not see usage that ran through other paths (e.g., a
+  // separate sub-org, or prepaid keys consumed via a third-party UI like
+  // TypingMind which OpenAI's usage report may not include in retention).
+  // When you set manual.<provider> > 0, it stacks on top of the API number.
 
-  if (oai.ok) {
-    breakdown.openai = oai.total;
-    sources.openai = 'api';
-  } else {
-    breakdown.openai = manual.openai || 0;
-    sources.openai = breakdown.openai > 0 ? 'manual' : 'unavailable';
-    errors.push(`openai: ${oai.reason}`);
-  }
+  const anthApi = anth.ok ? anth.total : 0;
+  const anthManual = manual.anthropic || 0;
+  breakdown.anthropic = anthApi + anthManual;
+  if (anth.ok && anthManual > 0) sources.anthropic = 'api+manual';
+  else if (anth.ok) sources.anthropic = 'api';
+  else if (anthManual > 0) sources.anthropic = 'manual';
+  else sources.anthropic = 'unavailable';
+  if (!anth.ok) errors.push(`anthropic: ${anth.reason}`);
 
-  const verified = Object.entries(breakdown)
-    .filter(([k]) => sources[k] === 'api')
-    .reduce((sum, [, v]) => sum + v, 0);
-  const manualTotal = Object.entries(breakdown)
-    .filter(([k]) => sources[k] === 'manual')
-    .reduce((sum, [, v]) => sum + v, 0);
+  const oaiApi = oai.ok ? oai.total : 0;
+  const oaiManual = manual.openai || 0;
+  breakdown.openai = oaiApi + oaiManual;
+  if (oai.ok && oaiManual > 0) sources.openai = 'api+manual';
+  else if (oai.ok) sources.openai = 'api';
+  else if (oaiManual > 0) sources.openai = 'manual';
+  else sources.openai = 'unavailable';
+  if (!oai.ok) errors.push(`openai: ${oai.reason}`);
+
+  const verified = anthApi + oaiApi;
+  const manualTotal = anthManual + oaiManual + breakdown.copilot + breakdown.cursor + breakdown.gemini;
   const total = verified + manualTotal;
 
   return {
