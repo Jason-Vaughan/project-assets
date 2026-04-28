@@ -6,7 +6,8 @@ import { execSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import yaml from 'js-yaml';
 
-import { coreStats } from './lib/git-stats.mjs';
+import { coreStats, countFixCommits } from './lib/git-stats.mjs';
+import { fetchMergedPRCount } from './lib/github-prs.mjs';
 import { aggregateTokens } from './lib/tokens.mjs';
 import tangleclaw from './counters/tangleclaw.mjs';
 import tilt from './counters/tilt.mjs';
@@ -186,6 +187,8 @@ async function main() {
           if (r.private && !token) {
             throw new Error('STATS_COLLECTOR_TOKEN not set; cannot clone private repo');
           }
+          // Full clone (no --depth) — countFixCommits walks the entire history
+          // via `git log --grep`, so a shallow clone would silently undercount.
           execSync(
             `git clone --branch ${branch} --no-single-branch ${url} ${workDir}`,
             { stdio: 'inherit' },
@@ -216,6 +219,13 @@ async function main() {
       if (!remoteStats) {
         const languages = await fetchLanguages(r.full_name);
         if (languages !== null) stats.languages = languages;
+
+        // Fix-prefix commit count from local clone (cheap, always available).
+        stats.fixes = { count: countFixCommits(workDir) };
+
+        // Merged-PR count from GitHub API (requires PAT with Pull requests: Read).
+        const token = process.env.STATS_COLLECTOR_TOKEN || process.env.GITHUB_TOKEN;
+        stats.prs = { merged: await fetchMergedPRCount(r.full_name, token) };
       }
 
       stats.repo = r.full_name;
@@ -258,6 +268,52 @@ async function main() {
     } catch (err) {
       console.error(`Token aggregation FAILED: ${err.message}`);
       meta.aggregateTokens = { error: err.message };
+    }
+  }
+
+  // Aggregate fix-commits + merged-PRs across all successfully collected repos.
+  // Treat null PR counts as 0 in the aggregate so a single permission failure
+  // doesn't poison the headline number; per-repo `null` is preserved separately
+  // for debugging.
+  if (!onlyRepo) {
+    let aggFixes = 0;
+    let aggPRs = 0;
+    let prsCollected = 0;
+    let prsNull = 0;
+    let repoCount = 0;
+    for (const slug of Object.keys(meta.projects)) {
+      const p = meta.projects[slug];
+      if (!p.ok || !p.stats) continue;
+      repoCount++;
+      aggFixes += p.stats.fixes?.count || 0;
+      // Track null PR counts separately so we can warn when the PAT scope is
+      // wrong (every repo returns null) vs. legitimate "no merged PRs yet".
+      if (p.stats.prs && p.stats.prs.merged !== null && p.stats.prs.merged !== undefined) {
+        prsCollected++;
+        aggPRs += p.stats.prs.merged;
+      } else if (p.stats.prs) {
+        prsNull++;
+      }
+    }
+    meta.aggregateFixes = { count: aggFixes };
+    meta.aggregatePRs = { merged: aggPRs };
+    console.log(
+      `Aggregates: fixes=${aggFixes.toLocaleString()} merged-PRs=${aggPRs.toLocaleString()} ` +
+        `(PR data from ${prsCollected}/${prsCollected + prsNull} repos)`,
+    );
+
+    // Sanity alarms — a sudden drop to 0 across many successful repos almost
+    // always means a regression in the underlying collector path, not actual
+    // zero activity.
+    if (repoCount > 2 && aggFixes === 0) {
+      console.warn(
+        `WARN: aggregateFixes=0 across ${repoCount} successful repos — possible countFixCommits regression`,
+      );
+    }
+    if (prsNull > 0 && prsCollected === 0) {
+      console.warn(
+        `WARN: ${prsNull} repos all returned null for PR count — STATS_COLLECTOR_TOKEN likely missing 'Pull requests: Read' scope`,
+      );
     }
   }
 
