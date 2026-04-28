@@ -103,20 +103,26 @@ import { fileURLToPath } from 'node:url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, '..', '..');
 const ANTHROPIC_USAGE_FILE = path.join(REPO_ROOT, 'anthropic-usage.json');
+const GEMINI_USAGE_FILE = path.join(REPO_ROOT, 'gemini-usage.json');
 
-/**
- * Read the anthropic-usage.json file pushed by the local agent
- * (~/.claude-stats/refresh.sh on Cursatory). Returns the total token count
- * across all logged Claude Code machines, or null if file missing.
- */
-function readAnthropicAgentTotal() {
-  if (!fs.existsSync(ANTHROPIC_USAGE_FILE)) return null;
+function readAgentFile(filePath) {
+  if (!fs.existsSync(filePath)) return null;
   try {
-    const data = JSON.parse(fs.readFileSync(ANTHROPIC_USAGE_FILE, 'utf8'));
+    const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
     return typeof data.total === 'number' ? data : null;
   } catch {
     return null;
   }
+}
+
+/** Total Anthropic usage from local ccusage agent (Cursatory + habitat). */
+function readAnthropicAgentTotal() {
+  return readAgentFile(ANTHROPIC_USAGE_FILE);
+}
+
+/** Total Gemini CLI usage from local telemetry agent. */
+function readGeminiAgentTotal() {
+  return readAgentFile(GEMINI_USAGE_FILE);
 }
 
 /**
@@ -139,19 +145,25 @@ export async function aggregateTokens(cfg = {}) {
   const manual = cfg.manual || {};
   const proratedCfg = cfg.prorated || {};
   const agentAnthropic = readAnthropicAgentTotal();
+  const agentGemini = readGeminiAgentTotal();
   const errors = [];
   const sources = {}; // per-provider: 'api' | 'manual'
 
+  const geminiAgent = agentGemini?.total || 0;
+  const geminiManual = manual.gemini || 0;
   const breakdown = {
     anthropic: 0,
     openai: 0,
     copilot: manual.copilot || 0,
     cursor: manual.cursor || 0,
-    gemini: manual.gemini || 0,
+    gemini: geminiAgent + geminiManual,
   };
   sources.copilot = 'manual';
   sources.cursor = 'manual';
-  sources.gemini = 'manual';
+  if (geminiAgent > 0 && geminiManual > 0) sources.gemini = 'agent+manual';
+  else if (geminiAgent > 0) sources.gemini = 'agent';
+  else if (geminiManual > 0) sources.gemini = 'manual';
+  else sources.gemini = 'unavailable';
 
   const [anth, oai] = await Promise.all([fetchAnthropicTokens(), fetchOpenAITokens()]);
 
@@ -202,8 +214,8 @@ export async function aggregateTokens(cfg = {}) {
   }
 
   const verified = anthApi + oaiApi;
-  const agentTotal = anthAgent;
-  const manualTotal = anthManual + oaiManual + (manual.copilot || 0) + (manual.cursor || 0) + (manual.gemini || 0);
+  const agentTotal = anthAgent + geminiAgent;
+  const manualTotal = anthManual + oaiManual + (manual.copilot || 0) + (manual.cursor || 0) + geminiManual;
   const total = verified + agentTotal + manualTotal + proratedTotal;
 
   return {
@@ -215,9 +227,14 @@ export async function aggregateTokens(cfg = {}) {
     breakdown,
     sources,
     errors,
-    agentMeta: agentAnthropic
-      ? { byMachine: agentAnthropic.byMachine, fetchedAt: agentAnthropic.fetchedAt }
-      : null,
+    agentMeta: {
+      anthropic: agentAnthropic
+        ? { byMachine: agentAnthropic.byMachine, fetchedAt: agentAnthropic.fetchedAt }
+        : null,
+      gemini: agentGemini
+        ? { source: agentGemini.source, fetchedAt: agentGemini.fetchedAt }
+        : null,
+    },
     fetchedAt: new Date().toISOString(),
   };
 }

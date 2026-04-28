@@ -71,7 +71,7 @@ tokens:
     openai:    35000000     # TypingMind 2024 prepaid est ~$355 / ~$10 per 1M = 35,000,000 (additive on top of admin API total). Captured 2026-04-27.
     copilot:   0   # see prorated.copilot below — Copilot Free, no per-user API
     cursor:    7016899866   # Cursor lifetime via cursor.com export CSV (May 2025 - Apr 2026), captured 2026-04-27
-    gemini:    230000000   # TypingMind 2024 prepaid est ~$700 / ~$3 per 1M (Gemini 1.5 Pro blended) = 230,000,000. Captured 2026-04-27.
+    gemini:    305000000   # 230M TypingMind 2024 prepaid + 75M Gemini Free tier daily-limit usage Feb-Apr 2026 (~20 days/month × 3 months × ~1.25M/day). Real CLI usage captured going forward via gemini-usage.json. Captured 2026-04-27.
 
   # Prorated estimates. The collector computes (days_since_start / 30.4375) * monthlyRate
   # at each run, so the value grows daily without manual bumps. Adjust monthlyRate
