@@ -2,7 +2,14 @@ name: collect-stats
 
 on:
   schedule:
-    - cron: '0 6 * * *'
+    # Five times daily, anchored to PDT (US/Pacific in summer):
+    #   03 UTC = 8 PM prev (PDT) / 7 PM (PST)
+    #   09 UTC = 2 AM (PDT)      / 1 AM (PST)
+    #   13 UTC = 6 AM (PDT)      / 5 AM (PST)
+    #   17 UTC = 10 AM (PDT)     / 9 AM (PST)
+    #   22 UTC = 3 PM (PDT)      / 2 PM (PST)
+    # Cron is fixed UTC; PT times shift 1 hour earlier in standard time (Nov-Mar).
+    - cron: '0 3,9,13,17,22 * * *'
   workflow_dispatch:
 
 permissions:
