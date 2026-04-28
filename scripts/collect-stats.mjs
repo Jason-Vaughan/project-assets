@@ -249,7 +249,10 @@ async function main() {
       const t = meta.aggregateTokens;
       console.log(
         `Tokens: total=${t.total.toLocaleString()} ` +
-          `(verified=${t.verified.toLocaleString()}, manual=${t.manual.toLocaleString()})`,
+          `(verified=${t.verified.toLocaleString()}, ` +
+          `agent=${(t.agent || 0).toLocaleString()}, ` +
+          `manual=${t.manual.toLocaleString()}, ` +
+          `prorated=${(t.prorated || 0).toLocaleString()})`,
       );
       if (t.errors.length) console.warn(`Token errors: ${t.errors.join(' | ')}`);
     } catch (err) {

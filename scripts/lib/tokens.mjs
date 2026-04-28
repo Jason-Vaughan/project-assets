@@ -1,20 +1,28 @@
 /**
- * Aggregate token usage from AI provider admin APIs + manual estimates
- * for providers without public usage APIs (Copilot, Cursor, Gemini).
+ * Aggregate token usage from AI provider admin APIs, local-agent files,
+ * static manual entries, and date-prorated formulas. Each provider's
+ * breakdown number is the sum of contributions across all four source
+ * types (api + agent + manual + prorated), so they're additive.
+ *
+ * Convention: never put the same usage in two source types. The
+ * `manual.<provider>` value should explicitly exclude usage already
+ * captured by `api` (admin API) or `agent` (local agent JSON file).
+ * Agent files are: anthropic-usage.json (ccusage on Cursatory + habitat),
+ * gemini-usage.json (Gemini CLI local telemetry log).
  *
  * Returns:
  *   {
- *     total: <sum of everything>,
- *     verified: <sum from APIs>,
- *     manual: <sum from projects.yml manual entries>,
- *     breakdown: {
- *       anthropic: <number|null>,
- *       openai:    <number|null>,
- *       copilot:   <number>,   // manual
- *       cursor:    <number>,   // manual
- *       gemini:    <number>,   // manual
- *     },
- *     errors: [<provider>: <message>]   // partial-failure notes
+ *     total:    <sum of every contribution>,
+ *     verified: <sum of admin-API contributions>,
+ *     agent:    <sum of agent-file contributions (Anthropic + Gemini)>,
+ *     manual:   <sum of static projects.yml manual entries>,
+ *     prorated: <sum of computed prorated values>,
+ *     breakdown: { anthropic, openai, copilot, cursor, gemini },
+ *     sources:   per-provider source-mix label e.g. 'api+manual',
+ *                'agent+manual', 'manual+prorated', 'unavailable'
+ *     errors:    [<provider>: <message>] for any API call that failed
+ *     agentMeta: { anthropic: { byMachine, fetchedAt }, gemini: {...} }
+ *     fetchedAt: ISO timestamp of this aggregation
  *   }
  */
 

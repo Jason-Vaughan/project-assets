@@ -61,6 +61,21 @@ if [[ "$TOTAL" -eq 0 ]]; then
   exit 1
 fi
 
+# Regression guard: if either machine was unreachable, the partial total
+# would silently regress the live number. Compare to last successful run.
+PREV_TOTAL=0
+if [[ -f "$USAGE_FILE" ]]; then
+  PREV_TOTAL=$(python3 -c "import json,sys; print(json.load(open('$USAGE_FILE')).get('total', 0))" 2>/dev/null || echo 0)
+fi
+if [[ "$PREV_TOTAL" -gt 0 ]]; then
+  THRESHOLD=$((PREV_TOTAL * 95 / 100))
+  if [[ "$TOTAL" -lt "$THRESHOLD" ]]; then
+    echo "ERROR: new total $TOTAL is >5% below previous $PREV_TOTAL — likely a machine was unreachable."
+    echo "  Refusing to overwrite. Will retry on the next scheduled run."
+    exit 2
+  fi
+fi
+
 NOW=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 
 cat > "$USAGE_FILE" <<EOF
@@ -117,11 +132,11 @@ echo "[file] wrote $GEMINI_USAGE_FILE"
 
 cd "$PROJECT_ASSETS"
 git pull --rebase --quiet
-git add anthropic-usage.json
+git add anthropic-usage.json gemini-usage.json
 if git diff --cached --quiet; then
   echo "[git] no changes to commit"
 else
-  git commit -m "chore(stats): refresh Anthropic ccusage ($NOW)"
+  git commit -m "chore(stats): refresh AI usage agents ($NOW)"
   git push --quiet
   echo "[git] pushed"
 fi
