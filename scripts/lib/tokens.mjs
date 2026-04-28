@@ -120,10 +120,24 @@ function readAnthropicAgentTotal() {
 }
 
 /**
- * @param {{ manual?: { anthropic?: number, openai?: number, copilot?: number, cursor?: number, gemini?: number } }} cfg
+ * Compute prorated usage from a {since, monthlyRate} spec at the current date.
+ * Returns 0 if spec is missing/invalid or start date is in the future.
+ */
+function prorate(spec) {
+  if (!spec || !spec.since || !spec.monthlyRate) return 0;
+  const start = new Date(spec.since);
+  const now = new Date();
+  if (Number.isNaN(start.getTime()) || start > now) return 0;
+  const daysSince = (now - start) / 86_400_000; // ms per day
+  return Math.round((daysSince / 30.4375) * spec.monthlyRate);
+}
+
+/**
+ * @param {{ manual?: object, prorated?: object }} cfg
  */
 export async function aggregateTokens(cfg = {}) {
   const manual = cfg.manual || {};
+  const proratedCfg = cfg.prorated || {};
   const agentAnthropic = readAnthropicAgentTotal();
   const errors = [];
   const sources = {}; // per-provider: 'api' | 'manual'
@@ -172,16 +186,32 @@ export async function aggregateTokens(cfg = {}) {
   else sources.openai = 'unavailable';
   if (!oai.ok) errors.push(`openai: ${oai.reason}`);
 
+  // Prorated entries — provider-keyed { since, monthlyRate }. Stacks on top
+  // of every other source. Lets values grow daily without manual bumps.
+  let proratedTotal = 0;
+  for (const provider of ['anthropic', 'openai', 'copilot', 'cursor', 'gemini']) {
+    const v = prorate(proratedCfg[provider]);
+    if (v > 0) {
+      breakdown[provider] = (breakdown[provider] || 0) + v;
+      proratedTotal += v;
+      sources[provider] =
+        sources[provider] === 'unavailable' || !sources[provider]
+          ? 'prorated'
+          : `${sources[provider]}+prorated`;
+    }
+  }
+
   const verified = anthApi + oaiApi;
   const agentTotal = anthAgent;
-  const manualTotal = anthManual + oaiManual + breakdown.copilot + breakdown.cursor + breakdown.gemini;
-  const total = verified + agentTotal + manualTotal;
+  const manualTotal = anthManual + oaiManual + (manual.copilot || 0) + (manual.cursor || 0) + (manual.gemini || 0);
+  const total = verified + agentTotal + manualTotal + proratedTotal;
 
   return {
     total,
     verified,
     agent: agentTotal,
     manual: manualTotal,
+    prorated: proratedTotal,
     breakdown,
     sources,
     errors,

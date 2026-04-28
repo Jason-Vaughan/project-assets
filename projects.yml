@@ -69,7 +69,16 @@ tokens:
   manual:
     anthropic: 60000000     # JUST TypingMind 2024 prepaid (~$600 / ~$10 per 1M = 60M). ccusage portion lives in anthropic-usage.json (auto-refreshed by ~/.claude-stats/refresh.sh on Cursatory daily).
     openai:    35000000     # TypingMind 2024 prepaid est ~$355 / ~$10 per 1M = 35,000,000 (additive on top of admin API total). Captured 2026-04-27.
-    copilot:   1000000   # Copilot Free plan, used as backup; quota = 2K completions + 50 chats per month, screenshot showed 0% MTD usage. ~1M is conservative upper bound (no per-user API). 2026-04-27.
+    copilot:   0   # see prorated.copilot below — Copilot Free, no per-user API
     cursor:    7016899866   # Cursor lifetime via cursor.com export CSV (May 2025 - Apr 2026), captured 2026-04-27
     gemini:    230000000   # TypingMind 2024 prepaid est ~$700 / ~$3 per 1M (Gemini 1.5 Pro blended) = 230,000,000. Captured 2026-04-27.
+
+  # Prorated estimates. The collector computes (days_since_start / 30.4375) * monthlyRate
+  # at each run, so the value grows daily without manual bumps. Adjust monthlyRate
+  # if usage pattern changes.
+  prorated:
+    copilot:
+      since: "2026-03-01"
+      monthlyRate: 1000000   # Copilot Free, light backup usage on OpenClaw
+      note: "no per-user API; prorated estimate"
 
