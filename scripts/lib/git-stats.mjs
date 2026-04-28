@@ -30,4 +30,19 @@ export function coreStats(dir, loc) {
   return { loc: locVal, tests, testFiles, commits, contributors, firstCommit };
 }
 
+/**
+ * Count commits whose subject line follows the conventional-commit "fix" pattern.
+ * Matches: `fix:`, `fix(scope):`, `fix!:`, `bugfix:`, `hotfix:` (case-insensitive).
+ *
+ * Uses `--pretty=tformat:` (terminator) instead of `format:` so `wc -l` counts
+ * the final commit — `format:` omits the trailing newline and undercounts by 1.
+ *
+ * @param {string} dir - absolute path to a git repo working tree
+ * @returns {number} count of matching commits reachable from HEAD
+ */
+export function countFixCommits(dir) {
+  const cmd = `git log -E -i --grep='^(fix|bugfix|hotfix)(\\(.+\\))?!?:' --pretty=tformat:'%H' | wc -l | awk '{print $1}'`;
+  return parseInt(sh(cmd, dir) || '0', 10) || 0;
+}
+
 export const shellExec = sh;

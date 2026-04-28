@@ -6,7 +6,8 @@ import { execSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import yaml from 'js-yaml';
 
-import { coreStats } from './lib/git-stats.mjs';
+import { coreStats, countFixCommits } from './lib/git-stats.mjs';
+import { fetchMergedPRCount } from './lib/github-prs.mjs';
 import { aggregateTokens } from './lib/tokens.mjs';
 import tangleclaw from './counters/tangleclaw.mjs';
 import tilt from './counters/tilt.mjs';
@@ -216,6 +217,13 @@ async function main() {
       if (!remoteStats) {
         const languages = await fetchLanguages(r.full_name);
         if (languages !== null) stats.languages = languages;
+
+        // Fix-prefix commit count from local clone (cheap, always available).
+        stats.fixes = { count: countFixCommits(workDir) };
+
+        // Merged-PR count from GitHub API (requires PAT with Pull requests: Read).
+        const token = process.env.STATS_COLLECTOR_TOKEN || process.env.GITHUB_TOKEN;
+        stats.prs = { merged: await fetchMergedPRCount(r.full_name, token) };
       }
 
       stats.repo = r.full_name;
@@ -259,6 +267,26 @@ async function main() {
       console.error(`Token aggregation FAILED: ${err.message}`);
       meta.aggregateTokens = { error: err.message };
     }
+  }
+
+  // Aggregate fix-commits + merged-PRs across all successfully collected repos.
+  // Treat null PR counts as 0 in the aggregate so a single permission failure
+  // doesn't poison the headline number; per-repo `null` is preserved separately
+  // for debugging.
+  if (!onlyRepo) {
+    let aggFixes = 0;
+    let aggPRs = 0;
+    for (const slug of Object.keys(meta.projects)) {
+      const p = meta.projects[slug];
+      if (!p.ok || !p.stats) continue;
+      aggFixes += p.stats.fixes?.count || 0;
+      aggPRs += p.stats.prs?.merged || 0;
+    }
+    meta.aggregateFixes = { count: aggFixes };
+    meta.aggregatePRs = { merged: aggPRs };
+    console.log(
+      `Aggregates: fixes=${aggFixes.toLocaleString()} merged-PRs=${aggPRs.toLocaleString()}`,
+    );
   }
 
   meta.runFinishedAt = new Date().toISOString();
