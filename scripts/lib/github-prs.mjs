@@ -15,9 +15,14 @@
  * @param {string} fullName - "owner/repo" (e.g., "Jason-Vaughan/jasonvaughan.com")
  * @param {string|null|undefined} token - GitHub PAT with `Pull requests: Read`
  * @returns {Promise<number|null>} count of merged PRs, or `null` when the API
- *   returns 401/403/404 (token missing, missing scope, repo inaccessible). The
- *   manifest carries `null` so the frontend can distinguish "no data" from "0".
+ *   returns 401/403/404/5xx (token missing, missing scope, repo inaccessible,
+ *   GitHub having a bad day) or the request times out. Treating 5xx as null
+ *   instead of throwing means a transient GitHub blip on the PR endpoint
+ *   doesn't poison the rest of the repo's stats (LOC, fixes, etc.) — those are
+ *   already computed by the time this call runs.
  */
+const FETCH_TIMEOUT_MS = 30_000;
+
 export async function fetchMergedPRCount(fullName, token) {
   if (!token) {
     console.warn(`[${fullName}] no GitHub token; skipping PR count`);
@@ -36,11 +41,29 @@ export async function fetchMergedPRCount(fullName, token) {
 
   while (true) {
     const url = `https://api.github.com/repos/${fullName}/pulls?state=closed&per_page=100&page=${page}`;
-    const res = await fetch(url, { headers });
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+    let res;
+    try {
+      res = await fetch(url, { headers, signal: controller.signal });
+    } catch (err) {
+      if (err.name === 'AbortError') {
+        console.warn(`[${fullName}] PR fetch timed out after ${FETCH_TIMEOUT_MS}ms (page ${page})`);
+        return null;
+      }
+      throw err;
+    } finally {
+      clearTimeout(timeout);
+    }
 
     if (res.status === 401 || res.status === 403 || res.status === 404) {
       const body = await res.text().catch(() => '');
       console.warn(`[${fullName}] PR fetch ${res.status}: ${body.slice(0, 200)}`);
+      return null;
+    }
+    if (res.status >= 500) {
+      console.warn(`[${fullName}] PR fetch ${res.status} (server error); preserving other stats by returning null`);
       return null;
     }
     if (!res.ok) {

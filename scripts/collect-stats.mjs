@@ -187,6 +187,8 @@ async function main() {
           if (r.private && !token) {
             throw new Error('STATS_COLLECTOR_TOKEN not set; cannot clone private repo');
           }
+          // Full clone (no --depth) — countFixCommits walks the entire history
+          // via `git log --grep`, so a shallow clone would silently undercount.
           execSync(
             `git clone --branch ${branch} --no-single-branch ${url} ${workDir}`,
             { stdio: 'inherit' },
@@ -276,17 +278,43 @@ async function main() {
   if (!onlyRepo) {
     let aggFixes = 0;
     let aggPRs = 0;
+    let prsCollected = 0;
+    let prsNull = 0;
+    let repoCount = 0;
     for (const slug of Object.keys(meta.projects)) {
       const p = meta.projects[slug];
       if (!p.ok || !p.stats) continue;
+      repoCount++;
       aggFixes += p.stats.fixes?.count || 0;
-      aggPRs += p.stats.prs?.merged || 0;
+      // Track null PR counts separately so we can warn when the PAT scope is
+      // wrong (every repo returns null) vs. legitimate "no merged PRs yet".
+      if (p.stats.prs && p.stats.prs.merged !== null && p.stats.prs.merged !== undefined) {
+        prsCollected++;
+        aggPRs += p.stats.prs.merged;
+      } else if (p.stats.prs) {
+        prsNull++;
+      }
     }
     meta.aggregateFixes = { count: aggFixes };
     meta.aggregatePRs = { merged: aggPRs };
     console.log(
-      `Aggregates: fixes=${aggFixes.toLocaleString()} merged-PRs=${aggPRs.toLocaleString()}`,
+      `Aggregates: fixes=${aggFixes.toLocaleString()} merged-PRs=${aggPRs.toLocaleString()} ` +
+        `(PR data from ${prsCollected}/${prsCollected + prsNull} repos)`,
     );
+
+    // Sanity alarms — a sudden drop to 0 across many successful repos almost
+    // always means a regression in the underlying collector path, not actual
+    // zero activity.
+    if (repoCount > 2 && aggFixes === 0) {
+      console.warn(
+        `WARN: aggregateFixes=0 across ${repoCount} successful repos — possible countFixCommits regression`,
+      );
+    }
+    if (prsNull > 0 && prsCollected === 0) {
+      console.warn(
+        `WARN: ${prsNull} repos all returned null for PR count — STATS_COLLECTOR_TOKEN likely missing 'Pull requests: Read' scope`,
+      );
+    }
   }
 
   meta.runFinishedAt = new Date().toISOString();
