@@ -60,4 +60,41 @@ export function countFixCommits(dir) {
   return parseInt(sh(cmd, dir) || '0', 10) || 0;
 }
 
+/**
+ * Sum lines deleted across the repo's history, scoped to the same file set
+ * the LOC counter uses (so the number is apples-to-apples with `loc`).
+ *
+ * Why this is "lines refactored" and not "lines lost":
+ *   `git log --numstat` counts a modified line as 1 add + 1 delete (any time
+ *   you change an existing line, the delete column ticks up). So this number
+ *   captures three things, all of which are good engineering signals:
+ *     - true deletions (dead code removal, file removal)
+ *     - rewrites (refactoring an existing function — old lines deleted, new
+ *       lines added in the same commit)
+ *     - simplifications (replacing N lines with fewer lines)
+ *
+ * Caveats (documented for future-you, not the user):
+ *   - Squash-merges collapse pre-squash deletes into one diff, so the number
+ *     is a floor, not a ceiling. Repos with squash workflows undercount.
+ *   - Repos with rewritten history (BFG, filter-branch) lose the deleted
+ *     lines from the rewritten range. Refuctor is a known case.
+ *   - Binary files show "-" in --numstat; awk treats "-" as 0 numerically,
+ *     so they don't poison the sum.
+ *
+ * @param {string} dir - absolute path to a git repo working tree
+ * @param {{include: string[], exclude: string[]}} loc - same LOC profile passed to coreStats
+ * @returns {number} total lines deleted across history, scoped to loc.include
+ */
+export function countLinesRefactored(dir, loc) {
+  const includeArgs = loc.include.map((p) => `'${p}'`).join(' ');
+  const excludes = buildGrepExcludes(loc.exclude);
+  // Pathspec includes limit numstat output to files matching the LOC profile;
+  // grep -v then strips generated/vendor dirs (matches the `coreStats` LOC
+  // approach exactly, so this number is apples-to-apples with `loc`).
+  // numstat columns: <added>\t<deleted>\t<path>; awk on $2 sums deletes.
+  // Binary files emit `-` for both columns; awk treats `-` as 0 numerically.
+  const cmd = `git log --numstat --pretty=tformat: -- ${includeArgs} 2>/dev/null ${excludes} | awk '{del+=$2} END {print del+0}'`;
+  return parseInt(sh(cmd, dir) || '0', 10) || 0;
+}
+
 export const shellExec = sh;

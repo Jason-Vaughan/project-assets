@@ -6,7 +6,7 @@ import { execSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import yaml from 'js-yaml';
 
-import { coreStats, countFixCommits } from './lib/git-stats.mjs';
+import { coreStats, countFixCommits, countLinesRefactored } from './lib/git-stats.mjs';
 import { fetchMergedPRCount } from './lib/github-prs.mjs';
 import { aggregateTokens } from './lib/tokens.mjs';
 import tangleclaw from './counters/tangleclaw.mjs';
@@ -223,6 +223,10 @@ async function main() {
         // Fix-prefix commit count from local clone (cheap, always available).
         stats.fixes = { count: countFixCommits(workDir) };
 
+        // Lines-deleted across history, scoped to the same LOC profile.
+        // Captures refactors, dead code removal, simplifications, file deletes.
+        stats.linesRefactored = { count: countLinesRefactored(workDir, loc) };
+
         // Merged-PR count from GitHub API (requires PAT with Pull requests: Read).
         const token = process.env.STATS_COLLECTOR_TOKEN || process.env.GITHUB_TOKEN;
         stats.prs = { merged: await fetchMergedPRCount(r.full_name, token) };
@@ -278,6 +282,7 @@ async function main() {
   if (!onlyRepo) {
     let aggFixes = 0;
     let aggPRs = 0;
+    let aggRefactored = 0;
     let prsCollected = 0;
     let prsNull = 0;
     let repoCount = 0;
@@ -286,6 +291,7 @@ async function main() {
       if (!p.ok || !p.stats) continue;
       repoCount++;
       aggFixes += p.stats.fixes?.count || 0;
+      aggRefactored += p.stats.linesRefactored?.count || 0;
       // Track null PR counts separately so we can warn when the PAT scope is
       // wrong (every repo returns null) vs. legitimate "no merged PRs yet".
       if (p.stats.prs && p.stats.prs.merged !== null && p.stats.prs.merged !== undefined) {
@@ -297,8 +303,10 @@ async function main() {
     }
     meta.aggregateFixes = { count: aggFixes };
     meta.aggregatePRs = { merged: aggPRs };
+    meta.aggregateRefactored = { count: aggRefactored };
     console.log(
       `Aggregates: fixes=${aggFixes.toLocaleString()} merged-PRs=${aggPRs.toLocaleString()} ` +
+        `lines-refactored=${aggRefactored.toLocaleString()} ` +
         `(PR data from ${prsCollected}/${prsCollected + prsNull} repos)`,
     );
 

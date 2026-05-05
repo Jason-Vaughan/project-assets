@@ -5,7 +5,12 @@ import { mkdtempSync, rmSync, writeFileSync, mkdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-import { countFixCommits } from './git-stats.mjs';
+import { countFixCommits, countLinesRefactored } from './git-stats.mjs';
+
+const DEFAULT_LOC = {
+  include: ['*.js', '*.ts', '*.jsx', '*.tsx', '*.mjs'],
+  exclude: ['node_modules', '.next', 'dist', '.min.'],
+};
 
 /**
  * Build a throwaway git repo in /tmp with the given list of commit subjects.
@@ -122,5 +127,94 @@ describe('countFixCommits', () => {
     const dir = makeRepo(['fix']);
     repos.push(dir);
     assert.equal(countFixCommits(dir), 1);
+  });
+});
+
+/**
+ * Build a repo and run a sequence of (path, content) write+commit operations
+ * so we can construct precise add/delete histories.
+ */
+function makeRepoWithEdits(edits) {
+  const dir = mkdtempSync(join(tmpdir(), 'gitstats-refactor-test-'));
+  const sh = (cmd) => execSync(cmd, { cwd: dir, stdio: 'pipe' });
+  sh('git init -q -b main');
+  sh('git config user.email "test@example.com"');
+  sh('git config user.name "Test Bot"');
+  sh('git config commit.gpgsign false');
+  for (let i = 0; i < edits.length; i++) {
+    const { path: p, content, deletePath } = edits[i];
+    if (deletePath) {
+      execSync(`git rm -q ${JSON.stringify(deletePath)}`, { cwd: dir, stdio: 'pipe' });
+    } else {
+      const full = join(dir, p);
+      const parent = full.substring(0, full.lastIndexOf('/'));
+      if (parent && parent !== dir) mkdirSync(parent, { recursive: true });
+      writeFileSync(full, content);
+      sh(`git add ${JSON.stringify(p)}`);
+    }
+    execSync(`git commit -q -m ${JSON.stringify('edit ' + i)}`, { cwd: dir, stdio: 'pipe' });
+  }
+  return dir;
+}
+
+describe('countLinesRefactored', () => {
+  let repos = [];
+
+  after(() => {
+    for (const d of repos) rmSync(d, { recursive: true, force: true });
+  });
+
+  test('returns 0 for a repo with only adds (no deletions)', () => {
+    const dir = makeRepoWithEdits([
+      { path: 'a.js', content: 'one\ntwo\nthree\n' },
+      { path: 'b.js', content: 'x\ny\n' },
+    ]);
+    repos.push(dir);
+    assert.equal(countLinesRefactored(dir, DEFAULT_LOC), 0);
+  });
+
+  test('counts lines deleted when a file is rewritten', () => {
+    // Git's diff keeps the unchanged leading `one\n`, so 4 lines are deleted
+    // (two/three/four/five), not 5. Verifies we trust git's diff math.
+    const dir = makeRepoWithEdits([
+      { path: 'a.js', content: 'one\ntwo\nthree\nfour\nfive\n' },
+      { path: 'a.js', content: 'one\n' },
+    ]);
+    repos.push(dir);
+    assert.equal(countLinesRefactored(dir, DEFAULT_LOC), 4);
+  });
+
+  test('counts whole-file deletions', () => {
+    const dir = makeRepoWithEdits([
+      { path: 'a.js', content: 'one\ntwo\nthree\n' },
+      { path: 'b.js', content: 'x\ny\n' },
+      { deletePath: 'b.js' },
+    ]);
+    repos.push(dir);
+    assert.equal(countLinesRefactored(dir, DEFAULT_LOC), 2);
+  });
+
+  test('excludes node_modules paths', () => {
+    const dir = makeRepoWithEdits([
+      { path: 'src/a.js', content: 'one\ntwo\n' },
+      { path: 'node_modules/pkg/index.js', content: 'a\nb\nc\nd\n' },
+      { path: 'node_modules/pkg/index.js', content: '' },
+      { path: 'src/a.js', content: '' },
+    ]);
+    repos.push(dir);
+    // Only the 2 lines deleted from src/a.js should count; node_modules ignored.
+    assert.equal(countLinesRefactored(dir, DEFAULT_LOC), 2);
+  });
+
+  test('honors LOC profile include filter (only counts matching extensions)', () => {
+    const dir = makeRepoWithEdits([
+      { path: 'a.js', content: 'js-one\njs-two\n' },
+      { path: 'b.css', content: 'css-one\ncss-two\ncss-three\n' },
+      { path: 'a.js', content: '' },
+      { path: 'b.css', content: '' },
+    ]);
+    repos.push(dir);
+    // .css excluded by default LOC profile; only the 2 .js lines count.
+    assert.equal(countLinesRefactored(dir, DEFAULT_LOC), 2);
   });
 });
