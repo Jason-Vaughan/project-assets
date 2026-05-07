@@ -2,14 +2,13 @@ name: collect-stats
 
 on:
   schedule:
-    # Five times daily, anchored to PDT (US/Pacific in summer):
-    #   03 UTC = 8 PM prev (PDT) / 7 PM (PST)
-    #   09 UTC = 2 AM (PDT)      / 1 AM (PST)
-    #   13 UTC = 6 AM (PDT)      / 5 AM (PST)
-    #   17 UTC = 10 AM (PDT)     / 9 AM (PST)
-    #   22 UTC = 3 PM (PDT)      / 2 PM (PST)
-    # Cron is fixed UTC; PT times shift 1 hour earlier in standard time (Nov-Mar).
-    - cron: '0 3,9,13,17,22 * * *'
+    # Hourly. Each run is ~60s of CI on a public repo (free GitHub Actions
+    # minutes). The "Commit updated stats" step uses `-I` to ignore changes
+    # that are only timestamp churn (updatedAt / runStartedAt / runFinishedAt),
+    # so 23/24 runs/day produce zero-noise no-ops when no project actually
+    # changed. After a real push, the next hourly run picks it up — or trigger
+    # manually via workflow_dispatch for instant refresh.
+    - cron: '0 * * * *'
   workflow_dispatch:
 
 permissions:
@@ -41,12 +40,21 @@ jobs:
         run: node scripts/collect-stats.mjs
 
       - name: Commit updated stats
+        # Skip the commit when the only changes are timestamp churn — every
+        # run rewrites updatedAt / runStartedAt / runFinishedAt regardless of
+        # whether real values changed. `git diff -I<regex>` ignores hunks where
+        # all changed lines match the regex, so timestamp-only diffs become
+        # silent no-ops at hourly cadence (23/24 runs/day).
         run: |
           git config user.name  "stats-bot"
           git config user.email "stats-bot@users.noreply.github.com"
           git add '*-stats.json' _collect-meta.json
-          if git diff --cached --quiet; then
-            echo "No stats changes."
+          if git diff --cached \
+              -I '"updatedAt":' \
+              -I '"runStartedAt":' \
+              -I '"runFinishedAt":' \
+              --quiet; then
+            echo "No meaningful stats changes (timestamps only or no diff)."
           else
             git commit -m "chore(stats): refresh $(date -u +%FT%TZ)"
             git push
