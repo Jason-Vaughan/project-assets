@@ -173,7 +173,7 @@ For a mid-sized food manufacturer carrying $50M in annual product liability and 
 
 ### 5.2 Operational Savings
 
-Industry data (Grocery Manufacturers Association, FMI) supports 30–50% recall cost reduction per incident when recalls are precision-targeted to specific batches rather than executed as broad market sweeps. For a single $10M-average recall, that is $3M–$5M saved. The 2024 Boar's Head listeria outbreak, with reported costs exceeding $100M, demonstrates the upper bound: a precise recall executed in hours rather than days would have meaningfully bounded that loss.
+Industry data (Grocery Manufacturers Association, FMI) supports 30–50% recall cost reduction per incident when recalls are precision-targeted to specific batches rather than executed as broad market sweeps. For a single $10M-average recall, that is $3M–$5M saved. The 2024 Boar's Head listeria outbreak — 61 illnesses, 10 fatalities, more than 7 million pounds of recalled product, the indefinite closure of the Jarratt, Virginia production facility, a $3.1M class-action consumer settlement, and multiple individual wrongful-death settlements (one confirmed at $4M) — demonstrates the upper bound: a precise recall executed in hours rather than days would have meaningfully bounded both the human and economic losses.
 
 ### 5.3 FSMA 204 as the Adoption Forcing Function
 
