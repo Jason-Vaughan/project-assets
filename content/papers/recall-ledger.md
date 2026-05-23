@@ -355,11 +355,16 @@ The remaining work is the work of building it — and the people on the other en
 
 ## Appendix: Source Material
 
-- New Food Magazine, "Label errors dominate 2024 US food recalls, costing industry $1.92 billion": https://www.newfoodmagazine.com/news/247701/label-errors-dominate-2024-us-food-recalls-costing-industry-1-92-billion/
-- FDA Enforcement Reports (recall database, public)
-- FSMA 204 Final Rule and August 2025 compliance extension announcement
-- 2024 International Food Information Council Food & Health Survey
-- NielsenIQ consumer response to recall events survey
-- Grocery Manufacturers Association / FMI recall cost benchmarking
-- Hedera Hashgraph Consensus Service technical documentation
-- Linux Foundation 501(c)(6) + sister (c)(3) governance pattern (precedent for §4.5)
+Verified canonical sources for the claims and figures in this paper. Periodic link-check runs in CI; broken links surface as GitHub issues.
+
+- New Food Magazine, "[Label errors dominate 2024 US food recalls, costing industry $1.92 billion](https://www.newfoodmagazine.com/news/247701/label-errors-dominate-2024-us-food-recalls-costing-industry-1-92-billion/)" (2025-01-27) — source for 2024 aggregate recall statistics.
+- [FDA Enforcement Reports database](https://www.accessdata.fda.gov/scripts/ires/) — recall events, products affected, classification details.
+- FDA, "[Requirements for Additional Traceability Records for Certain Foods](https://www.federalregister.gov/documents/2022/11/21/2022-24417/requirements-for-additional-traceability-records-for-certain-foods)" (Final Rule, 87 Fed. Reg. 70,910, November 21, 2022) — FSMA 204.
+- FDA, "[Requirements for Additional Traceability Records for Certain Foods: Compliance Date Extension](https://www.federalregister.gov/documents/2025/08/07/2025-14967/requirements-for-additional-traceability-records-for-certain-foods-compliance-date-extension)" (Proposed Rule, August 7, 2025) — FSMA 204 extension to July 2028.
+- International Food Information Council, "[2024 Food and Health Survey](https://ific.org/wp-content/uploads/2024/06/2024-IFIC-Food-Health-Survey.pdf)" — consumer trust data.
+- NielsenIQ, [consumer response to food safety incidents research](https://nielseniq.com/global/en/insights/) — 68% brand-abandonment finding.
+- Grocery Manufacturers Association, "[Capturing Recall Costs: Measuring and Recovering the Losses](https://globalfoodsafetyresource.com/wp-content/uploads/2014/08/www.gmaonline.org_file-manager_images_gmapublications_Capturing_Recall_Costs_GMA_Whitepaper_FINAL.pdf)" (2011) — recall economics benchmarking.
+- USDA Food Safety and Inspection Service, "[Review of the Boar's Head Listeria monocytogenes Outbreak](https://www.fsis.usda.gov/sites/default/files/media_file/documents/Boars-Head-Public-Report-012025.pdf)" (January 2025) — 2024 Boar's Head outbreak review.
+- [Hedera Hashgraph Consensus Service](https://hedera.com/service/consensus-service/) — technical documentation for the on-chain notarization layer.
+- [The Linux Foundation Bylaws](https://www.linuxfoundation.org/legal/bylaws) — 501(c)(6) governance precedent for §4.5.
+- Mérieux NutriSciences, "[Q1 2025 food recall trend report](https://www.merieuxnutrisciences.com/)" — Q1 2025 foreign-material-contamination 93% YoY trend.
