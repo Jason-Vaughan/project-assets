@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-05-24T22:04:20Z",
+  "updatedAt": "2026-05-24T22:19:57Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -7,51 +7,52 @@
     "ram": "251 GiB"
   },
   "currentModel": {
-    "name": "Qwen2.5 14B",
-    "size": "17 GB",
-    "precision": "Q4_K_M",
+    "name": "Qwen2.5 14B 1M",
+    "size": "25 GB",
+    "precision": "Q6_K",
     "role": "chat"
   },
   "currentModels": [
     {
-      "name": "Qwen2.5 14B",
-      "size": "17 GB",
-      "precision": "Q4_K_M",
+      "name": "Qwen2.5 14B 1M",
+      "size": "25 GB",
+      "precision": "Q6_K",
       "role": "chat"
     },
     {
-      "name": "Qwen2.5-1m 14B",
-      "size": "25 GB",
-      "precision": "Q6_K"
+      "name": "Qwen2.5-Coder 32B",
+      "size": "75 GB",
+      "precision": "FP16",
+      "role": "code"
     }
   ],
   "availableModels": [
     {
-      "name": "Llama 3.3 70B",
+      "name": "Llama3.3 70B",
       "size": "74 GB",
       "precision": "Q8_0",
-      "role": "chat",
       "resident": false
     },
     {
       "name": "Qwen2.5 14B",
-      "size": "17 GB",
+      "size": "9.0 GB",
       "precision": "Q4_K_M",
+      "role": "chat",
+      "resident": false
+    },
+    {
+      "name": "Qwen2.5 14B 1M",
+      "size": "25 GB",
+      "precision": "Q6_K",
       "role": "chat",
       "resident": true
     },
     {
-      "name": "Qwen2.5-1m 14B",
-      "size": "25 GB",
-      "precision": "Q6_K",
-      "resident": true
-    },
-    {
       "name": "Qwen2.5-Coder 32B",
-      "size": "65 GB",
+      "size": "75 GB",
       "precision": "FP16",
       "role": "code",
-      "resident": false
+      "resident": true
     }
   ],
   "stack": [
@@ -82,24 +83,24 @@
     "plannedDowntimeSeconds": 23291
   },
   "gpu": {
-    "temp": 80,
-    "utilization": 95,
-    "powerDraw": 300
+    "temp": 40,
+    "utilization": 0,
+    "powerDraw": 10
   },
   "tokens": {
-    "total": 240147,
-    "last24h": 181081,
-    "last7d": 240147
+    "total": 240185,
+    "last24h": 181119,
+    "last7d": 240185
   },
   "costSaved": {
     "estimated": 0.4213,
     "basis": "vs cloud comparators per alias (see basisDetail)",
     "basisDetail": [
       {
-        "alias": "llama3.3-70b-instruct-q8_0",
-        "anchor": "GPT-4o",
-        "input": "$2.50/MTok",
-        "output": "$10/MTok"
+        "alias": "qwen2.5-14b-instruct-1m-q6_K",
+        "anchor": "GPT-4o mini",
+        "input": "$0.15/MTok",
+        "output": "$0.60/MTok"
       },
       {
         "alias": "qwen2.5-coder-32b-fp16",
