@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-05-24T13:43:43Z",
+  "updatedAt": "2026-05-24T13:58:51Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -7,45 +7,40 @@
     "ram": "251 GiB"
   },
   "currentModel": {
-    "name": "Qwen2.5 14B",
-    "size": "17 GB",
-    "precision": "Q4_K_M",
+    "name": "Llama 3.3 70B",
+    "size": "96 GB",
+    "precision": "Q8_0",
     "role": "chat"
   },
   "currentModels": [
     {
-      "name": "Qwen2.5 14B",
-      "size": "17 GB",
-      "precision": "Q4_K_M",
+      "name": "Llama 3.3 70B",
+      "size": "96 GB",
+      "precision": "Q8_0",
       "role": "chat"
-    },
-    {
-      "name": "Qwen2.5-Coder 32B",
-      "size": "75 GB",
-      "precision": "FP16",
-      "role": "code"
     }
   ],
   "availableModels": [
     {
-      "name": "Llama3.3 70B",
-      "size": "74 GB",
+      "name": "Llama 3.3 70B",
+      "size": "96 GB",
       "precision": "Q8_0",
-      "resident": false
-    },
-    {
-      "name": "Qwen2.5 14B",
-      "size": "17 GB",
-      "precision": "Q4_K_M",
       "role": "chat",
       "resident": true
     },
     {
+      "name": "Qwen2.5 14B",
+      "size": "9.0 GB",
+      "precision": "Q4_K_M",
+      "role": "chat",
+      "resident": false
+    },
+    {
       "name": "Qwen2.5-Coder 32B",
-      "size": "75 GB",
+      "size": "65 GB",
       "precision": "FP16",
       "role": "code",
-      "resident": true
+      "resident": false
     }
   ],
   "stack": [
@@ -78,17 +73,23 @@
   "gpu": {
     "temp": 30,
     "utilization": 0,
-    "powerDraw": 20
+    "powerDraw": 10
   },
   "tokens": {
-    "total": 234870,
-    "last24h": 175804,
-    "last7d": 234870
+    "total": 234891,
+    "last24h": 175825,
+    "last7d": 234891
   },
   "costSaved": {
-    "estimated": 0.4043,
+    "estimated": 0.4044,
     "basis": "vs cloud comparators per alias (see basisDetail)",
     "basisDetail": [
+      {
+        "alias": "llama3.3-70b-instruct-q8_0",
+        "anchor": "GPT-4o",
+        "input": "$2.50/MTok",
+        "output": "$10/MTok"
+      },
       {
         "alias": "qwen2.5-coder-32b-fp16",
         "anchor": "GPT-4o",
