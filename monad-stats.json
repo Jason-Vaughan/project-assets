@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-05-25T00:06:20Z",
+  "updatedAt": "2026-05-25T00:33:19Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -7,23 +7,17 @@
     "ram": "251 GiB"
   },
   "currentModel": {
-    "name": "Qwen2.5 14B",
-    "size": "17 GB",
-    "precision": "Q4_K_M",
-    "role": "chat"
+    "name": "Qwen2.5-Coder 32B",
+    "size": "75 GB",
+    "precision": "FP16",
+    "role": "code"
   },
   "currentModels": [
     {
-      "name": "Qwen2.5 14B",
-      "size": "17 GB",
-      "precision": "Q4_K_M",
-      "role": "chat"
-    },
-    {
-      "name": "Qwen2.5 14B 1M",
-      "size": "25 GB",
-      "precision": "Q6_K",
-      "role": "chat"
+      "name": "Qwen2.5-Coder 32B",
+      "size": "75 GB",
+      "precision": "FP16",
+      "role": "code"
     }
   ],
   "availableModels": [
@@ -35,24 +29,24 @@
     },
     {
       "name": "Qwen2.5 14B",
-      "size": "17 GB",
+      "size": "9.0 GB",
       "precision": "Q4_K_M",
       "role": "chat",
-      "resident": true
+      "resident": false
     },
     {
       "name": "Qwen2.5 14B 1M",
-      "size": "25 GB",
+      "size": "12 GB",
       "precision": "Q6_K",
       "role": "chat",
-      "resident": true
+      "resident": false
     },
     {
       "name": "Qwen2.5-Coder 32B",
-      "size": "65 GB",
+      "size": "75 GB",
       "precision": "FP16",
       "role": "code",
-      "resident": false
+      "resident": true
     }
   ],
   "stack": [
@@ -63,8 +57,8 @@
     "NVIDIA driver 595.71.05"
   ],
   "uptime": {
-    "daysOnline": 1,
-    "lastReboot": "2026-05-23T00:31:11Z",
+    "daysOnline": 0,
+    "lastReboot": "2026-05-25T00:31:12Z",
     "trackedSince": "2026-05-15T15:08:00Z",
     "plannedOutages": [
       {
@@ -83,7 +77,7 @@
     "plannedDowntimeSeconds": 23291
   },
   "gpu": {
-    "temp": 35,
+    "temp": 40,
     "utilization": 0,
     "powerDraw": 10
   },
