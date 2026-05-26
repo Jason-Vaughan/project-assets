@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-05-26T20:02:50Z",
+  "updatedAt": "2026-05-26T20:18:15Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -7,29 +7,29 @@
     "ram": "251 GiB"
   },
   "currentModel": {
-    "name": "Qwen2.5 14B 1M",
-    "size": "25 GB",
-    "precision": "Q6_K",
-    "role": "chat"
+    "name": "Gemma4 26B",
+    "size": "19 GB"
   },
   "currentModels": [
     {
-      "name": "Qwen2.5 14B 1M",
-      "size": "25 GB",
-      "precision": "Q6_K",
-      "role": "chat"
+      "name": "Gemma4 26B",
+      "size": "19 GB"
+    },
+    {
+      "name": "Gemma4 31B",
+      "size": "26 GB"
     }
   ],
   "availableModels": [
     {
       "name": "Gemma4 26B",
-      "size": "17 GB",
-      "resident": false
+      "size": "19 GB",
+      "resident": true
     },
     {
       "name": "Gemma4 31B",
-      "size": "19 GB",
-      "resident": false
+      "size": "26 GB",
+      "resident": true
     },
     {
       "name": "Llama3.3 70B",
@@ -46,10 +46,10 @@
     },
     {
       "name": "Qwen2.5 14B 1M",
-      "size": "25 GB",
+      "size": "12 GB",
       "precision": "Q6_K",
       "role": "chat",
-      "resident": true
+      "resident": false
     },
     {
       "name": "Qwen2.5-Coder 32B",
@@ -87,9 +87,9 @@
     "plannedDowntimeSeconds": 23291
   },
   "gpu": {
-    "temp": 35,
-    "utilization": 0,
-    "powerDraw": 10
+    "temp": 55,
+    "utilization": 95,
+    "powerDraw": 300
   },
   "tokens": {
     "total": 240185,
