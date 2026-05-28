@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-05-28T22:52:20Z",
+  "updatedAt": "2026-05-28T23:07:30Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -7,23 +7,23 @@
     "ram": "251 GiB"
   },
   "currentModel": {
-    "name": "Qwen2.5 14B 1M",
-    "size": "25 GB",
-    "precision": "Q6_K",
+    "name": "Qwen2.5 14B",
+    "size": "17 GB",
+    "precision": "Q4_K_M",
     "role": "chat"
   },
   "currentModels": [
+    {
+      "name": "Qwen2.5 14B",
+      "size": "17 GB",
+      "precision": "Q4_K_M",
+      "role": "chat"
+    },
     {
       "name": "Qwen2.5 14B 1M",
       "size": "25 GB",
       "precision": "Q6_K",
       "role": "chat"
-    },
-    {
-      "name": "Qwen2.5-Coder 32B",
-      "size": "75 GB",
-      "precision": "FP16",
-      "role": "code"
     }
   ],
   "availableModels": [
@@ -45,10 +45,10 @@
     },
     {
       "name": "Qwen2.5 14B",
-      "size": "9.0 GB",
+      "size": "17 GB",
       "precision": "Q4_K_M",
       "role": "chat",
-      "resident": false
+      "resident": true
     },
     {
       "name": "Qwen2.5 14B 1M",
@@ -59,10 +59,10 @@
     },
     {
       "name": "Qwen2.5-Coder 32B",
-      "size": "75 GB",
+      "size": "65 GB",
       "precision": "FP16",
       "role": "code",
-      "resident": true
+      "resident": false
     }
   ],
   "stack": [
@@ -93,17 +93,17 @@
     "plannedDowntimeSeconds": 23291
   },
   "gpu": {
-    "temp": 35,
+    "temp": 50,
     "utilization": 0,
     "powerDraw": 10
   },
   "tokens": {
-    "total": 240185,
-    "last24h": 0,
-    "last7d": 181119
+    "total": 249933,
+    "last24h": 9748,
+    "last7d": 190867
   },
   "costSaved": {
-    "estimated": 0.4213,
+    "estimated": 0.4445,
     "basis": "vs cloud comparators per alias (see basisDetail)",
     "basisDetail": [
       {
@@ -127,6 +127,6 @@
     ]
   },
   "throughput": {
-    "tokensPerSec": 26.7
+    "tokensPerSec": 30.5
   }
 }
