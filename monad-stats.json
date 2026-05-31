@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-05-31T18:22:51Z",
+  "updatedAt": "2026-05-31T18:38:00Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -18,6 +18,12 @@
       "size": "25 GB",
       "precision": "Q6_K",
       "role": "chat"
+    },
+    {
+      "name": "Qwen2.5-Coder 32B",
+      "size": "67 GB",
+      "precision": "FP16",
+      "role": "code"
     }
   ],
   "availableModels": [
@@ -53,10 +59,10 @@
     },
     {
       "name": "Qwen2.5-Coder 32B",
-      "size": "65 GB",
+      "size": "67 GB",
       "precision": "FP16",
       "role": "code",
-      "resident": false
+      "resident": true
     }
   ],
   "stack": [
