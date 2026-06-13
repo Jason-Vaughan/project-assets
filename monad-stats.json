@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-13T07:02:49Z",
+  "updatedAt": "2026-06-13T07:05:17Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -7,23 +7,23 @@
     "ram": "251 GiB"
   },
   "currentModel": {
-    "name": "GPT-OSS 120B",
-    "size": "66 GB",
-    "precision": "MXFP4",
-    "role": "agent"
+    "name": "Qwen2.5 14B 1M",
+    "size": "25 GB",
+    "precision": "Q6_K",
+    "role": "chat"
   },
   "currentModels": [
-    {
-      "name": "GPT-OSS 120B",
-      "size": "66 GB",
-      "precision": "MXFP4",
-      "role": "agent"
-    },
     {
       "name": "Qwen2.5 14B 1M",
       "size": "25 GB",
       "precision": "Q6_K",
       "role": "chat"
+    },
+    {
+      "name": "Qwen2.5 32B",
+      "size": "30 GB",
+      "precision": "Q4_K_M",
+      "role": "general"
     }
   ],
   "availableModels": [
@@ -35,10 +35,10 @@
     },
     {
       "name": "GPT-OSS 120B",
-      "size": "66 GB",
+      "size": "65 GB",
       "precision": "MXFP4",
       "role": "agent",
-      "resident": true
+      "resident": false
     },
     {
       "name": "Gemma4 26B",
@@ -75,10 +75,10 @@
     },
     {
       "name": "Qwen2.5 32B",
-      "size": "19 GB",
+      "size": "30 GB",
       "precision": "Q4_K_M",
       "role": "general",
-      "resident": false
+      "resident": true
     },
     {
       "name": "Qwen2.5 72B",
@@ -123,9 +123,9 @@
     "plannedDowntimeSeconds": 23291
   },
   "gpu": {
-    "temp": 40,
+    "temp": 50,
     "utilization": 0,
-    "powerDraw": 10
+    "powerDraw": 70
   },
   "tokens": {
     "total": 116991461,
@@ -133,44 +133,44 @@
     "last7d": 71748428
   },
   "costSaved": {
-    "estimated": 30.1597,
-    "basis": "Estimated cloud cost avoided \u2014 comparator rates per alias (see basisDetail)",
+    "estimated": 358.0243,
+    "basis": "Estimated cloud cost avoided at Claude Sonnet rates ($3/$15 per MTok); local compute free (see basisDetail)",
     "basisDetail": [
       {
         "alias": "qwen2.5-14b-instruct-1m-q6_K",
-        "anchor": "GPT-4o mini",
-        "input": "$0.15/MTok",
-        "output": "$0.60/MTok"
+        "anchor": "Claude Sonnet",
+        "input": "$3/MTok",
+        "output": "$15/MTok"
       },
       {
         "alias": "qwen2.5-coder-32b-fp16",
-        "anchor": "GPT-4o",
-        "input": "$2.50/MTok",
-        "output": "$10/MTok"
+        "anchor": "Claude Sonnet",
+        "input": "$3/MTok",
+        "output": "$15/MTok"
       },
       {
         "alias": "qwen2.5-14b-instruct-q4_K_M",
-        "anchor": "GPT-4o mini",
-        "input": "$0.15/MTok",
-        "output": "$0.60/MTok"
+        "anchor": "Claude Sonnet",
+        "input": "$3/MTok",
+        "output": "$15/MTok"
       },
       {
         "alias": "gpt-oss-120b",
-        "anchor": "GPT-4o",
-        "input": "$2.50/MTok",
-        "output": "$10/MTok"
+        "anchor": "Claude Sonnet",
+        "input": "$3/MTok",
+        "output": "$15/MTok"
       },
       {
         "alias": "qwen2.5-32b-instruct-q4_K_M",
-        "anchor": "GPT-4o mini",
-        "input": "$0.15/MTok",
-        "output": "$0.60/MTok"
+        "anchor": "Claude Sonnet",
+        "input": "$3/MTok",
+        "output": "$15/MTok"
       },
       {
         "alias": "llama3.3-70b-instruct-q8_0",
-        "anchor": "GPT-4o",
-        "input": "$2.50/MTok",
-        "output": "$10/MTok"
+        "anchor": "Claude Sonnet",
+        "input": "$3/MTok",
+        "output": "$15/MTok"
       }
     ]
   },
@@ -185,7 +185,7 @@
         "last24h": 9583297,
         "last7d": 50567100
       },
-      "costSaved": 19.4743,
+      "costSaved": 169.9259,
       "throughputTokensPerSec": 29.5
     },
     "directOllama": {
@@ -195,7 +195,7 @@
         "last24h": 2094478,
         "last7d": 21181328
       },
-      "costSaved": 10.6854,
+      "costSaved": 188.0984,
       "throughputTokensPerSec": 26.9
     }
   }
