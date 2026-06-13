@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-13T06:23:10Z",
+  "updatedAt": "2026-06-13T06:32:39Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -20,10 +20,10 @@
       "role": "agent"
     },
     {
-      "name": "Qwen2.5 32B",
-      "size": "30 GB",
-      "precision": "Q4_K_M",
-      "role": "general"
+      "name": "Qwen2.5 14B 1M",
+      "size": "25 GB",
+      "precision": "Q6_K",
+      "role": "chat"
     }
   ],
   "availableModels": [
@@ -68,17 +68,17 @@
     },
     {
       "name": "Qwen2.5 14B 1M",
-      "size": "12 GB",
+      "size": "25 GB",
       "precision": "Q6_K",
       "role": "chat",
-      "resident": false
+      "resident": true
     },
     {
       "name": "Qwen2.5 32B",
-      "size": "30 GB",
+      "size": "19 GB",
       "precision": "Q4_K_M",
       "role": "general",
-      "resident": true
+      "resident": false
     },
     {
       "name": "Qwen2.5 72B",
@@ -123,18 +123,18 @@
     "plannedDowntimeSeconds": 23291
   },
   "gpu": {
-    "temp": 35,
+    "temp": 40,
     "utilization": 0,
     "powerDraw": 10
   },
   "tokens": {
-    "total": 116655958,
-    "last24h": 11425514,
-    "last7d": 71503942
+    "total": 116687894,
+    "last24h": 11438666,
+    "last7d": 71507583
   },
   "costSaved": {
-    "estimated": 29.5494,
-    "basis": "vs cloud comparators per alias (see basisDetail)",
+    "estimated": 29.5969,
+    "basis": "Estimated cloud cost avoided \u2014 comparator rates per alias (see basisDetail)",
     "basisDetail": [
       {
         "alias": "qwen2.5-14b-instruct-1m-q6_K",
@@ -181,19 +181,19 @@
     "litellm": {
       "available": true,
       "tokens": {
-        "total": 55219267,
-        "last24h": 9247794,
-        "last7d": 50231597
+        "total": 55251203,
+        "last24h": 9279730,
+        "last7d": 50263533
       },
-      "costSaved": 18.864,
+      "costSaved": 18.9115,
       "throughputTokensPerSec": 29.4
     },
     "directOllama": {
       "available": true,
       "tokens": {
         "total": 61436691,
-        "last24h": 2177720,
-        "last7d": 21272345
+        "last24h": 2158936,
+        "last7d": 21244050
       },
       "costSaved": 10.6854,
       "throughputTokensPerSec": 26.9
