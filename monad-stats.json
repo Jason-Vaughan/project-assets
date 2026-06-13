@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-13T16:54:10Z",
+  "updatedAt": "2026-06-13T17:09:12Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -20,10 +20,10 @@
       "role": "agent"
     },
     {
-      "name": "Qwen2.5 14B 1M",
-      "size": "25 GB",
-      "precision": "Q6_K",
-      "role": "chat"
+      "name": "Qwen2.5 32B",
+      "size": "30 GB",
+      "precision": "Q4_K_M",
+      "role": "general"
     }
   ],
   "availableModels": [
@@ -68,17 +68,17 @@
     },
     {
       "name": "Qwen2.5 14B 1M",
-      "size": "25 GB",
+      "size": "12 GB",
       "precision": "Q6_K",
       "role": "chat",
-      "resident": true
+      "resident": false
     },
     {
       "name": "Qwen2.5 32B",
-      "size": "19 GB",
+      "size": "30 GB",
       "precision": "Q4_K_M",
       "role": "general",
-      "resident": false
+      "resident": true
     },
     {
       "name": "Qwen2.5 72B",
@@ -123,17 +123,17 @@
     "plannedDowntimeSeconds": 23291
   },
   "gpu": {
-    "temp": 35,
+    "temp": 40,
     "utilization": 0,
     "powerDraw": 10
   },
   "tokens": {
-    "total": 124750493,
-    "last24h": 18108060,
-    "last7d": 78163813
+    "total": 125100230,
+    "last24h": 18429562,
+    "last7d": 78494792
   },
   "costSaved": {
-    "estimated": 382.4645,
+    "estimated": 383.5984,
     "basis": "Estimated cloud cost avoided at Claude Sonnet rates ($3/$15 per MTok); local compute free (see basisDetail)",
     "basisDetail": [
       {
@@ -175,28 +175,28 @@
     ]
   },
   "throughput": {
-    "tokensPerSec": 32.0
+    "tokensPerSec": 32.1
   },
   "sources": {
     "litellm": {
       "available": true,
       "tokens": {
-        "total": 63313802,
-        "last24h": 17342329,
-        "last7d": 58326132
+        "total": 63663539,
+        "last24h": 17692066,
+        "last7d": 58675869
       },
-      "costSaved": 194.3661,
-      "throughputTokensPerSec": 33.7
+      "costSaved": 195.5,
+      "throughputTokensPerSec": 33.8
     },
     "directOllama": {
       "available": true,
       "tokens": {
         "total": 61436691,
-        "last24h": 765731,
-        "last7d": 19837681
+        "last24h": 737496,
+        "last7d": 19818923
       },
       "costSaved": 188.0984,
-      "throughputTokensPerSec": 26.9
+      "throughputTokensPerSec": 27.0
     }
   }
 }
