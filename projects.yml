@@ -27,16 +27,13 @@ slugs:
 # Key is the repo name (case-insensitive). Without an entry, defaults apply
 # (default branch from the GitHub API, standard LOC profile, no custom counters).
 overrides:
+  # No `loc` override: TangleClaw and TiLT inherit the wide `defaultLoc`
+  # profile below so their HTML/CSS/Markdown/Python all count. Only the
+  # custom commit counters remain project-specific.
   TangleClaw:
-    loc:
-      include: ['*.js', '*.mjs']
-      exclude: ['node_modules', '.min.']
     counters: [tangleclaw]
 
   TiLT:
-    loc:
-      include: ['*.js', '*.ts', '*.jsx', '*.tsx']
-      exclude: ['node_modules', '.next', '.min.']
     counters: [tilt]
 
   # OnDeck-V9 main is frozen at June 2025; active V2.1+ work lives on
@@ -53,9 +50,12 @@ overrides:
     fixedFields:
       firstCommit: "2024-09-01"
 
+# Single wide LOC profile applied to every repo (no per-project overrides).
+# Counts hand-written source, markup, styles, docs, and config. Generated and
+# vendored files are kept out via the `exclude` path filter below.
 defaultLoc:
-  include: ['*.js', '*.ts', '*.jsx', '*.tsx', '*.mjs', '*.py']
-  exclude: ['node_modules', '.next', 'dist', '.min.', '__pycache__', '.venv', 'venv', 'site-packages', '.pytest_cache', 'egg-info']
+  include: ['*.js', '*.mjs', '*.cjs', '*.ts', '*.tsx', '*.jsx', '*.py', '*.html', '*.css', '*.scss', '*.go', '*.rs', '*.sh', '*.sql', '*.md', '*.json', '*.yml', '*.yaml', '*.toml']
+  exclude: ['node_modules', '.next', 'dist', 'build', 'coverage', '.min.', '__pycache__', '.venv', 'venv', 'site-packages', '.pytest_cache', 'egg-info', 'package-lock.json', 'pnpm-lock.yaml']
 
 # AI token usage aggregation. Pulled from provider admin APIs where available,
 # falling back to manual entries for tools without public per-user usage APIs

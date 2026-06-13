@@ -29,8 +29,8 @@ const owner = arg('--owner') || 'Jason-Vaughan';
 
 const cfg = yaml.load(fs.readFileSync(path.join(REPO_ROOT, 'projects.yml'), 'utf8'));
 const defaultLoc = cfg.defaultLoc || {
-  include: ['*.js', '*.ts', '*.jsx', '*.tsx', '*.mjs'],
-  exclude: ['node_modules', '.next', 'dist', '.min.'],
+  include: ['*.js', '*.mjs', '*.cjs', '*.ts', '*.tsx', '*.jsx', '*.py', '*.html', '*.css', '*.scss', '*.go', '*.rs', '*.sh', '*.sql', '*.md', '*.json', '*.yml', '*.yaml', '*.toml'],
+  exclude: ['node_modules', '.next', 'dist', 'build', 'coverage', '.min.', '__pycache__', '.venv', 'venv', 'site-packages', '.pytest_cache', 'egg-info', 'package-lock.json', 'pnpm-lock.yaml'],
 };
 const excludeSet = new Set((cfg.exclude || []).map((s) => s.toLowerCase()));
 const includeForkSet = new Set((cfg.includeForks || []).map((s) => s.toLowerCase()));
