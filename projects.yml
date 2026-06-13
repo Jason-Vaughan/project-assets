@@ -51,11 +51,15 @@ overrides:
       firstCommit: "2024-09-01"
 
 # Single wide LOC profile applied to every repo (no per-project overrides).
-# Counts hand-written source, markup, styles, docs, and config. Generated and
-# vendored files are kept out via the `exclude` path filter below.
+# Counts hand-written source, markup, styles, and docs. Deliberately EXCLUDES
+# data/config formats (.json/.yml/.yaml/.toml): those are dominated by
+# machine-generated content — e.g. TiLT's `backups/full-system-prod-*.json`
+# DB dumps were 10M+ lines, dwarfing the ~218k lines of actual source. Counting
+# them makes the headline stat look padded. Generated/vendored trees are kept
+# out via the `exclude` path filter below.
 defaultLoc:
-  include: ['*.js', '*.mjs', '*.cjs', '*.ts', '*.tsx', '*.jsx', '*.py', '*.html', '*.css', '*.scss', '*.go', '*.rs', '*.sh', '*.sql', '*.md', '*.json', '*.yml', '*.yaml', '*.toml']
-  exclude: ['node_modules', '.next', 'dist', 'build', 'coverage', '.min.', '__pycache__', '.venv', 'venv', 'site-packages', '.pytest_cache', 'egg-info', 'package-lock.json', 'pnpm-lock.yaml']
+  include: ['*.js', '*.mjs', '*.cjs', '*.ts', '*.tsx', '*.jsx', '*.py', '*.html', '*.css', '*.scss', '*.go', '*.rs', '*.sh', '*.sql', '*.md']
+  exclude: ['node_modules', '.next', 'dist', 'build', 'coverage', '.min.', '__pycache__', '.venv', 'venv', 'site-packages', '.pytest_cache', 'egg-info']
 
 # AI token usage aggregation. Pulled from provider admin APIs where available,
 # falling back to manual entries for tools without public per-user usage APIs
