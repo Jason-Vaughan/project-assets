@@ -1,0 +1,52 @@
+name: clawhub-watch
+
+# Weekly check of ClawHub skill/plugin versions. Extracts each item's current
+# version from its server-rendered og:image meta tag, compares to the committed
+# clawhub-versions.json, and on any change commits the new versions + opens a
+# GitHub issue. The JSON also feeds the portfolio's ClawHub cards panel.
+on:
+  schedule:
+    - cron: '23 14 * * 1'   # Mondays ~14:23 UTC (off the :00 mark)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: clawhub-watch
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Check ClawHub versions
+        id: check
+        run: |
+          changes="$(node scripts/check-clawhub-versions.mjs)"
+          {
+            echo "changes<<EOF"
+            echo "$changes"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Commit + open issue on change
+        if: steps.check.outputs.changes != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CHANGES: ${{ steps.check.outputs.changes }}
+        run: |
+          git config user.name  "clawhub-watch"
+          git config user.email "clawhub-watch@users.noreply.github.com"
+          git add clawhub-versions.json
+          git commit -m "chore(clawhub): version update $(date -u +%FT%TZ)"
+          git push
+          printf 'New ClawHub version(s) detected:\n\n%s\n\n— clawhub-watch (weekly)\n' "$CHANGES" > /tmp/clawhub-body.md
+          gh issue create --title "ClawHub: new version(s) published" --body-file /tmp/clawhub-body.md
