@@ -14,6 +14,9 @@ exclude:
   - tilt-v1-wrapper-archive # archived TiLT predecessor
   - barcoach-assets         # assets-only repo
   - rentalclaw-bunker       # archive/storage
+  - volta-stats             # telemetry sink — 1,735 `stats: <ts>` bot commits, auto-pushed hourly by Volta
+  - volta-bunker            # archive/storage — OpenClaw workspace continuity backups
+  - notse-releases          # release artifacts (DMGs); source is the private Notse repo (would double-count)
 
 # Forks are skipped by default. Add repo names here to track despite being a fork.
 includeForks: []
