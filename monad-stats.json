@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-13T05:50:40Z",
+  "updatedAt": "2026-06-13T06:05:44Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -7,13 +7,17 @@
     "ram": "251 GiB"
   },
   "currentModel": {
-    "name": "Gpt-Oss 120B",
-    "size": "66 GB"
+    "name": "Qwen2.5 14B 1M",
+    "size": "25 GB",
+    "precision": "Q6_K",
+    "role": "chat"
   },
   "currentModels": [
     {
-      "name": "Gpt-Oss 120B",
-      "size": "66 GB"
+      "name": "Qwen2.5 14B 1M",
+      "size": "25 GB",
+      "precision": "Q6_K",
+      "role": "chat"
     },
     {
       "name": "Qwen2.5 32B",
@@ -39,8 +43,8 @@
     },
     {
       "name": "Gpt-Oss 120B",
-      "size": "66 GB",
-      "resident": true
+      "size": "65 GB",
+      "resident": false
     },
     {
       "name": "Llama3.3 70B",
@@ -57,10 +61,10 @@
     },
     {
       "name": "Qwen2.5 14B 1M",
-      "size": "12 GB",
+      "size": "25 GB",
       "precision": "Q6_K",
       "role": "chat",
-      "resident": false
+      "resident": true
     },
     {
       "name": "Qwen2.5 32B",
@@ -110,17 +114,17 @@
     "plannedDowntimeSeconds": 23291
   },
   "gpu": {
-    "temp": 40,
+    "temp": 50,
     "utilization": 0,
-    "powerDraw": 10
+    "powerDraw": 20
   },
   "tokens": {
-    "total": 55039443,
-    "last24h": 9067970,
-    "last7d": 50051773
+    "total": 55161317,
+    "last24h": 9189844,
+    "last7d": 50173647
   },
   "costSaved": {
-    "estimated": 18.656,
+    "estimated": 18.7169,
     "basis": "vs cloud comparators per alias (see basisDetail)",
     "basisDetail": [
       {
