@@ -97,4 +97,43 @@ export function countLinesRefactored(dir, loc) {
   return parseInt(sh(cmd, dir) || '0', 10) || 0;
 }
 
+/**
+ * Sum lines *added* across the repo's history, scoped to the same file set the
+ * LOC counter uses (so the number is apples-to-apples with `loc` and
+ * `linesRefactored`).
+ *
+ * This is "lines authored" — the lifetime total of every line ever written,
+ * including rewrites. Because `git log --numstat` counts a modified line as
+ * 1 add + 1 delete, rewriting an existing function adds to BOTH this counter
+ * and `countLinesRefactored`. That's intentional: the value captures depth of
+ * work (write → rewrite → trim), which the current-snapshot `loc` flattens to
+ * net. Roughly, `linesAuthored ≈ loc + linesRefactored`, modulo the caveats
+ * below.
+ *
+ * Identical pathspec + exclude approach to `countLinesRefactored`, summing the
+ * added column (`$1`) instead of the deleted column (`$2`). Scoping to
+ * `loc.include` keeps generated/vendored data (e.g. checked-in DB dumps) out,
+ * so the headline can't be padded by non-code.
+ *
+ * Caveats (documented for future-you, not the user):
+ *   - Squash-merges collapse pre-squash adds into one diff, so the number is a
+ *     floor, not a ceiling. Repos with squash workflows undercount.
+ *   - Repos with rewritten history (BFG, filter-branch) lose the added lines
+ *     from the rewritten range. Refuctor is a known case.
+ *   - Binary files emit `-` in --numstat; awk treats `-` as 0, so they don't
+ *     poison the sum.
+ *
+ * @param {string} dir - absolute path to a git repo working tree
+ * @param {{include: string[], exclude: string[]}} loc - same LOC profile passed to coreStats
+ * @returns {number} total lines added across history, scoped to loc.include
+ */
+export function countLinesAuthored(dir, loc) {
+  const includeArgs = loc.include.map((p) => `'${p}'`).join(' ');
+  const excludes = buildGrepExcludes(loc.exclude);
+  // numstat columns: <added>\t<deleted>\t<path>; awk on $1 sums adds.
+  // Binary files emit `-` for both columns; awk treats `-` as 0 numerically.
+  const cmd = `git log --numstat --pretty=tformat: -- ${includeArgs} 2>/dev/null ${excludes} | awk '{add+=$1} END {print add+0}'`;
+  return parseInt(sh(cmd, dir) || '0', 10) || 0;
+}
+
 export const shellExec = sh;
