@@ -15,9 +15,16 @@ export function coreStats(dir, loc) {
   const locCmd = `find . \\( ${includes} \\) ${excludes} | xargs wc -l 2>/dev/null | tail -1 | awk '{print $1}'`;
   const locVal = parseInt(sh(locCmd, dir) || '0', 10) || 0;
 
-  const testFindBase = `find . \\( -name '*.test.*' -o -name '*.spec.*' \\) | grep -v node_modules`;
+  // Test files across ecosystems: JS/TS (*.test.* / *.spec.*) AND Python
+  // (test_*.py / *_test.py — pytest/unittest convention). Without the Python
+  // patterns, Python-heavy repos report 0 tests despite a full suite.
+  const testFindBase = `find . \\( -name '*.test.*' -o -name '*.spec.*' -o -name 'test_*.py' -o -name '*_test.py' \\) | grep -v node_modules`;
 
-  const testsCmd = `${testFindBase} | xargs grep -c 'it(\\|test(' 2>/dev/null | awk -F: '{s+=$2} END {print s+0}'`;
+  // Count test cases: JS idioms it(/test( PLUS Python's `def test` (pytest
+  // functions + unittest methods). -H forces a `file:count` prefix even when
+  // there's a single match file (plain `grep -c` omits the filename for one
+  // file, which made `awk -F:` read nothing → undercount to 0).
+  const testsCmd = `${testFindBase} | xargs grep -cH 'it(\\|test(\\|def test' 2>/dev/null | awk -F: '{s+=$2} END {print s+0}'`;
   const tests = parseInt(sh(testsCmd, dir) || '0', 10) || 0;
 
   const testFilesCmd = `${testFindBase} | wc -l | awk '{print $1}'`;
