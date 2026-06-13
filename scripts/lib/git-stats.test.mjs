@@ -5,7 +5,7 @@ import { mkdtempSync, rmSync, writeFileSync, mkdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-import { countFixCommits, countLinesRefactored } from './git-stats.mjs';
+import { countFixCommits, countLinesRefactored, countLinesAuthored } from './git-stats.mjs';
 
 const DEFAULT_LOC = {
   include: ['*.js', '*.ts', '*.jsx', '*.tsx', '*.mjs'],
@@ -216,5 +216,54 @@ describe('countLinesRefactored', () => {
     repos.push(dir);
     // .css excluded by default LOC profile; only the 2 .js lines count.
     assert.equal(countLinesRefactored(dir, DEFAULT_LOC), 2);
+  });
+});
+
+describe('countLinesAuthored', () => {
+  let repos = [];
+
+  after(() => {
+    for (const d of repos) rmSync(d, { recursive: true, force: true });
+  });
+
+  test('sums lines added across history', () => {
+    const dir = makeRepoWithEdits([
+      { path: 'a.js', content: 'one\ntwo\nthree\n' },
+      { path: 'b.js', content: 'x\ny\n' },
+    ]);
+    repos.push(dir);
+    assert.equal(countLinesAuthored(dir, DEFAULT_LOC), 5);
+  });
+
+  test('counts the original adds even after the lines are later deleted', () => {
+    // First commit adds 5 lines; second rewrites the file down to the single
+    // pre-existing `one\n` (0 adds, 4 deletes). Authored captures the 5 adds —
+    // lifetime authoring is not reduced by later deletion.
+    const dir = makeRepoWithEdits([
+      { path: 'a.js', content: 'one\ntwo\nthree\nfour\nfive\n' },
+      { path: 'a.js', content: 'one\n' },
+    ]);
+    repos.push(dir);
+    assert.equal(countLinesAuthored(dir, DEFAULT_LOC), 5);
+  });
+
+  test('excludes node_modules paths', () => {
+    const dir = makeRepoWithEdits([
+      { path: 'src/a.js', content: 'one\ntwo\n' },
+      { path: 'node_modules/pkg/index.js', content: 'a\nb\nc\nd\n' },
+    ]);
+    repos.push(dir);
+    // Only the 2 lines added in src/a.js count; node_modules ignored.
+    assert.equal(countLinesAuthored(dir, DEFAULT_LOC), 2);
+  });
+
+  test('honors LOC profile include filter (only counts matching extensions)', () => {
+    const dir = makeRepoWithEdits([
+      { path: 'a.js', content: 'js-one\njs-two\n' },
+      { path: 'b.css', content: 'css-one\ncss-two\ncss-three\n' },
+    ]);
+    repos.push(dir);
+    // .css excluded by default LOC profile; only the 2 .js lines count.
+    assert.equal(countLinesAuthored(dir, DEFAULT_LOC), 2);
   });
 });

@@ -6,7 +6,7 @@ import { execSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import yaml from 'js-yaml';
 
-import { coreStats, countFixCommits, countLinesRefactored } from './lib/git-stats.mjs';
+import { coreStats, countFixCommits, countLinesRefactored, countLinesAuthored } from './lib/git-stats.mjs';
 import { fetchMergedPRCount } from './lib/github-prs.mjs';
 import { aggregateTokens } from './lib/tokens.mjs';
 import tangleclaw from './counters/tangleclaw.mjs';
@@ -227,6 +227,10 @@ async function main() {
         // Captures refactors, dead code removal, simplifications, file deletes.
         stats.linesRefactored = { count: countLinesRefactored(workDir, loc) };
 
+        // Lines-added across history (lifetime authoring), same LOC profile.
+        // Captures depth of work — writes + rewrites — that `loc` flattens to net.
+        stats.linesAuthored = { count: countLinesAuthored(workDir, loc) };
+
         // Merged-PR count from GitHub API (requires PAT with Pull requests: Read).
         const token = process.env.STATS_COLLECTOR_TOKEN || process.env.GITHUB_TOKEN;
         stats.prs = { merged: await fetchMergedPRCount(r.full_name, token) };
@@ -286,6 +290,7 @@ async function main() {
     let aggFixes = 0;
     let aggPRs = 0;
     let aggRefactored = 0;
+    let aggAuthored = 0;
     let prsCollected = 0;
     let prsNull = 0;
     let repoCount = 0;
@@ -298,6 +303,7 @@ async function main() {
       aggTests += p.stats.tests || 0;
       aggFixes += p.stats.fixes?.count || 0;
       aggRefactored += p.stats.linesRefactored?.count || 0;
+      aggAuthored += p.stats.linesAuthored?.count || 0;
       // Track null PR counts separately so we can warn when the PAT scope is
       // wrong (every repo returns null) vs. legitimate "no merged PRs yet".
       if (p.stats.prs && p.stats.prs.merged !== null && p.stats.prs.merged !== undefined) {
@@ -310,6 +316,7 @@ async function main() {
     meta.aggregateFixes = { count: aggFixes };
     meta.aggregatePRs = { merged: aggPRs };
     meta.aggregateRefactored = { count: aggRefactored };
+    meta.aggregateAuthored = { count: aggAuthored };
 
     // 7-day deltas — read the manifest from ~7 days ago via git history and
     // diff every aggregate. If the lookup fails (fresh repo, first run, etc.)
@@ -340,12 +347,20 @@ async function main() {
           fixes: aggFixes - ((oldMeta.aggregateFixes || {}).count || 0),
           prs: aggPRs - ((oldMeta.aggregatePRs || {}).merged || 0),
           refactored: aggRefactored - ((oldMeta.aggregateRefactored || {}).count || 0),
+          // Emit a 7-day delta only once a prior manifest actually carried the
+          // field. Before that baseline exists, `aggAuthored - 0` would equal
+          // the full lifetime total and render a misleading "+1.3M this week"
+          // badge on launch day, so we surface null (frontend hides the badge).
+          authored: oldMeta.aggregateAuthored
+            ? aggAuthored - oldMeta.aggregateAuthored.count
+            : null,
         };
         console.log(
           `Deltas (7d): loc=${meta.aggregateDeltas.loc.toLocaleString()} ` +
           `commits=${meta.aggregateDeltas.commits} tests=${meta.aggregateDeltas.tests} ` +
           `fixes=${meta.aggregateDeltas.fixes} prs=${meta.aggregateDeltas.prs} ` +
-          `refactored=${meta.aggregateDeltas.refactored.toLocaleString()}`,
+          `refactored=${meta.aggregateDeltas.refactored.toLocaleString()} ` +
+          `authored=${meta.aggregateDeltas.authored === null ? 'n/a (no baseline)' : meta.aggregateDeltas.authored.toLocaleString()}`,
         );
       } else {
         console.log('No manifest history older than 7 days — skipping aggregateDeltas.');
@@ -357,6 +372,7 @@ async function main() {
     console.log(
       `Aggregates: fixes=${aggFixes.toLocaleString()} merged-PRs=${aggPRs.toLocaleString()} ` +
         `lines-refactored=${aggRefactored.toLocaleString()} ` +
+        `lines-authored=${aggAuthored.toLocaleString()} ` +
         `(PR data from ${prsCollected}/${prsCollected + prsNull} repos)`,
     );
 
