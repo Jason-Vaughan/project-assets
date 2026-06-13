@@ -347,14 +347,20 @@ async function main() {
           fixes: aggFixes - ((oldMeta.aggregateFixes || {}).count || 0),
           prs: aggPRs - ((oldMeta.aggregatePRs || {}).merged || 0),
           refactored: aggRefactored - ((oldMeta.aggregateRefactored || {}).count || 0),
-          authored: aggAuthored - ((oldMeta.aggregateAuthored || {}).count || 0),
+          // Emit a 7-day delta only once a prior manifest actually carried the
+          // field. Before that baseline exists, `aggAuthored - 0` would equal
+          // the full lifetime total and render a misleading "+1.3M this week"
+          // badge on launch day, so we surface null (frontend hides the badge).
+          authored: oldMeta.aggregateAuthored
+            ? aggAuthored - oldMeta.aggregateAuthored.count
+            : null,
         };
         console.log(
           `Deltas (7d): loc=${meta.aggregateDeltas.loc.toLocaleString()} ` +
           `commits=${meta.aggregateDeltas.commits} tests=${meta.aggregateDeltas.tests} ` +
           `fixes=${meta.aggregateDeltas.fixes} prs=${meta.aggregateDeltas.prs} ` +
           `refactored=${meta.aggregateDeltas.refactored.toLocaleString()} ` +
-          `authored=${meta.aggregateDeltas.authored.toLocaleString()}`,
+          `authored=${meta.aggregateDeltas.authored === null ? 'n/a (no baseline)' : meta.aggregateDeltas.authored.toLocaleString()}`,
         );
       } else {
         console.log('No manifest history older than 7 days — skipping aggregateDeltas.');
