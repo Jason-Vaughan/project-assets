@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-01T18:23:42Z",
+  "updatedAt": "2026-06-13T05:49:58Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -7,26 +7,26 @@
     "ram": "251 GiB"
   },
   "currentModel": {
-    "name": "Qwen2.5 14B 1M",
-    "size": "25 GB",
-    "precision": "Q6_K",
-    "role": "chat"
+    "name": "Gpt-Oss 120B",
+    "size": "66 GB"
   },
   "currentModels": [
     {
-      "name": "Qwen2.5 14B 1M",
-      "size": "25 GB",
-      "precision": "Q6_K",
-      "role": "chat"
+      "name": "Gpt-Oss 120B",
+      "size": "66 GB"
     },
     {
-      "name": "Qwen2.5-Coder 32B",
-      "size": "67 GB",
-      "precision": "FP16",
-      "role": "code"
+      "name": "Qwen2.5 32B",
+      "size": "30 GB",
+      "precision": "Q4_K_M"
     }
   ],
   "availableModels": [
+    {
+      "name": "Command-R-Plus",
+      "size": "59 GB",
+      "resident": false
+    },
     {
       "name": "Gemma4 26B",
       "size": "17 GB",
@@ -36,6 +36,11 @@
       "name": "Gemma4 31B",
       "size": "19 GB",
       "resident": false
+    },
+    {
+      "name": "Gpt-Oss 120B",
+      "size": "66 GB",
+      "resident": true
     },
     {
       "name": "Llama3.3 70B",
@@ -52,17 +57,29 @@
     },
     {
       "name": "Qwen2.5 14B 1M",
-      "size": "25 GB",
+      "size": "12 GB",
       "precision": "Q6_K",
       "role": "chat",
+      "resident": false
+    },
+    {
+      "name": "Qwen2.5 32B",
+      "size": "30 GB",
+      "precision": "Q4_K_M",
       "resident": true
     },
     {
+      "name": "Qwen2.5 72B",
+      "size": "47 GB",
+      "precision": "Q4_K_M",
+      "resident": false
+    },
+    {
       "name": "Qwen2.5-Coder 32B",
-      "size": "67 GB",
+      "size": "65 GB",
       "precision": "FP16",
       "role": "code",
-      "resident": true
+      "resident": false
     }
   ],
   "stack": [
@@ -73,7 +90,7 @@
     "NVIDIA driver 595.71.05"
   ],
   "uptime": {
-    "daysOnline": 4,
+    "daysOnline": 16,
     "lastReboot": "2026-05-27T23:47:22Z",
     "trackedSince": "2026-05-15T15:08:00Z",
     "plannedOutages": [
@@ -93,17 +110,17 @@
     "plannedDowntimeSeconds": 23291
   },
   "gpu": {
-    "temp": 35,
+    "temp": 45,
     "utilization": 0,
-    "powerDraw": 10
+    "powerDraw": 20
   },
   "tokens": {
-    "total": 268102,
-    "last24h": 0,
-    "last7d": 27917
+    "total": 55039443,
+    "last24h": 9067970,
+    "last7d": 50051773
   },
   "costSaved": {
-    "estimated": 0.4483,
+    "estimated": 18.656,
     "basis": "vs cloud comparators per alias (see basisDetail)",
     "basisDetail": [
       {
@@ -127,6 +144,6 @@
     ]
   },
   "throughput": {
-    "tokensPerSec": 36.9
+    "tokensPerSec": 29.3
   }
 }
