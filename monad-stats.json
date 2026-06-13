@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-13T08:24:09Z",
+  "updatedAt": "2026-06-13T08:39:09Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -20,10 +20,10 @@
       "role": "agent"
     },
     {
-      "name": "Qwen2.5 32B",
-      "size": "30 GB",
-      "precision": "Q4_K_M",
-      "role": "general"
+      "name": "Qwen2.5 14B 1M",
+      "size": "25 GB",
+      "precision": "Q6_K",
+      "role": "chat"
     }
   ],
   "availableModels": [
@@ -68,17 +68,17 @@
     },
     {
       "name": "Qwen2.5 14B 1M",
-      "size": "12 GB",
+      "size": "25 GB",
       "precision": "Q6_K",
       "role": "chat",
-      "resident": false
+      "resident": true
     },
     {
       "name": "Qwen2.5 32B",
-      "size": "30 GB",
+      "size": "19 GB",
       "precision": "Q4_K_M",
       "role": "general",
-      "resident": true
+      "resident": false
     },
     {
       "name": "Qwen2.5 72B",
@@ -128,12 +128,12 @@
     "powerDraw": 10
   },
   "tokens": {
-    "total": 118157201,
-    "last24h": 12665665,
-    "last7d": 72742047
+    "total": 118222029,
+    "last24h": 12711720,
+    "last7d": 72788135
   },
   "costSaved": {
-    "estimated": 361.6741,
+    "estimated": 361.8723,
     "basis": "Estimated cloud cost avoided at Claude Sonnet rates ($3/$15 per MTok); local compute free (see basisDetail)",
     "basisDetail": [
       {
@@ -181,19 +181,19 @@
     "litellm": {
       "available": true,
       "tokens": {
-        "total": 56720510,
-        "last24h": 10749037,
-        "last7d": 51732840
+        "total": 56785338,
+        "last24h": 10813865,
+        "last7d": 51797668
       },
-      "costSaved": 173.5757,
+      "costSaved": 173.7739,
       "throughputTokensPerSec": 29.6
     },
     "directOllama": {
       "available": true,
       "tokens": {
         "total": 61436691,
-        "last24h": 1916628,
-        "last7d": 21009207
+        "last24h": 1897855,
+        "last7d": 20990467
       },
       "costSaved": 188.0984,
       "throughputTokensPerSec": 26.9
