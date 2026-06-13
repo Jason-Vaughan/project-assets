@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-13T06:20:56Z",
+  "updatedAt": "2026-06-13T06:23:10Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -7,45 +7,56 @@
     "ram": "251 GiB"
   },
   "currentModel": {
-    "name": "Gpt-Oss 120B",
-    "size": "66 GB"
+    "name": "GPT-OSS 120B",
+    "size": "66 GB",
+    "precision": "MXFP4",
+    "role": "agent"
   },
   "currentModels": [
     {
-      "name": "Gpt-Oss 120B",
-      "size": "66 GB"
+      "name": "GPT-OSS 120B",
+      "size": "66 GB",
+      "precision": "MXFP4",
+      "role": "agent"
     },
     {
       "name": "Qwen2.5 32B",
       "size": "30 GB",
-      "precision": "Q4_K_M"
+      "precision": "Q4_K_M",
+      "role": "general"
     }
   ],
   "availableModels": [
     {
-      "name": "Command-R-Plus",
+      "name": "Command R+",
       "size": "59 GB",
+      "role": "rag",
       "resident": false
+    },
+    {
+      "name": "GPT-OSS 120B",
+      "size": "66 GB",
+      "precision": "MXFP4",
+      "role": "agent",
+      "resident": true
     },
     {
       "name": "Gemma4 26B",
       "size": "17 GB",
+      "role": "general",
       "resident": false
     },
     {
       "name": "Gemma4 31B",
       "size": "19 GB",
+      "role": "general",
       "resident": false
     },
     {
-      "name": "Gpt-Oss 120B",
-      "size": "66 GB",
-      "resident": true
-    },
-    {
-      "name": "Llama3.3 70B",
+      "name": "Llama 3.3 70B",
       "size": "74 GB",
       "precision": "Q8_0",
+      "role": "reasoning",
       "resident": false
     },
     {
@@ -66,12 +77,14 @@
       "name": "Qwen2.5 32B",
       "size": "30 GB",
       "precision": "Q4_K_M",
+      "role": "general",
       "resident": true
     },
     {
       "name": "Qwen2.5 72B",
       "size": "47 GB",
       "precision": "Q4_K_M",
+      "role": "reasoning",
       "resident": false
     },
     {
@@ -110,17 +123,17 @@
     "plannedDowntimeSeconds": 23291
   },
   "gpu": {
-    "temp": 40,
+    "temp": 35,
     "utilization": 0,
     "powerDraw": 10
   },
   "tokens": {
-    "total": 55219267,
-    "last24h": 9247794,
-    "last7d": 50231597
+    "total": 116655958,
+    "last24h": 11425514,
+    "last7d": 71503942
   },
   "costSaved": {
-    "estimated": 18.864,
+    "estimated": 29.5494,
     "basis": "vs cloud comparators per alias (see basisDetail)",
     "basisDetail": [
       {
@@ -140,10 +153,50 @@
         "anchor": "GPT-4o mini",
         "input": "$0.15/MTok",
         "output": "$0.60/MTok"
+      },
+      {
+        "alias": "gpt-oss-120b",
+        "anchor": "GPT-4o",
+        "input": "$2.50/MTok",
+        "output": "$10/MTok"
+      },
+      {
+        "alias": "qwen2.5-32b-instruct-q4_K_M",
+        "anchor": "GPT-4o mini",
+        "input": "$0.15/MTok",
+        "output": "$0.60/MTok"
+      },
+      {
+        "alias": "llama3.3-70b-instruct-q8_0",
+        "anchor": "GPT-4o",
+        "input": "$2.50/MTok",
+        "output": "$10/MTok"
       }
     ]
   },
   "throughput": {
-    "tokensPerSec": 29.4
+    "tokensPerSec": 28.7
+  },
+  "sources": {
+    "litellm": {
+      "available": true,
+      "tokens": {
+        "total": 55219267,
+        "last24h": 9247794,
+        "last7d": 50231597
+      },
+      "costSaved": 18.864,
+      "throughputTokensPerSec": 29.4
+    },
+    "directOllama": {
+      "available": true,
+      "tokens": {
+        "total": 61436691,
+        "last24h": 2177720,
+        "last7d": 21272345
+      },
+      "costSaved": 10.6854,
+      "throughputTokensPerSec": 26.9
+    }
   }
 }
