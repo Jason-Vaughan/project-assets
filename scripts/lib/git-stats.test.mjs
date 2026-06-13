@@ -5,7 +5,7 @@ import { mkdtempSync, rmSync, writeFileSync, mkdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-import { countFixCommits, countLinesRefactored, countLinesAuthored } from './git-stats.mjs';
+import { coreStats, countFixCommits, countLinesRefactored, countLinesAuthored } from './git-stats.mjs';
 
 const DEFAULT_LOC = {
   include: ['*.js', '*.ts', '*.jsx', '*.tsx', '*.mjs'],
@@ -156,6 +156,50 @@ function makeRepoWithEdits(edits) {
   }
   return dir;
 }
+
+describe('coreStats test detection', () => {
+  let repos = [];
+
+  after(() => {
+    for (const d of repos) rmSync(d, { recursive: true, force: true });
+  });
+
+  test('counts Python test files and cases (test_*.py / def test_)', () => {
+    const dir = makeRepoWithEdits([
+      {
+        path: 'tools/foo/test_foo.py',
+        content: 'def test_one():\n    assert True\n\ndef test_two():\n    assert 1 == 1\n',
+      },
+      { path: 'tools/foo/foo.py', content: 'def foo():\n    return 1\n' },
+    ]);
+    repos.push(dir);
+    const stats = coreStats(dir, DEFAULT_LOC);
+    // Regression for the JS-only detector: Python suites used to report 0.
+    assert.equal(stats.testFiles, 1);
+    assert.equal(stats.tests, 2);
+  });
+
+  test('still counts JS/TS test files and cases', () => {
+    const dir = makeRepoWithEdits([
+      { path: 'a.test.js', content: "it('works', () => {});\ntest('also', () => {});\n" },
+    ]);
+    repos.push(dir);
+    const stats = coreStats(dir, DEFAULT_LOC);
+    assert.equal(stats.testFiles, 1);
+    assert.equal(stats.tests, 2);
+  });
+
+  test('counts mixed Python + JS suites together', () => {
+    const dir = makeRepoWithEdits([
+      { path: 'test_py.py', content: 'def test_a():\n    pass\n' },
+      { path: 'spec.test.ts', content: "it('x', () => {});\n" },
+    ]);
+    repos.push(dir);
+    const stats = coreStats(dir, DEFAULT_LOC);
+    assert.equal(stats.testFiles, 2);
+    assert.equal(stats.tests, 2);
+  });
+});
 
 describe('countLinesRefactored', () => {
   let repos = [];
