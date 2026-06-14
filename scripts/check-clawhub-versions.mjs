@@ -50,9 +50,21 @@ for (const item of data.items) {
     item.version = live.version;
     dirty = true;
   }
-  if (typeof live.downloads === 'number' && live.downloads !== item.downloads) {
-    item.downloads = live.downloads;
-    dirty = true;
+  // Live stats surfaced on the card + its hover tooltip. `lastPublished` is
+  // deliberately NOT named "updatedAt" so it doesn't get swallowed by the
+  // workflow's `-I '"updatedAt":'` commit-ignore (that guards the file-level
+  // timestamp only).
+  const fields = {
+    downloads: live.downloads,
+    stars: live.stars,
+    security: live.security,
+    lastPublished: live.updatedAt,
+  };
+  for (const [key, value] of Object.entries(fields)) {
+    if (value !== undefined && value !== null && value !== item[key]) {
+      item[key] = value;
+      dirty = true;
+    }
   }
 }
 
