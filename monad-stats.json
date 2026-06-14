@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-14T05:03:09Z",
+  "updatedAt": "2026-06-14T05:18:21Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -20,10 +20,10 @@
       "role": "agent"
     },
     {
-      "name": "Qwen2.5 14B 1M",
-      "size": "25 GB",
-      "precision": "Q6_K",
-      "role": "chat"
+      "name": "Qwen2.5 32B",
+      "size": "30 GB",
+      "precision": "Q4_K_M",
+      "role": "general"
     }
   ],
   "availableModels": [
@@ -68,17 +68,17 @@
     },
     {
       "name": "Qwen2.5 14B 1M",
-      "size": "25 GB",
+      "size": "12 GB",
       "precision": "Q6_K",
       "role": "chat",
-      "resident": true
+      "resident": false
     },
     {
       "name": "Qwen2.5 32B",
-      "size": "19 GB",
+      "size": "30 GB",
       "precision": "Q4_K_M",
       "role": "general",
-      "resident": false
+      "resident": true
     },
     {
       "name": "Qwen2.5 72B",
@@ -128,12 +128,12 @@
     "powerDraw": 10
   },
   "tokens": {
-    "total": 134202693,
-    "last24h": 21573060,
-    "last7d": 79005191
+    "total": 134336590,
+    "last24h": 21706957,
+    "last7d": 79091831
   },
   "costSaved": {
-    "estimated": 412.2931,
+    "estimated": 412.7001,
     "basis": "Estimated cloud cost avoided at Claude Sonnet rates ($3/$15 per MTok); local compute free (see basisDetail)",
     "basisDetail": [
       {
@@ -181,11 +181,11 @@
     "litellm": {
       "available": true,
       "tokens": {
-        "total": 72766002,
-        "last24h": 21573060,
-        "last7d": 60741229
+        "total": 72899899,
+        "last24h": 21706957,
+        "last7d": 60875126
       },
-      "costSaved": 224.1947,
+      "costSaved": 224.6017,
       "throughputTokensPerSec": 36.8
     },
     "directOllama": {
@@ -193,10 +193,10 @@
       "tokens": {
         "total": 61436691,
         "last24h": 0,
-        "last7d": 18263962
+        "last7d": 18216705
       },
       "costSaved": 188.0984,
-      "throughputTokensPerSec": 27.3
+      "throughputTokensPerSec": 27.2
     }
   }
 }
