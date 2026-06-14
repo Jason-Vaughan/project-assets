@@ -22,6 +22,18 @@ export function readDownloads(raw) {
 }
 
 /**
+ * Read a star count from whichever shape ClawHub returns (same locations as
+ * downloads). Falls back to 0.
+ *
+ * @param {object} raw - parsed ClawHub API response
+ * @returns {number} star count (0 if absent/malformed)
+ */
+export function readStars(raw) {
+  const s = raw?.stats || raw?.skill?.stats || raw?.package?.stats || {};
+  return typeof s.stars === 'number' ? s.stars : 0;
+}
+
+/**
  * Normalize a ClawHub security signal to "pass" | "pending" | "unknown".
  * Plugins expose `package.scanStatus`; skills expose `moderation.verdict`
  * (usually null — treated as clean-by-default since a published, unflagged
@@ -75,6 +87,7 @@ export function normalizeClawhubItem(type, slug, raw) {
     displayName,
     version,
     downloads: readDownloads(raw),
+    stars: readStars(raw),
     security: readSecurity(raw),
     url: `https://clawhub.ai/${OWNER}/${bareSlug}`,
     updatedAt,

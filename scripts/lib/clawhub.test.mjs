@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import {
   normalizeClawhubItem,
   readDownloads,
+  readStars,
   readSecurity,
   clawhubApiUrl,
 } from './clawhub.mjs';
@@ -37,10 +38,11 @@ const PLUGIN_RAW = {
 describe('normalizeClawhubItem — skills', () => {
   const out = normalizeClawhubItem('skill', 'airbnb-gateway', SKILL_RAW);
 
-  test('pulls displayName, version, downloads', () => {
+  test('pulls displayName, version, downloads, stars', () => {
     assert.equal(out.displayName, 'Airbnb Gateway');
     assert.equal(out.version, '0.1.4');
     assert.equal(out.downloads, 244);
+    assert.equal(out.stars, 1);
   });
 
   test('treats a published skill with null moderation as pass', () => {
@@ -107,5 +109,17 @@ describe('readDownloads', () => {
     assert.equal(readDownloads({ stats: { downloads: 5 } }), 5);
     assert.equal(readDownloads({ skill: { stats: { downloads: 7 } } }), 7);
     assert.equal(readDownloads({ package: { stats: { downloads: 9 } } }), 9);
+  });
+});
+
+describe('readStars', () => {
+  test('returns 0 when absent/malformed', () => {
+    assert.equal(readStars({}), 0);
+    assert.equal(readStars({ stats: { stars: null } }), 0);
+  });
+
+  test('reads from skill or package stats', () => {
+    assert.equal(readStars({ skill: { stats: { stars: 1 } } }), 1);
+    assert.equal(readStars({ package: { stats: { stars: 4 } } }), 4);
   });
 });
