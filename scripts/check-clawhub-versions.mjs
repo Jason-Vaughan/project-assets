@@ -1,45 +1,65 @@
 #!/usr/bin/env node
 /**
- * Weekly ClawHub version watcher.
+ * Daily ClawHub watcher.
  *
- * Reads clawhub-versions.json, fetches each item's ClawHub page, extracts the
- * current version from the server-rendered `og:image` meta tag (…&version=X.Y.Z
- * — present without JS, unlike the CSR page body), and compares to the stored
- * value. Prints one line per change ("name: old -> new") to stdout and, unless
- * --check, rewrites the JSON with the new versions + updatedAt. Exit 0 always;
- * the workflow decides what to do via `git diff` + stdout.
+ * For each item in clawhub-versions.json, fetches live metadata from the ClawHub
+ * public JSON API (skills: /api/v1/skills/{slug}; plugins:
+ * /api/v1/packages/@owner/{slug}) and updates its `version` and `downloads`.
+ *
+ * Prints one "name: old -> new" line per VERSION bump to stdout — the workflow
+ * opens a GitHub issue on those. Download changes update the JSON silently (no
+ * issue; downloads move constantly and would spam). Exit 0 always; the workflow
+ * decides what to commit via `git diff` and what to flag via stdout.
+ *
+ * Flags: --check rewrites nothing (dry run, still prints version bumps).
+ *
+ * (Replaces the original og:image-scraping approach — the JSON API is a stable,
+ * documented contract and yields downloads in the same call.)
  */
 import { readFileSync, writeFileSync } from 'node:fs';
 
+import { normalizeClawhubItem, clawhubApiUrl } from './lib/clawhub.mjs';
+
 const FILE = new URL('../clawhub-versions.json', import.meta.url);
 const CHECK_ONLY = process.argv.includes('--check');
-const VER_RE = /og:image"\s+content="[^"]*version=(\d+\.\d+\.\d+)/;
 
 const data = JSON.parse(readFileSync(FILE, 'utf8'));
-const changes = [];
+const versionChanges = [];
+let dirty = false;
 
 for (const item of data.items) {
-  let html;
+  let raw;
   try {
-    const res = await fetch(item.url, { headers: { 'user-agent': 'clawhub-watch' } });
-    if (!res.ok) { console.error(`WARN ${item.slug}: HTTP ${res.status}`); continue; }
-    html = await res.text();
+    const res = await fetch(clawhubApiUrl(item.type, item.slug), {
+      headers: { 'user-agent': 'clawhub-watch', accept: 'application/json' },
+    });
+    if (!res.ok) {
+      console.error(`WARN ${item.slug}: HTTP ${res.status}`);
+      continue;
+    }
+    raw = await res.json();
   } catch (e) {
     console.error(`WARN ${item.slug}: fetch failed (${e.message})`);
     continue;
   }
-  const m = html.match(VER_RE);
-  if (!m) { console.error(`WARN ${item.slug}: no version found in og:image`); continue; }
-  const live = m[1];
-  if (live !== item.version) {
-    changes.push(`${item.name} (${item.type}): ${item.version} -> ${live}`);
-    item.version = live;
+
+  const live = normalizeClawhubItem(item.type, item.slug, raw);
+
+  if (live.version && live.version !== item.version) {
+    versionChanges.push(`${item.name} (${item.type}): ${item.version} -> ${live.version}`);
+    item.version = live.version;
+    dirty = true;
+  }
+  if (typeof live.downloads === 'number' && live.downloads !== item.downloads) {
+    item.downloads = live.downloads;
+    dirty = true;
   }
 }
 
-for (const c of changes) console.log(c);
+// stdout = version bumps only (drives the workflow's issue-on-bump step).
+for (const c of versionChanges) console.log(c);
 
-if (changes.length && !CHECK_ONLY) {
+if (dirty && !CHECK_ONLY) {
   data.updatedAt = new Date().toISOString().slice(0, 10);
   writeFileSync(FILE, JSON.stringify(data, null, 2) + '\n');
 }

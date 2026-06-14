@@ -1,12 +1,13 @@
 name: clawhub-watch
 
-# Weekly check of ClawHub skill/plugin versions. Extracts each item's current
-# version from its server-rendered og:image meta tag, compares to the committed
-# clawhub-versions.json, and on any change commits the new versions + opens a
-# GitHub issue. The JSON also feeds the portfolio's ClawHub cards panel.
+# Daily check of ClawHub skill/plugin stats. Fetches each item's version +
+# download count from the ClawHub public JSON API, updates clawhub-versions.json,
+# and commits whenever a real value changed (versions OR downloads). A GitHub
+# issue is opened only on a VERSION bump — download counts move constantly and
+# would spam. The JSON feeds the portfolio's ClawHub cards panel.
 on:
   schedule:
-    - cron: '23 14 * * 1'   # Mondays ~14:23 UTC (off the :00 mark)
+    - cron: '23 14 * * *'   # Daily ~14:23 UTC (off the :00 mark)
   workflow_dispatch:
 
 permissions:
@@ -27,8 +28,10 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Check ClawHub versions
+      - name: Check ClawHub stats
         id: check
+        # stdout carries version-bump lines only (drives the issue step below);
+        # the script also rewrites clawhub-versions.json with new downloads.
         run: |
           changes="$(node scripts/check-clawhub-versions.mjs)"
           {
@@ -37,16 +40,25 @@ jobs:
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
 
-      - name: Commit + open issue on change
+      - name: Commit refreshed stats
+        # Commit on ANY real change (version or downloads). The `-I` ignore makes
+        # an `updatedAt`-only diff a no-op, so quiet days don't churn history.
+        run: |
+          git config user.name  "clawhub-watch"
+          git config user.email "clawhub-watch@users.noreply.github.com"
+          git add clawhub-versions.json
+          if git diff --cached -I '"updatedAt":' --quiet; then
+            echo "No meaningful ClawHub changes (timestamp only or no diff)."
+          else
+            git commit -m "chore(clawhub): refresh $(date -u +%FT%TZ)"
+            git push
+          fi
+
+      - name: Open issue on version bump
         if: steps.check.outputs.changes != ''
         env:
           GH_TOKEN: ${{ github.token }}
           CHANGES: ${{ steps.check.outputs.changes }}
         run: |
-          git config user.name  "clawhub-watch"
-          git config user.email "clawhub-watch@users.noreply.github.com"
-          git add clawhub-versions.json
-          git commit -m "chore(clawhub): version update $(date -u +%FT%TZ)"
-          git push
-          printf 'New ClawHub version(s) detected:\n\n%s\n\n— clawhub-watch (weekly)\n' "$CHANGES" > /tmp/clawhub-body.md
+          printf 'New ClawHub version(s) detected:\n\n%s\n\n— clawhub-watch (daily)\n' "$CHANGES" > /tmp/clawhub-body.md
           gh issue create --title "ClawHub: new version(s) published" --body-file /tmp/clawhub-body.md
