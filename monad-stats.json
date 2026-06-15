@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-15T02:19:00Z",
+  "updatedAt": "2026-06-15T02:34:00Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -20,10 +20,10 @@
       "role": "agent"
     },
     {
-      "name": "Qwen2.5 32B",
-      "size": "30 GB",
-      "precision": "Q4_K_M",
-      "role": "general"
+      "name": "Qwen2.5 14B 1M",
+      "size": "25 GB",
+      "precision": "Q6_K",
+      "role": "chat"
     }
   ],
   "availableModels": [
@@ -68,17 +68,17 @@
     },
     {
       "name": "Qwen2.5 14B 1M",
-      "size": "12 GB",
+      "size": "25 GB",
       "precision": "Q6_K",
       "role": "chat",
-      "resident": false
+      "resident": true
     },
     {
       "name": "Qwen2.5 32B",
-      "size": "30 GB",
+      "size": "19 GB",
       "precision": "Q4_K_M",
       "role": "general",
-      "resident": true
+      "resident": false
     },
     {
       "name": "Qwen2.5 72B",
@@ -128,12 +128,12 @@
     "powerDraw": 10
   },
   "tokens": {
-    "total": 145464153,
-    "last24h": 13503642,
-    "last7d": 77969119
+    "total": 145497295,
+    "last24h": 13536784,
+    "last7d": 77983506
   },
   "costSaved": {
-    "estimated": 447.5771,
+    "estimated": 447.6804,
     "basis": "Estimated cloud cost avoided at Claude Sonnet rates ($3/$15 per MTok); local compute free (see basisDetail)",
     "basisDetail": [
       {
@@ -181,11 +181,11 @@
     "litellm": {
       "available": true,
       "tokens": {
-        "total": 84027462,
-        "last24h": 13503642,
-        "last7d": 62551858
+        "total": 84060604,
+        "last24h": 13536784,
+        "last7d": 62585000
       },
-      "costSaved": 259.4787,
+      "costSaved": 259.582,
       "throughputTokensPerSec": 40.2
     },
     "directOllama": {
@@ -193,10 +193,10 @@
       "tokens": {
         "total": 61436691,
         "last24h": 0,
-        "last7d": 15417261
+        "last7d": 15398506
       },
       "costSaved": 188.0984,
-      "throughputTokensPerSec": 27.3
+      "throughputTokensPerSec": 27.2
     }
   }
 }
