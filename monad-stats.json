@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-15T19:45:18Z",
+  "updatedAt": "2026-06-15T20:00:21Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -20,10 +20,10 @@
       "role": "agent"
     },
     {
-      "name": "Qwen2.5 32B",
-      "size": "30 GB",
-      "precision": "Q4_K_M",
-      "role": "general"
+      "name": "Qwen2.5 14B 1M",
+      "size": "25 GB",
+      "precision": "Q6_K",
+      "role": "chat"
     }
   ],
   "availableModels": [
@@ -68,17 +68,17 @@
     },
     {
       "name": "Qwen2.5 14B 1M",
-      "size": "12 GB",
+      "size": "25 GB",
       "precision": "Q6_K",
       "role": "chat",
-      "resident": false
+      "resident": true
     },
     {
       "name": "Qwen2.5 32B",
-      "size": "30 GB",
+      "size": "19 GB",
       "precision": "Q4_K_M",
       "role": "general",
-      "resident": true
+      "resident": false
     },
     {
       "name": "Qwen2.5 72B",
@@ -123,17 +123,17 @@
     "plannedDowntimeSeconds": 23291
   },
   "gpu": {
-    "temp": 45,
-    "utilization": 0,
-    "powerDraw": 60
+    "temp": 55,
+    "utilization": 95,
+    "powerDraw": 300
   },
   "tokens": {
-    "total": 152137579,
-    "last24h": 20177068,
-    "last7d": 82339304
+    "total": 152212462,
+    "last24h": 20251951,
+    "last7d": 82395426
   },
   "costSaved": {
-    "estimated": 468.2379,
+    "estimated": 468.4766,
     "basis": "Estimated cloud cost avoided at Claude Sonnet rates ($3/$15 per MTok); local compute free (see basisDetail)",
     "basisDetail": [
       {
@@ -181,11 +181,11 @@
     "litellm": {
       "available": true,
       "tokens": {
-        "total": 90700888,
-        "last24h": 20177068,
-        "last7d": 69225284
+        "total": 90775771,
+        "last24h": 20251951,
+        "last7d": 69300167
       },
-      "costSaved": 280.1395,
+      "costSaved": 280.3782,
       "throughputTokensPerSec": 41.1
     },
     "directOllama": {
@@ -193,7 +193,7 @@
       "tokens": {
         "total": 61436691,
         "last24h": 0,
-        "last7d": 13114020
+        "last7d": 13095259
       },
       "costSaved": 188.0984,
       "throughputTokensPerSec": 27.0
