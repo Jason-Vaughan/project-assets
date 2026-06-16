@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-16T14:29:09Z",
+  "updatedAt": "2026-06-16T14:44:20Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -20,10 +20,10 @@
       "role": "agent"
     },
     {
-      "name": "Qwen2.5 32B",
-      "size": "30 GB",
-      "precision": "Q4_K_M",
-      "role": "general"
+      "name": "Qwen2.5 14B 1M",
+      "size": "25 GB",
+      "precision": "Q6_K",
+      "role": "chat"
     }
   ],
   "availableModels": [
@@ -68,17 +68,17 @@
     },
     {
       "name": "Qwen2.5 14B 1M",
-      "size": "12 GB",
+      "size": "25 GB",
       "precision": "Q6_K",
       "role": "chat",
-      "resident": false
+      "resident": true
     },
     {
       "name": "Qwen2.5 32B",
-      "size": "30 GB",
+      "size": "19 GB",
       "precision": "Q4_K_M",
       "role": "general",
-      "resident": true
+      "resident": false
     },
     {
       "name": "Qwen2.5 72B",
@@ -123,17 +123,17 @@
     "plannedDowntimeSeconds": 23291
   },
   "gpu": {
-    "temp": 35,
+    "temp": 40,
     "utilization": 0,
     "powerDraw": 10
   },
   "tokens": {
-    "total": 160255908,
-    "last24h": 15988023,
-    "last7d": 80874951
+    "total": 160333373,
+    "last24h": 16065488,
+    "last7d": 80909015
   },
   "costSaved": {
-    "estimated": 493.473,
+    "estimated": 493.7096,
     "basis": "Estimated cloud cost avoided at Claude Sonnet rates ($3/$15 per MTok); local compute free (see basisDetail)",
     "basisDetail": [
       {
@@ -181,11 +181,11 @@
     "litellm": {
       "available": true,
       "tokens": {
-        "total": 98819217,
-        "last24h": 15988023,
-        "last7d": 70138586
+        "total": 98896682,
+        "last24h": 16065488,
+        "last7d": 70216051
       },
-      "costSaved": 305.3746,
+      "costSaved": 305.6112,
       "throughputTokensPerSec": 42.7
     },
     "directOllama": {
@@ -193,7 +193,7 @@
       "tokens": {
         "total": 61436691,
         "last24h": 0,
-        "last7d": 10736365
+        "last7d": 10692964
       },
       "costSaved": 188.0984,
       "throughputTokensPerSec": 27.0
