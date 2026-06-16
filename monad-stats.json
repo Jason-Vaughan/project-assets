@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-16T18:01:43Z",
+  "updatedAt": "2026-06-16T18:16:58Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -20,10 +20,10 @@
       "role": "agent"
     },
     {
-      "name": "Qwen2.5 14B 1M",
-      "size": "25 GB",
-      "precision": "Q6_K",
-      "role": "chat"
+      "name": "Qwen2.5 32B",
+      "size": "30 GB",
+      "precision": "Q4_K_M",
+      "role": "general"
     }
   ],
   "availableModels": [
@@ -68,17 +68,17 @@
     },
     {
       "name": "Qwen2.5 14B 1M",
-      "size": "25 GB",
+      "size": "12 GB",
       "precision": "Q6_K",
       "role": "chat",
-      "resident": true
+      "resident": false
     },
     {
       "name": "Qwen2.5 32B",
-      "size": "19 GB",
+      "size": "30 GB",
       "precision": "Q4_K_M",
       "role": "general",
-      "resident": false
+      "resident": true
     },
     {
       "name": "Qwen2.5 72B",
@@ -123,17 +123,17 @@
     "plannedDowntimeSeconds": 23291
   },
   "gpu": {
-    "temp": 40,
+    "temp": 45,
     "utilization": 0,
     "powerDraw": 10
   },
   "tokens": {
-    "total": 161828725,
-    "last24h": 17560840,
-    "last7d": 81991210
+    "total": 162080258,
+    "last24h": 17812373,
+    "last7d": 82199301
   },
   "costSaved": {
-    "estimated": 498.3618,
+    "estimated": 499.1476,
     "basis": "Estimated cloud cost avoided at Claude Sonnet rates ($3/$15 per MTok); local compute free (see basisDetail)",
     "basisDetail": [
       {
@@ -175,28 +175,28 @@
     ]
   },
   "throughput": {
-    "tokensPerSec": 40.9
+    "tokensPerSec": 41.0
   },
   "sources": {
     "litellm": {
       "available": true,
       "tokens": {
-        "total": 100392034,
-        "last24h": 17560840,
-        "last7d": 71711403
+        "total": 100643567,
+        "last24h": 17812373,
+        "last7d": 71962936
       },
-      "costSaved": 310.2634,
-      "throughputTokensPerSec": 42.9
+      "costSaved": 311.0492,
+      "throughputTokensPerSec": 43.0
     },
     "directOllama": {
       "available": true,
       "tokens": {
         "total": 61436691,
         "last24h": 0,
-        "last7d": 10279807
+        "last7d": 10236365
       },
       "costSaved": 188.0984,
-      "throughputTokensPerSec": 27.0
+      "throughputTokensPerSec": 26.9
     }
   }
 }
