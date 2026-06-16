@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-16T15:14:31Z",
+  "updatedAt": "2026-06-16T15:30:01Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -7,18 +7,12 @@
     "ram": "251 GiB"
   },
   "currentModel": {
-    "name": "GPT-OSS 120B",
-    "size": "66 GB",
-    "precision": "MXFP4",
-    "role": "agent"
+    "name": "Qwen2.5 32B",
+    "size": "30 GB",
+    "precision": "Q4_K_M",
+    "role": "general"
   },
   "currentModels": [
-    {
-      "name": "GPT-OSS 120B",
-      "size": "66 GB",
-      "precision": "MXFP4",
-      "role": "agent"
-    },
     {
       "name": "Qwen2.5 32B",
       "size": "30 GB",
@@ -35,10 +29,10 @@
     },
     {
       "name": "GPT-OSS 120B",
-      "size": "66 GB",
+      "size": "65 GB",
       "precision": "MXFP4",
       "role": "agent",
-      "resident": true
+      "resident": false
     },
     {
       "name": "Gemma4 26B",
@@ -124,16 +118,16 @@
   },
   "gpu": {
     "temp": 40,
-    "utilization": 0,
-    "powerDraw": 10
+    "utilization": 45,
+    "powerDraw": 80
   },
   "tokens": {
-    "total": 160555210,
-    "last24h": 16287325,
-    "last7d": 81068764
+    "total": 160596274,
+    "last24h": 16328389,
+    "last7d": 81072344
   },
   "costSaved": {
-    "estimated": 494.3989,
+    "estimated": 494.5307,
     "basis": "Estimated cloud cost avoided at Claude Sonnet rates ($3/$15 per MTok); local compute free (see basisDetail)",
     "basisDetail": [
       {
@@ -181,11 +175,11 @@
     "litellm": {
       "available": true,
       "tokens": {
-        "total": 99118519,
-        "last24h": 16287325,
-        "last7d": 70437888
+        "total": 99159583,
+        "last24h": 16328389,
+        "last7d": 70478952
       },
-      "costSaved": 306.3005,
+      "costSaved": 306.4323,
       "throughputTokensPerSec": 42.7
     },
     "directOllama": {
@@ -193,7 +187,7 @@
       "tokens": {
         "total": 61436691,
         "last24h": 0,
-        "last7d": 10630876
+        "last7d": 10593392
       },
       "costSaved": 188.0984,
       "throughputTokensPerSec": 26.9
