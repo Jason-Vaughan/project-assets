@@ -5,10 +5,15 @@
 #
 # Triggered by ~/Library/LaunchAgents/com.jasonvaughan.claude-stats.plist
 # (daily at 05:30 local). May also be run manually for testing.
+#
+# NOTE: the clone lives in ~/code (NOT ~/Documents). macOS TCC blocks launchd
+# agents from writing into ~/Documents/Desktop/Downloads without Full Disk
+# Access, which silently froze this file at 2026-04-28 ("Operation not
+# permitted" on the write). Keep this path outside the TCC-protected folders.
 
 set -euo pipefail
 
-PROJECT_ASSETS="$HOME/Documents/Projects/project-assets"
+PROJECT_ASSETS="$HOME/code/project-assets"
 USAGE_FILE="$PROJECT_ASSETS/anthropic-usage.json"
 GEMINI_USAGE_FILE="$PROJECT_ASSETS/gemini-usage.json"
 GEMINI_TELEMETRY_LOG="$HOME/.gemini/telemetry.log"
@@ -98,24 +103,59 @@ echo "[file] wrote $USAGE_FILE"
 # events. If the log doesn't exist yet, write a zero-value file (Medusa is
 # the only project using Gemini CLI today; log populates on next session).
 
+# Incremental parse: telemetry.log grows without bound (it reached 70GB once a
+# full-file scan was reattempted), so we never re-read history. We track a byte
+# offset in $GEMINI_OFFSET_FILE and only sum tokens from NEW bytes each run,
+# carrying the cumulative total forward in $GEMINI_USAGE_FILE. First run (no
+# offset file) baselines at EOF — historical pre-fix telemetry is not
+# retro-counted (it was never in the headline; the manifest used a manual value).
+GEMINI_OFFSET_FILE="$LOG_DIR/gemini-offset"
 GEMINI_TOTAL=0
 if [[ -f "$GEMINI_TELEMETRY_LOG" ]]; then
-  echo "[gemini] parsing $GEMINI_TELEMETRY_LOG..."
+  echo "[gemini] incremental parse of $GEMINI_TELEMETRY_LOG..."
   GEMINI_TOTAL=$(python3 -c "
-import sys, re, json
-total = 0
-with open('$GEMINI_TELEMETRY_LOG', 'r', errors='replace') as f:
+import os, re, json
+log = '$GEMINI_TELEMETRY_LOG'
+offset_file = '$GEMINI_OFFSET_FILE'
+usage_file = '$GEMINI_USAGE_FILE'
+
+prev_total = 0
+try:
+    with open(usage_file) as f:
+        prev_total = int(json.load(f).get('total', 0))
+except Exception:
+    prev_total = 0
+
+size = os.path.getsize(log)
+try:
+    with open(offset_file) as f:
+        start = int(f.read().strip())
+except Exception:
+    start = None
+
+if start is None:
+    start = size          # first run: skip history, count only new telemetry
+elif start > size:
+    start = 0             # log rotated/truncated: re-scan the smaller file
+
+delta = 0
+pat = re.compile(r'(input_token_count|output_token_count|cached_content_token_count|tool_token_count)[\":=\s]+([0-9]+)')
+with open(log, 'r', errors='replace') as f:
+    f.seek(start)
+    f.readline()          # discard a possibly-partial line at the seek boundary
     for line in f:
-        # Match input_token_count / output_token_count / cached_content_token_count attributes
-        for m in re.finditer(r'(input_token_count|output_token_count|cached_content_token_count|tool_token_count)[\":=\s]+([0-9]+)', line):
+        for m in pat.finditer(line):
             try:
-                total += int(m.group(2))
+                delta += int(m.group(2))
             except ValueError:
                 pass
-print(total)
+
+with open(offset_file, 'w') as f:
+    f.write(str(size))
+print(prev_total + delta)
 " 2>/dev/null)
   GEMINI_TOTAL=${GEMINI_TOTAL:-0}
-  echo "[gemini] total: $GEMINI_TOTAL"
+  echo "[gemini] total: $GEMINI_TOTAL (cumulative, incremental)"
 else
   echo "[gemini] no telemetry log yet at $GEMINI_TELEMETRY_LOG (will populate after next CLI session)"
 fi
@@ -131,12 +171,17 @@ EOF
 echo "[file] wrote $GEMINI_USAGE_FILE"
 
 cd "$PROJECT_ASSETS"
-git pull --rebase --quiet
+# Stage + commit BEFORE pulling: the script writes the usage files first, so a
+# pull --rebase against a dirty tree errors ("unstaged changes"). Commit first,
+# then rebase our commit onto the latest remote (the cloud collector pushes
+# several times a day), then push. --autostash covers any stray local edits.
 git add anthropic-usage.json gemini-usage.json
 if git diff --cached --quiet; then
   echo "[git] no changes to commit"
+  git pull --rebase --autostash --quiet || true
 else
   git commit -m "chore(stats): refresh AI usage agents ($NOW)"
+  git pull --rebase --autostash --quiet
   git push --quiet
   echo "[git] pushed"
 fi
