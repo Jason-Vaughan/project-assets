@@ -1,10 +1,15 @@
 {
-  "updatedAt": "2026-06-19T06:16:39Z",
+  "updatedAt": "2026-06-19T06:26:49Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
     "cpu": "AMD Threadripper 9970X",
     "ram": "251 GiB"
+  },
+  "primaryModel": {
+    "name": "GPT-OSS 120B",
+    "role": "agent",
+    "note": "served on demand"
   },
   "currentModel": {
     "name": "GPT-OSS 120B",
@@ -95,6 +100,10 @@
       "resident": false
     }
   ],
+  "residency24h": {
+    "mostResident": "GPT-OSS 120B",
+    "hotSwaps": 0
+  },
   "stack": [
     "Ollama 0.24.0",
     "LiteLLM 1.85.0",
@@ -128,12 +137,12 @@
     "powerDraw": 10
   },
   "tokens": {
-    "total": 185057960,
-    "last24h": 10717183,
-    "last7d": 79827516
+    "total": 185119022,
+    "last24h": 10778245,
+    "last7d": 79888578
   },
   "costSaved": {
-    "estimated": 570.1733,
+    "estimated": 570.3591,
     "basis": "Estimated cloud cost avoided at Claude Sonnet rates ($3/$15 per MTok); local compute free (see basisDetail)",
     "basisDetail": [
       {
@@ -181,11 +190,11 @@
     "litellm": {
       "available": true,
       "tokens": {
-        "total": 123621269,
-        "last24h": 10717183,
-        "last7d": 77649796
+        "total": 123682331,
+        "last24h": 10778245,
+        "last7d": 77710858
       },
-      "costSaved": 382.0749,
+      "costSaved": 382.2607,
       "throughputTokensPerSec": 44.4
     },
     "directOllama": {
