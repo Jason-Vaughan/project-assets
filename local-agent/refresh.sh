@@ -160,6 +160,29 @@ else
   echo "[gemini] no telemetry log yet at $GEMINI_TELEMETRY_LOG (will populate after next CLI session)"
 fi
 
+# Rolling size cap: keep the newest GEMINI_LOG_CAP_GB, prune oldest. Runs AFTER
+# the incremental parse (which counted through EOF and saved the offset), so
+# dropping already-counted old bytes loses nothing; we reset the offset to the
+# post-trim EOF so the next run counts only new appends. Gemini CLI itself has
+# no rotation (settings.json is just enabled/target/outfile) and re-logs its full
+# ~39KB system prompt on every event, so without this the log grows unbounded.
+GEMINI_LOG_CAP_GB=10
+if [[ -f "$GEMINI_TELEMETRY_LOG" ]]; then
+  CAP_BYTES=$(( GEMINI_LOG_CAP_GB * 1024 * 1024 * 1024 ))
+  CUR_BYTES=$(stat -f%z "$GEMINI_TELEMETRY_LOG" 2>/dev/null || echo 0)
+  if (( CUR_BYTES > CAP_BYTES )); then
+    echo "[gemini] log $(( CUR_BYTES / 1073741824 ))GB > ${GEMINI_LOG_CAP_GB}GB cap — pruning oldest..."
+    TRIM_TMP="${GEMINI_TELEMETRY_LOG}.trim.$$"
+    if tail -c "$CAP_BYTES" "$GEMINI_TELEMETRY_LOG" > "$TRIM_TMP" 2>/dev/null && mv "$TRIM_TMP" "$GEMINI_TELEMETRY_LOG"; then
+      stat -f%z "$GEMINI_TELEMETRY_LOG" > "$GEMINI_OFFSET_FILE"
+      echo "[gemini] trimmed to $(( $(stat -f%z "$GEMINI_TELEMETRY_LOG") / 1073741824 ))GB; offset reset to new EOF"
+    else
+      rm -f "$TRIM_TMP"
+      echo "[gemini] WARN: trim failed; log left intact"
+    fi
+  fi
+fi
+
 cat > "$GEMINI_USAGE_FILE" <<EOF
 {
   "total": $GEMINI_TOTAL,
