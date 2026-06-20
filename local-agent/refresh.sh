@@ -19,6 +19,12 @@ GEMINI_USAGE_FILE="$PROJECT_ASSETS/gemini-usage.json"
 GEMINI_TELEMETRY_LOG="$HOME/.gemini/telemetry.log"
 LOG_DIR="$HOME/.claude-stats"
 LOG_FILE="$LOG_DIR/last-run.log"
+# Antigravity (agy) — successor to the sunsetted Gemini CLI. Usage is read from
+# agy's local SQLite conversation DBs (one global store, launcher-independent, so
+# terminal/cron/TangleClaw sessions all count) via a hardened protobuf parser.
+ANTIGRAVITY_USAGE_FILE="$PROJECT_ASSETS/antigravity-usage.json"
+ANTIGRAVITY_CONV_DIR="$HOME/.gemini/antigravity-cli/conversations"
+ANTIGRAVITY_PARSER="$LOG_DIR/antigravity-tokens.py"
 
 # Make sure the npm-global bin is on PATH (where ccusage is installed locally).
 export PATH="$HOME/.npm-global/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin"
@@ -166,14 +172,20 @@ fi
 # post-trim EOF so the next run counts only new appends. Gemini CLI itself has
 # no rotation (settings.json is just enabled/target/outfile) and re-logs its full
 # ~39KB system prompt on every event, so without this the log grows unbounded.
-GEMINI_LOG_CAP_GB=10
+# Hysteresis: prune only ABOVE the high watermark, and trim down to the low one —
+# so a few MB over cap doesn't rewrite 10GB every run (that thrash blocked the rest
+# of the script). Gemini CLI is sunsetted now, so this log is near-static; this is
+# just a cheap safety backstop, not a daily chore.
+GEMINI_LOG_HIGH_GB=12
+GEMINI_LOG_LOW_GB=8
 if [[ -f "$GEMINI_TELEMETRY_LOG" ]]; then
-  CAP_BYTES=$(( GEMINI_LOG_CAP_GB * 1024 * 1024 * 1024 ))
+  HIGH_BYTES=$(( GEMINI_LOG_HIGH_GB * 1024 * 1024 * 1024 ))
+  LOW_BYTES=$(( GEMINI_LOG_LOW_GB * 1024 * 1024 * 1024 ))
   CUR_BYTES=$(stat -f%z "$GEMINI_TELEMETRY_LOG" 2>/dev/null || echo 0)
-  if (( CUR_BYTES > CAP_BYTES )); then
-    echo "[gemini] log $(( CUR_BYTES / 1073741824 ))GB > ${GEMINI_LOG_CAP_GB}GB cap — pruning oldest..."
+  if (( CUR_BYTES > HIGH_BYTES )); then
+    echo "[gemini] log $(( CUR_BYTES / 1073741824 ))GB > ${GEMINI_LOG_HIGH_GB}GB — pruning oldest down to ${GEMINI_LOG_LOW_GB}GB..."
     TRIM_TMP="${GEMINI_TELEMETRY_LOG}.trim.$$"
-    if tail -c "$CAP_BYTES" "$GEMINI_TELEMETRY_LOG" > "$TRIM_TMP" 2>/dev/null && mv "$TRIM_TMP" "$GEMINI_TELEMETRY_LOG"; then
+    if tail -c "$LOW_BYTES" "$GEMINI_TELEMETRY_LOG" > "$TRIM_TMP" 2>/dev/null && mv "$TRIM_TMP" "$GEMINI_TELEMETRY_LOG"; then
       stat -f%z "$GEMINI_TELEMETRY_LOG" > "$GEMINI_OFFSET_FILE"
       echo "[gemini] trimmed to $(( $(stat -f%z "$GEMINI_TELEMETRY_LOG") / 1073741824 ))GB; offset reset to new EOF"
     else
@@ -193,12 +205,60 @@ cat > "$GEMINI_USAGE_FILE" <<EOF
 EOF
 echo "[file] wrote $GEMINI_USAGE_FILE"
 
+# === Antigravity (agy) usage → antigravity-usage.json ===
+# Cumulative lifetime tokens summed from agy's local SQLite conversation DBs,
+# cached INCLUDED. Carry-forward guard: if the recomputed total drops below the
+# last recorded value (e.g. agy prunes old conversation DBs), keep the previous
+# higher value so the lifetime stat never regresses.
+if [[ -f "$ANTIGRAVITY_PARSER" ]]; then
+  echo "[antigravity] parsing $ANTIGRAVITY_CONV_DIR ..."
+  AGY_JSON=$(python3 "$ANTIGRAVITY_PARSER" "$ANTIGRAVITY_CONV_DIR" 2>/dev/null || true)
+  if [[ -n "$AGY_JSON" ]]; then
+    if python3 - "$ANTIGRAVITY_USAGE_FILE" "$NOW" "$AGY_JSON" <<'PYEOF'
+import json, sys
+usage_file, now, agy_json = sys.argv[1], sys.argv[2], sys.argv[3]
+new = json.loads(agy_json)
+prev_total = 0
+try:
+    with open(usage_file) as f:
+        prev_total = int(json.load(f).get('total', 0))
+except Exception:
+    prev_total = 0
+total = int(new.get('total', 0))
+if total < prev_total:
+    print(f"[antigravity] WARN: recomputed {total:,} < previous {prev_total:,} (DBs pruned?); keeping previous", file=sys.stderr)
+    sys.exit(0)
+out = {
+    "total": total,
+    "prompt": int(new.get('prompt', 0)),
+    "output": int(new.get('output', 0)),
+    "cached": int(new.get('cached', 0)),
+    "tool": int(new.get('tool', 0)),
+    "includesCached": True,
+    "source": "antigravity-cli local SQLite gen_metadata",
+    "dbs": int(new.get('dbs', 0)),
+    "rows": int(new.get('rows', 0)),
+    "fetchedAt": now,
+}
+with open(usage_file, 'w') as f:
+    json.dump(out, f, indent=2)
+print(f"[antigravity] total {total:,} (prompt {out['prompt']:,} + output {out['output']:,} + cached {out['cached']:,} + tool {out['tool']:,})")
+PYEOF
+    then :; else echo "[antigravity] WARN: writer failed — leaving previous antigravity-usage.json"; fi
+  else
+    echo "[antigravity] parser returned nothing — skipping (no DBs yet?)"
+  fi
+else
+  echo "[antigravity] parser not found at $ANTIGRAVITY_PARSER — skipping"
+fi
+
 cd "$PROJECT_ASSETS"
 # Stage + commit BEFORE pulling: the script writes the usage files first, so a
 # pull --rebase against a dirty tree errors ("unstaged changes"). Commit first,
 # then rebase our commit onto the latest remote (the cloud collector pushes
 # several times a day), then push. --autostash covers any stray local edits.
 git add anthropic-usage.json gemini-usage.json
+if [[ -f antigravity-usage.json ]]; then git add antigravity-usage.json; fi
 if git diff --cached --quiet; then
   echo "[git] no changes to commit"
   git pull --rebase --autostash --quiet || true

@@ -112,6 +112,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, '..', '..');
 const ANTHROPIC_USAGE_FILE = path.join(REPO_ROOT, 'anthropic-usage.json');
 const GEMINI_USAGE_FILE = path.join(REPO_ROOT, 'gemini-usage.json');
+const ANTIGRAVITY_USAGE_FILE = path.join(REPO_ROOT, 'antigravity-usage.json');
 
 function readAgentFile(filePath) {
   if (!fs.existsSync(filePath)) return null;
@@ -131,6 +132,12 @@ function readAnthropicAgentTotal() {
 /** Total Gemini CLI usage from local telemetry agent. */
 function readGeminiAgentTotal() {
   return readAgentFile(GEMINI_USAGE_FILE);
+}
+
+/** Total Antigravity (agy) usage from local SQLite conversation DBs. Successor to
+ *  the sunsetted Gemini CLI; cumulative lifetime total (cached tokens included). */
+function readAntigravityAgentTotal() {
+  return readAgentFile(ANTIGRAVITY_USAGE_FILE);
 }
 
 /**
@@ -154,17 +161,21 @@ export async function aggregateTokens(cfg = {}) {
   const proratedCfg = cfg.prorated || {};
   const agentAnthropic = readAnthropicAgentTotal();
   const agentGemini = readGeminiAgentTotal();
+  const agentAntigravity = readAntigravityAgentTotal();
   const errors = [];
   const sources = {}; // per-provider: 'api' | 'manual'
 
   const geminiAgent = agentGemini?.total || 0;
   const geminiManual = manual.gemini || 0;
+  const antigravityAgent = agentAntigravity?.total || 0;
+  const antigravityManual = manual.antigravity || 0;
   const breakdown = {
     anthropic: 0,
     openai: 0,
     copilot: manual.copilot || 0,
     cursor: manual.cursor || 0,
     gemini: geminiAgent + geminiManual,
+    antigravity: antigravityAgent + antigravityManual,
   };
   sources.copilot = 'manual';
   sources.cursor = 'manual';
@@ -172,6 +183,10 @@ export async function aggregateTokens(cfg = {}) {
   else if (geminiAgent > 0) sources.gemini = 'agent';
   else if (geminiManual > 0) sources.gemini = 'manual';
   else sources.gemini = 'unavailable';
+  if (antigravityAgent > 0 && antigravityManual > 0) sources.antigravity = 'agent+manual';
+  else if (antigravityAgent > 0) sources.antigravity = 'agent';
+  else if (antigravityManual > 0) sources.antigravity = 'manual';
+  else sources.antigravity = 'unavailable';
 
   const [anth, oai] = await Promise.all([fetchAnthropicTokens(), fetchOpenAITokens()]);
 
@@ -209,7 +224,7 @@ export async function aggregateTokens(cfg = {}) {
   // Prorated entries — provider-keyed { since, monthlyRate }. Stacks on top
   // of every other source. Lets values grow daily without manual bumps.
   let proratedTotal = 0;
-  for (const provider of ['anthropic', 'openai', 'copilot', 'cursor', 'gemini']) {
+  for (const provider of ['anthropic', 'openai', 'copilot', 'cursor', 'gemini', 'antigravity']) {
     const v = prorate(proratedCfg[provider]);
     if (v > 0) {
       breakdown[provider] = (breakdown[provider] || 0) + v;
@@ -222,8 +237,8 @@ export async function aggregateTokens(cfg = {}) {
   }
 
   const verified = anthApi + oaiApi;
-  const agentTotal = anthAgent + geminiAgent;
-  const manualTotal = anthManual + oaiManual + (manual.copilot || 0) + (manual.cursor || 0) + geminiManual;
+  const agentTotal = anthAgent + geminiAgent + antigravityAgent;
+  const manualTotal = anthManual + oaiManual + (manual.copilot || 0) + (manual.cursor || 0) + geminiManual + antigravityManual;
   const total = verified + agentTotal + manualTotal + proratedTotal;
 
   return {
