@@ -4,7 +4,10 @@ import path from 'node:path';
 import os from 'node:os';
 import { execSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import yaml from 'js-yaml';
+// Named import (not default): newer js-yaml ESM builds dropped the default export,
+// which broke the collector on a fresh CI install. `load` is a stable named export
+// across all js-yaml v4 builds, so this is version-resilient.
+import { load as yamlLoad } from 'js-yaml';
 
 import { coreStats, countFixCommits, countLinesRefactored, countLinesAuthored } from './lib/git-stats.mjs';
 import { fetchMergedPRCount } from './lib/github-prs.mjs';
@@ -27,7 +30,7 @@ const localPath = arg('--local-path');
 const dryRun = args.includes('--dry-run');
 const owner = arg('--owner') || 'Jason-Vaughan';
 
-const cfg = yaml.load(fs.readFileSync(path.join(REPO_ROOT, 'projects.yml'), 'utf8'));
+const cfg = yamlLoad(fs.readFileSync(path.join(REPO_ROOT, 'projects.yml'), 'utf8'));
 const defaultLoc = cfg.defaultLoc || {
   include: ['*.js', '*.mjs', '*.cjs', '*.ts', '*.tsx', '*.jsx', '*.py', '*.html', '*.css', '*.scss', '*.go', '*.rs', '*.sh', '*.sql', '*.md'],
   exclude: ['node_modules', '.next', 'dist', 'build', 'coverage', '.min.', '__pycache__', '.venv', 'venv', 'site-packages', '.pytest_cache', 'egg-info'],
