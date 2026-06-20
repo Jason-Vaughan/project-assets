@@ -62,5 +62,19 @@ jobs:
             echo "No meaningful stats changes (timestamps only or no diff)."
           else
             git commit -m "chore(stats): refresh $(date -u +%FT%TZ)"
-            git push
+            # Race-safe push: the local stats agent + manual commits also push to
+            # main, so a plain push loses the race and the whole run fails. Rebase
+            # onto the latest origin/main and retry; fail loudly only if it still
+            # can't land after several attempts (a lost run just retries next cadence).
+            pushed=false
+            for attempt in 1 2 3 4 5; do
+              if git push; then pushed=true; break; fi
+              echo "push rejected (attempt $attempt) — rebasing onto origin/main"
+              git pull --rebase --autostash origin main || true
+              sleep 3
+            done
+            if [ "$pushed" != true ]; then
+              echo "::error::stats push failed after 5 rebase attempts"
+              exit 1
+            fi
           fi
