@@ -35,7 +35,10 @@ exec > >(tee "$LOG_FILE") 2>&1
 
 echo "=== Claude Code stats refresh: $(date -u +%FT%TZ) ==="
 
-# Helper: parse ccusage JSON output (strips ANSI, sums totalTokens across months)
+# Helper: parse ccusage JSON output (strips ANSI, sums totalTokens across months).
+# Always prints a number on stdout (0 on any failure). Warnings go to stderr so a
+# silent 0 from a ccusage schema change is distinguishable from genuine no-usage —
+# stderr is captured in the run log via the `tee` redirect above.
 parse_total() {
   python3 -c "
 import sys, json, re
@@ -47,8 +50,16 @@ if start == -1:
     print(0); sys.exit(0)
 try:
     data = json.loads(clean[start:end+1])
-    print(sum(m.get('totalTokens', 0) for m in data.get('monthly', [])))
-except Exception:
+    months = data.get('monthly')
+    if months is None:
+        sys.stderr.write('[parse_total] WARN: JSON has no \"monthly\" key — ccusage output schema may have changed\n')
+        print(0); sys.exit(0)
+    total = sum(m.get('totalTokens', 0) for m in months)
+    if total == 0:
+        sys.stderr.write('[parse_total] WARN: parsed JSON but summed to 0 tokens (genuine no-usage, or totalTokens shape changed)\n')
+    print(total)
+except Exception as e:
+    sys.stderr.write('[parse_total] WARN: JSON parse failed: %s\n' % e)
     print(0)
 "
 }

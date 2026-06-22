@@ -27,7 +27,7 @@
  *     sources:   per-provider source-mix label e.g. 'api+manual',
  *                'agent+manual', 'manual+prorated', 'unavailable'
  *     errors:    [<provider>: <message>] for any API call that failed
- *     agentMeta: { anthropic: { byMachine, fetchedAt }, openai: { byMachine, fetchedAt }, gemini: {...} }
+ *     agentMeta: { anthropic: { byMachine, fetchedAt }, openai: { byMachine, fetchedAt }, gemini: {...}, antigravity: {...} }
  *     fetchedAt: ISO timestamp of this aggregation
  *   }
  */
@@ -193,16 +193,21 @@ export async function aggregateTokens(cfg = {}) {
   };
   sources.copilot = 'manual';
   sources.cursor = 'manual';
-  if (geminiAgent > 0 && geminiManual > 0) sources.gemini = 'agent+manual';
-  else if (geminiAgent > 0) sources.gemini = 'agent';
-  else if (geminiManual > 0) sources.gemini = 'manual';
-  else sources.gemini = 'unavailable';
-  if (antigravityAgent > 0 && antigravityManual > 0) sources.antigravity = 'agent+manual';
-  else if (antigravityAgent > 0) sources.antigravity = 'agent';
-  else if (antigravityManual > 0) sources.antigravity = 'manual';
-  else sources.antigravity = 'unavailable';
+  const geminiParts = [];
+  if (geminiAgent > 0) geminiParts.push('agent');
+  if (geminiManual > 0) geminiParts.push('manual');
+  sources.gemini = sourceMix(geminiParts);
+  const antigravityParts = [];
+  if (antigravityAgent > 0) antigravityParts.push('agent');
+  if (antigravityManual > 0) antigravityParts.push('manual');
+  sources.antigravity = sourceMix(antigravityParts);
 
-  const [anth, oai] = await Promise.all([fetchAnthropicTokens(), fetchOpenAITokens()]);
+  // Admin-API fetchers are injectable via cfg.fetchers for tests (so a test can
+  // force a non-zero api total to exercise the api+agent+manual path without a
+  // live network call); production passes neither and uses the real fetchers.
+  const fetchAnth = cfg.fetchers?.anthropic || fetchAnthropicTokens;
+  const fetchOai = cfg.fetchers?.openai || fetchOpenAITokens;
+  const [anth, oai] = await Promise.all([fetchAnth(), fetchOai()]);
 
   // Manual values are ADDITIVE to the API totals. Use case: a provider's
   // admin API may not see usage that ran through other paths (e.g., a
@@ -281,6 +286,9 @@ export async function aggregateTokens(cfg = {}) {
         : null,
       gemini: agentGemini
         ? { source: agentGemini.source, fetchedAt: agentGemini.fetchedAt }
+        : null,
+      antigravity: agentAntigravity
+        ? { source: agentAntigravity.source, fetchedAt: agentAntigravity.fetchedAt }
         : null,
     },
     fetchedAt: new Date().toISOString(),
