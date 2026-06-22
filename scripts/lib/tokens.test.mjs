@@ -93,4 +93,57 @@ describe('aggregateTokens — Codex feeds the openai line', () => {
       rmSync(dir, { recursive: true, force: true });
     }
   });
+
+  test('openai sums api + agent + manual when the admin API also returns data', async () => {
+    const dir = mkdtempSync(join(tmpdir(), 'tokens-agentdir-'));
+    try {
+      writeFileSync(
+        join(dir, 'codex-usage.json'),
+        JSON.stringify({ total: 14_000_000, byMachine: { cursatory: 14_000_000, habitat: 0 } }),
+      );
+      // Inject a stub admin-API fetcher so the api branch runs without a network call.
+      const out = await aggregateTokens({
+        agentDir: dir,
+        manual: { openai: 1_000_000 },
+        fetchers: { openai: async () => ({ ok: true, total: 24_000_000 }) },
+      });
+
+      // api (24M) + agent (14M codex) + manual (1M) = 39M
+      assert.equal(out.breakdown.openai, 39_000_000);
+      assert.equal(out.sources.openai, 'api+agent+manual');
+      assert.equal(out.verified, 24_000_000, 'api total counted as verified');
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+});
+
+describe('aggregateTokens — agentMeta covers every agent provider', () => {
+  let savedAnth, savedOai;
+  before(() => {
+    savedAnth = process.env.ANTHROPIC_ADMIN_KEY;
+    savedOai = process.env.OPENAI_ADMIN_KEY;
+    delete process.env.ANTHROPIC_ADMIN_KEY;
+    delete process.env.OPENAI_ADMIN_KEY;
+  });
+  after(() => {
+    if (savedAnth !== undefined) process.env.ANTHROPIC_ADMIN_KEY = savedAnth;
+    if (savedOai !== undefined) process.env.OPENAI_ADMIN_KEY = savedOai;
+  });
+
+  test('antigravity-usage.json surfaces in agentMeta.antigravity', async () => {
+    const dir = mkdtempSync(join(tmpdir(), 'tokens-agentdir-'));
+    try {
+      writeFileSync(
+        join(dir, 'antigravity-usage.json'),
+        JSON.stringify({ total: 6_120_390, source: 'antigravity-cli local SQLite gen_metadata', fetchedAt: '2026-06-22T00:00:00Z' }),
+      );
+      const out = await aggregateTokens({ agentDir: dir });
+      assert.equal(out.breakdown.antigravity, 6_120_390);
+      assert.equal(out.sources.antigravity, 'agent');
+      assert.equal(out.agentMeta.antigravity.source, 'antigravity-cli local SQLite gen_metadata');
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
 });
