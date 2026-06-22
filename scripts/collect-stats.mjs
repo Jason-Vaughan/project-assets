@@ -11,7 +11,7 @@ import { load as yamlLoad } from 'js-yaml';
 
 import { coreStats, countFixCommits, countLinesRefactored, countLinesAuthored } from './lib/git-stats.mjs';
 import { fetchMergedPRCount } from './lib/github-prs.mjs';
-import { fetchLatestRelease } from './lib/github-release.mjs';
+import { fetchLatestReleaseInfo } from './lib/github-release.mjs';
 import { aggregateTokens } from './lib/tokens.mjs';
 import tangleclaw from './counters/tangleclaw.mjs';
 import tilt from './counters/tilt.mjs';
@@ -290,13 +290,21 @@ async function main() {
   // releases/latest returns the latest STABLE release (no drafts/pre-releases),
   // so an unpublished 0.5.20-rc never shows. slug -> tag string (or null).
   if (!onlyRepo && cfg.versions) {
-    console.log(`\n=== fetching release tags ===`);
+    console.log(`\n=== fetching release tags + download assets ===`);
     const token = process.env.STATS_COLLECTOR_TOKEN || process.env.GITHUB_TOKEN;
     meta.versions = {};
+    meta.downloads = {}; // slug -> [{ name, url, size, contentType }] for releases
+                         // with downloadable assets (e.g. notse's .dmg + .exe).
+                         // The portfolio categorizes by filename (.dmg → Mac, etc.).
     for (const [slug, fullName] of Object.entries(cfg.versions)) {
       try {
-        meta.versions[slug] = await fetchLatestRelease(fullName, token);
-        console.log(`[version] ${slug} (${fullName}): ${meta.versions[slug] ?? 'none'}`);
+        const info = await fetchLatestReleaseInfo(fullName, token);
+        meta.versions[slug] = info ? info.tag : null;
+        if (info && info.assets.length) meta.downloads[slug] = info.assets;
+        console.log(
+          `[version] ${slug} (${fullName}): ${meta.versions[slug] ?? 'none'}` +
+            (info && info.assets.length ? ` (+${info.assets.length} download assets)` : ''),
+        );
       } catch (err) {
         console.warn(`[version] ${slug} (${fullName}) failed: ${err.message}`);
         meta.versions[slug] = null;

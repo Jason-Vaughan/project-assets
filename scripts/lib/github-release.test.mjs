@@ -1,7 +1,7 @@
 import { test, describe, beforeEach, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { fetchLatestRelease } from './github-release.mjs';
+import { fetchLatestRelease, fetchLatestReleaseInfo } from './github-release.mjs';
 
 const REPO = 'Jason-Vaughan/notse-releases';
 const TOKEN = 'fake-token';
@@ -99,5 +99,47 @@ describe('fetchLatestRelease', () => {
     stubFetch([jsonResponse({ tag_name: 'v0.5.19' })]);
     await fetchLatestRelease(REPO, null);
     assert.equal(calls[0].headers.Authorization, undefined);
+  });
+});
+
+describe('fetchLatestReleaseInfo', () => {
+  test('returns tag plus mapped download assets', async () => {
+    stubFetch([jsonResponse({
+      tag_name: 'v0.5.20',
+      assets: [
+        { name: 'Notse-0.5.20-arm64.dmg', browser_download_url: 'https://x/d.dmg', size: 1000, content_type: 'application/octet-stream' },
+        { name: 'NotseHelper-Setup-0.5.20.exe', browser_download_url: 'https://x/h.exe', size: 200, content_type: 'application/x-msdownload' },
+      ],
+    })]);
+    const info = await fetchLatestReleaseInfo(REPO, TOKEN);
+    assert.equal(info.tag, 'v0.5.20');
+    assert.equal(info.assets.length, 2);
+    assert.deepEqual(info.assets[0], { name: 'Notse-0.5.20-arm64.dmg', url: 'https://x/d.dmg', size: 1000, contentType: 'application/octet-stream' });
+    assert.equal(info.assets[1].name, 'NotseHelper-Setup-0.5.20.exe');
+  });
+
+  test('returns an empty assets array when the release has none', async () => {
+    stubFetch([jsonResponse({ tag_name: 'v1.0.0' })]);
+    const info = await fetchLatestReleaseInfo(REPO, TOKEN);
+    assert.deepEqual(info, { tag: 'v1.0.0', assets: [] });
+  });
+
+  test('skips malformed assets (no name or no download url)', async () => {
+    stubFetch([jsonResponse({
+      tag_name: 'v1.0.0',
+      assets: [
+        { name: 'good.dmg', browser_download_url: 'https://x/good.dmg', size: 5 },
+        { name: 'no-url.dmg' },                                  // dropped
+        { browser_download_url: 'https://x/no-name' },           // dropped
+      ],
+    })]);
+    const info = await fetchLatestReleaseInfo(REPO, TOKEN);
+    assert.equal(info.assets.length, 1);
+    assert.equal(info.assets[0].name, 'good.dmg');
+  });
+
+  test('returns null on 404 (no published release)', async () => {
+    stubFetch([textResponse('Not Found', { status: 404 })]);
+    assert.equal(await fetchLatestReleaseInfo(REPO, TOKEN), null);
   });
 });
