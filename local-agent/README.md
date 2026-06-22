@@ -8,8 +8,10 @@ This dir is the canonical source for what should be running on the user's primar
 
 | File | Deployed location | Purpose |
 |---|---|---|
-| `refresh.sh` | `~/.claude-stats/refresh.sh` (chmod +x) | Daily script. Runs ccusage on Cursatory + via SSH on habitat, parses Gemini telemetry log, writes `anthropic-usage.json` + `gemini-usage.json` to project-assets, commits + pushes. |
-| `com.jasonvaughan.claude-stats.plist` | `~/Library/LaunchAgents/com.jasonvaughan.claude-stats.plist` | macOS LaunchAgent. Fires `refresh.sh` at 05:30 local daily. |
+| `run-agent.sh` | `~/.claude-stats/run-agent.sh` (chmod +x) | **What launchd fires.** Pulls the latest `refresh.sh` from the repo, deploys it to `~/.claude-stats/refresh.sh`, and execs it. Self-deploying: a merged `refresh.sh` change is live on the next tick — no manual `cp`. |
+| `refresh.sh` | `~/.claude-stats/refresh.sh` (auto-synced by `run-agent.sh`) | The work script. Runs ccusage (Claude Code) + `ccusage codex` on Cursatory + via SSH on habitat, parses Gemini telemetry + Antigravity SQLite, writes the `*-usage.json` files to project-assets, commits + pushes. |
+| `com.jasonvaughan.claude-stats.plist` | `~/Library/LaunchAgents/com.jasonvaughan.claude-stats.plist` | macOS LaunchAgent. Fires `run-agent.sh` 4x/day (05:30, 11:30, 17:30, 23:30 local). |
+| `antigravity-tokens.py` | `~/.claude-stats/antigravity-tokens.py` | Protobuf/SQLite parser for Antigravity (agy) token totals, invoked by `refresh.sh`. |
 | `gemini-telemetry-snippet.json` | Merge into `~/.gemini/settings.json` | Enables Gemini CLI to write a telemetry log to `~/.gemini/telemetry.log` so `refresh.sh` can parse token totals. |
 
 ## Redeploying on a fresh Mac
@@ -24,10 +26,13 @@ npm install -g ccusage
 #    to 192.168.20.10 with the right key). Should already be set up.
 ssh habitat 'whoami'   # should return: habitat-admin
 
-# 3. Drop the agent script into place
+# 3. Drop the self-deploying launcher into place (it syncs refresh.sh itself).
+#    Assumes the project-assets clone lives at ~/code/project-assets.
 mkdir -p ~/.claude-stats
-cp local-agent/refresh.sh ~/.claude-stats/refresh.sh
-chmod +x ~/.claude-stats/refresh.sh
+cp local-agent/run-agent.sh ~/.claude-stats/run-agent.sh
+cp local-agent/antigravity-tokens.py ~/.claude-stats/antigravity-tokens.py
+chmod +x ~/.claude-stats/run-agent.sh
+# refresh.sh is auto-deployed by run-agent.sh on first run; no manual copy needed.
 
 # 4. Drop the LaunchAgent into place
 #    Edit hardcoded /Users/jasonvaughan paths if the user differs.
@@ -42,18 +47,17 @@ jq -s '.[0] * .[1]' ~/.gemini/settings.json local-agent/gemini-telemetry-snippet
    > /tmp/settings.merged.json && mv /tmp/settings.merged.json ~/.gemini/settings.json
 
 # 6. Smoke test
-~/.claude-stats/refresh.sh
-# Should print Cursatory + habitat ccusage totals, write
-# anthropic-usage.json + gemini-usage.json under
-# ~/Documents/Projects/project-assets, commit, push.
+~/.claude-stats/run-agent.sh
+# Should sync + print Cursatory + habitat ccusage totals (Claude Code + Codex),
+# write the *-usage.json files under ~/code/project-assets, commit, push.
 ```
 
 ## Schedule
 
-- **05:30 local time daily** — launchd fires `refresh.sh`
-- **06:00 UTC daily** — GitHub workflow `collect-stats.yml` runs in project-assets, picks up the latest agent files
+- **05:30 / 11:30 / 17:30 / 23:30 local time (4x/day)** — launchd fires `run-agent.sh`
+- **Hourly (`0 * * * *`)** — GitHub workflow `collect-stats.yml` runs in project-assets, picks up the latest agent files
 
-The local refresh runs *before* the GitHub cron, so each day's Anthropic/Gemini values are at most ~24 hours stale on the live portfolio — same freshness as the GitHub-derived stats.
+The collector is hourly but the agent files only change when the local agent runs, so token freshness is bounded by the local cadence: at 4x/day, the live portfolio's token stats are at most ~6 hours stale (was ~24h at 1x/day).
 
 ## Logs
 
@@ -66,7 +70,7 @@ If the agent stops working, those are the first place to look.
 
 If you move the user account or rename `Documents/Projects/`, you'll need to update:
 
-- `refresh.sh` — `PROJECT_ASSETS="$HOME/Documents/Projects/project-assets"`
+- `refresh.sh` / `run-agent.sh` — `PROJECT_ASSETS` / `REPO` = `$HOME/code/project-assets` (moved out of `~/Documents` to escape macOS TCC restrictions on launchd writes)
 - `com.jasonvaughan.claude-stats.plist` — `ProgramArguments`, `StandardOutPath`, `StandardErrorPath`, `EnvironmentVariables.HOME` and `EnvironmentVariables.PATH`
 - `gemini-telemetry-snippet.json` — `outfile` path
 
