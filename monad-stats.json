@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-22T07:01:20Z",
+  "updatedAt": "2026-06-22T07:16:50Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -25,10 +25,10 @@
       "role": "agent"
     },
     {
-      "name": "Qwen2.5 14B 1M",
-      "size": "25 GB",
-      "precision": "Q6_K",
-      "role": "chat"
+      "name": "Qwen2.5 32B",
+      "size": "30 GB",
+      "precision": "Q4_K_M",
+      "role": "general"
     }
   ],
   "availableModels": [
@@ -73,17 +73,17 @@
     },
     {
       "name": "Qwen2.5 14B 1M",
-      "size": "25 GB",
+      "size": "12 GB",
       "precision": "Q6_K",
       "role": "chat",
-      "resident": true
+      "resident": false
     },
     {
       "name": "Qwen2.5 32B",
-      "size": "19 GB",
+      "size": "30 GB",
       "precision": "Q4_K_M",
       "role": "general",
-      "resident": false
+      "resident": true
     },
     {
       "name": "Qwen2.5 72B",
@@ -132,17 +132,17 @@
     "plannedDowntimeSeconds": 23291
   },
   "gpu": {
-    "temp": 45,
+    "temp": 40,
     "utilization": 0,
     "powerDraw": 10
   },
   "tokens": {
-    "total": 210961553,
-    "last24h": 11484192,
-    "last7d": 66693668
+    "total": 211039237,
+    "last24h": 11561876,
+    "last7d": 66771352
   },
   "costSaved": {
-    "estimated": 188.0984,
+    "estimated": 651.1644,
     "basis": "Estimated cloud cost avoided at Claude Sonnet rates ($3/$15 per MTok); local compute free (see basisDetail)",
     "basisDetail": [
       {
@@ -184,18 +184,18 @@
     ]
   },
   "throughput": {
-    "tokensPerSec": null
+    "tokensPerSec": 45.9
   },
   "sources": {
     "litellm": {
       "available": true,
       "tokens": {
-        "total": 149524862,
-        "last24h": 11484192,
-        "last7d": 66693668
+        "total": 149602546,
+        "last24h": 11561876,
+        "last7d": 66771352
       },
-      "costSaved": null,
-      "throughputTokensPerSec": null
+      "costSaved": 463.066,
+      "throughputTokensPerSec": 45.9
     },
     "directOllama": {
       "available": true,
