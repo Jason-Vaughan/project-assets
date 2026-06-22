@@ -15,6 +15,7 @@ set -euo pipefail
 
 PROJECT_ASSETS="$HOME/code/project-assets"
 USAGE_FILE="$PROJECT_ASSETS/anthropic-usage.json"
+CODEX_USAGE_FILE="$PROJECT_ASSETS/codex-usage.json"
 GEMINI_USAGE_FILE="$PROJECT_ASSETS/gemini-usage.json"
 GEMINI_TELEMETRY_LOG="$HOME/.gemini/telemetry.log"
 LOG_DIR="$HOME/.claude-stats"
@@ -101,6 +102,89 @@ cat > "$USAGE_FILE" <<EOF
 EOF
 
 echo "[file] wrote $USAGE_FILE"
+
+# === OpenAI Codex CLI usage → codex-usage.json ===
+# Codex CLI authenticates via ChatGPT login (auth_mode=chatgpt), so its tokens are
+# billed through the ChatGPT subscription, NOT the OpenAI API platform — they do
+# NOT appear in the OpenAI admin-API usage report. The collector therefore folds
+# this in as an additive 'agent' contribution to the openai provider (mirrors how
+# ccusage feeds anthropic). Read via `ccusage codex`, which ships in ccusage@latest
+# (the globally-installed 20.0.14 lacks the subcommand), so use npx @latest on both
+# machines. Non-fatal throughout: Codex is a small line and must never block the
+# anthropic/gemini/antigravity push below.
+#
+# CONTRACT (not just convention): only count a machine's Codex usage when its
+# auth_mode == "chatgpt". API-key-auth Codex sessions DO hit the OpenAI API
+# platform and are already captured by tokens.mjs::fetchOpenAITokens(), so counting
+# them here too would double-count. We check auth_mode per machine and zero the
+# contribution otherwise — so flipping Codex to API auth can never silently
+# double-count; the admin API just picks it up instead.
+
+# Prints "chatgpt" iff the given auth.json has auth_mode == chatgpt, else "".
+codex_auth_mode() {
+  python3 -c "import json,sys
+try:
+    print(json.load(open(sys.argv[1])).get('auth_mode',''))
+except Exception:
+    print('')" "$1" 2>/dev/null || echo ""
+}
+
+echo "[codex/cursatory] running ccusage codex..."
+CODEX_CURSATORY=0
+if [[ "$(codex_auth_mode "$HOME/.codex/auth.json")" == "chatgpt" ]]; then
+  CODEX_CURSATORY=$(npx -y ccusage@latest codex monthly --json 2>/dev/null | parse_total) || CODEX_CURSATORY=0
+  CODEX_CURSATORY=${CODEX_CURSATORY:-0}
+else
+  echo "[codex/cursatory] auth_mode != chatgpt (or no Codex) — skipping to avoid admin-API double-count"
+fi
+echo "[codex/cursatory] total: $CODEX_CURSATORY"
+
+echo "[codex/habitat] checking Codex auth_mode via SSH..."
+HABITAT_CODEX_AUTH=$(ssh -o ConnectTimeout=15 -o BatchMode=yes habitat \
+  'python3 -c "import json,os
+try:
+    print(json.load(open(os.path.expanduser(\"~/.codex/auth.json\"))).get(\"auth_mode\",\"\"))
+except Exception:
+    print(\"\")"' 2>/dev/null) || HABITAT_CODEX_AUTH=""
+CODEX_HABITAT=0
+if [[ "$HABITAT_CODEX_AUTH" == "chatgpt" ]]; then
+  echo "[codex/habitat] running ccusage codex via SSH..."
+  CODEX_HABITAT=$(ssh -o ConnectTimeout=15 -o BatchMode=yes habitat \
+    'export PATH="/usr/local/bin:$PATH"; npx -y ccusage@latest codex monthly --json' 2>/dev/null \
+    | parse_total) || CODEX_HABITAT=0
+  CODEX_HABITAT=${CODEX_HABITAT:-0}
+else
+  echo "[codex/habitat] auth_mode='$HABITAT_CODEX_AUTH' != chatgpt (or no Codex/unreachable) — skipping"
+fi
+echo "[codex/habitat] total: $CODEX_HABITAT"
+
+CODEX_TOTAL=$((CODEX_CURSATORY + CODEX_HABITAT))
+echo "[codex/combined] total: $CODEX_TOTAL"
+
+# Carry-forward guard: if this run regressed below the last recorded value (a
+# machine unreachable, or Codex session logs pruned), leave the existing file
+# untouched so the additive openai line never drops. Only rewrite on >= previous.
+CODEX_PREV=0
+if [[ -f "$CODEX_USAGE_FILE" ]]; then
+  CODEX_PREV=$(python3 -c "import json;print(json.load(open('$CODEX_USAGE_FILE')).get('total',0))" 2>/dev/null || echo 0)
+fi
+if [[ "$CODEX_TOTAL" -lt "$CODEX_PREV" ]]; then
+  echo "[codex] WARN: new total $CODEX_TOTAL < previous $CODEX_PREV — keeping previous file"
+else
+  cat > "$CODEX_USAGE_FILE" <<EOF
+{
+  "total": $CODEX_TOTAL,
+  "provider": "openai",
+  "source": "codex-cli (ccusage codex; ChatGPT-auth, excluded from OpenAI admin API)",
+  "byMachine": {
+    "cursatory": $CODEX_CURSATORY,
+    "habitat": $CODEX_HABITAT
+  },
+  "fetchedAt": "$NOW"
+}
+EOF
+  echo "[file] wrote $CODEX_USAGE_FILE"
+fi
 
 # === Gemini CLI telemetry → gemini-usage.json ===
 # Telemetry is enabled in ~/.gemini/settings.json with target=local. Each
@@ -258,6 +342,7 @@ cd "$PROJECT_ASSETS"
 # then rebase our commit onto the latest remote (the cloud collector pushes
 # several times a day), then push. --autostash covers any stray local edits.
 git add anthropic-usage.json gemini-usage.json
+if [[ -f codex-usage.json ]]; then git add codex-usage.json; fi
 if [[ -f antigravity-usage.json ]]; then git add antigravity-usage.json; fi
 if git diff --cached --quiet; then
   echo "[git] no changes to commit"

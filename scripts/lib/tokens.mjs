@@ -8,20 +8,26 @@
  * `manual.<provider>` value should explicitly exclude usage already
  * captured by `api` (admin API) or `agent` (local agent JSON file).
  * Agent files are: anthropic-usage.json (ccusage on Cursatory + habitat),
- * gemini-usage.json (Gemini CLI local telemetry log).
+ * codex-usage.json (ccusage codex — Codex CLI, contributes to openai),
+ * gemini-usage.json (Gemini CLI local telemetry log),
+ * antigravity-usage.json (Antigravity local SQLite gen_metadata).
+ *
+ * Codex authenticates via ChatGPT login, so its tokens are billed through the
+ * subscription and do NOT appear in the OpenAI admin-API report — making the
+ * codex agent file additive to (not overlapping with) the openai `api` source.
  *
  * Returns:
  *   {
  *     total:    <sum of every contribution>,
  *     verified: <sum of admin-API contributions>,
- *     agent:    <sum of agent-file contributions (Anthropic + Gemini)>,
+ *     agent:    <sum of agent-file contributions (Anthropic + OpenAI/Codex + Gemini + Antigravity)>,
  *     manual:   <sum of static projects.yml manual entries>,
  *     prorated: <sum of computed prorated values>,
- *     breakdown: { anthropic, openai, copilot, cursor, gemini },
+ *     breakdown: { anthropic, openai, copilot, cursor, gemini, antigravity },
  *     sources:   per-provider source-mix label e.g. 'api+manual',
  *                'agent+manual', 'manual+prorated', 'unavailable'
  *     errors:    [<provider>: <message>] for any API call that failed
- *     agentMeta: { anthropic: { byMachine, fetchedAt }, gemini: {...} }
+ *     agentMeta: { anthropic: { byMachine, fetchedAt }, openai: { byMachine, fetchedAt }, gemini: {...} }
  *     fetchedAt: ISO timestamp of this aggregation
  *   }
  */
@@ -110,11 +116,23 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, '..', '..');
-const ANTHROPIC_USAGE_FILE = path.join(REPO_ROOT, 'anthropic-usage.json');
-const GEMINI_USAGE_FILE = path.join(REPO_ROOT, 'gemini-usage.json');
-const ANTIGRAVITY_USAGE_FILE = path.join(REPO_ROOT, 'antigravity-usage.json');
 
-function readAgentFile(filePath) {
+// Local-agent usage files, resolved against the repo root by default. Tests can
+// point aggregateTokens at a fixture directory via `cfg.agentDir`.
+const AGENT_FILES = {
+  anthropic: 'anthropic-usage.json',     // ccusage (Claude Code), Cursatory + habitat
+  openai: 'codex-usage.json',            // ccusage codex (Codex CLI, ChatGPT-auth), Cursatory + habitat
+  gemini: 'gemini-usage.json',           // Gemini CLI local telemetry
+  antigravity: 'antigravity-usage.json', // Antigravity (agy) local SQLite gen_metadata
+};
+
+/**
+ * Read a local-agent usage JSON file. Returns the parsed object when it has a
+ * numeric `total`, else null (missing file, parse error, or malformed shape).
+ * @param {string} filePath absolute path to a *-usage.json file
+ * @returns {{total: number}|null}
+ */
+export function readAgentFile(filePath) {
   if (!fs.existsSync(filePath)) return null;
   try {
     const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
@@ -124,20 +142,14 @@ function readAgentFile(filePath) {
   }
 }
 
-/** Total Anthropic usage from local ccusage agent (Cursatory + habitat). */
-function readAnthropicAgentTotal() {
-  return readAgentFile(ANTHROPIC_USAGE_FILE);
-}
-
-/** Total Gemini CLI usage from local telemetry agent. */
-function readGeminiAgentTotal() {
-  return readAgentFile(GEMINI_USAGE_FILE);
-}
-
-/** Total Antigravity (agy) usage from local SQLite conversation DBs. Successor to
- *  the sunsetted Gemini CLI; cumulative lifetime total (cached tokens included). */
-function readAntigravityAgentTotal() {
-  return readAgentFile(ANTIGRAVITY_USAGE_FILE);
+/**
+ * Join the present source labels into a '+' mix (e.g. 'api+agent+manual'), or
+ * 'unavailable' when no source contributed.
+ * @param {string[]} parts ordered source labels that are present
+ * @returns {string}
+ */
+export function sourceMix(parts) {
+  return parts.length ? parts.join('+') : 'unavailable';
 }
 
 /**
@@ -159,9 +171,11 @@ function prorate(spec) {
 export async function aggregateTokens(cfg = {}) {
   const manual = cfg.manual || {};
   const proratedCfg = cfg.prorated || {};
-  const agentAnthropic = readAnthropicAgentTotal();
-  const agentGemini = readGeminiAgentTotal();
-  const agentAntigravity = readAntigravityAgentTotal();
+  const agentDir = cfg.agentDir || REPO_ROOT;
+  const agentAnthropic = readAgentFile(path.join(agentDir, AGENT_FILES.anthropic));
+  const agentOpenAI = readAgentFile(path.join(agentDir, AGENT_FILES.openai));
+  const agentGemini = readAgentFile(path.join(agentDir, AGENT_FILES.gemini));
+  const agentAntigravity = readAgentFile(path.join(agentDir, AGENT_FILES.antigravity));
   const errors = [];
   const sources = {}; // per-provider: 'api' | 'manual'
 
@@ -209,16 +223,24 @@ export async function aggregateTokens(cfg = {}) {
   if (anth.ok) anthSourceParts.push('api');
   if (anthAgent > 0) anthSourceParts.push('agent');
   if (anthManual > 0) anthSourceParts.push('manual');
-  sources.anthropic = anthSourceParts.length ? anthSourceParts.join('+') : 'unavailable';
+  sources.anthropic = sourceMix(anthSourceParts);
   if (!anth.ok) errors.push(`anthropic: ${anth.reason}`);
 
+  // OpenAI gets contributions from up to three sources:
+  //   1. admin API (API-platform usage)
+  //   2. local agent JSON file (codex-usage.json — ccusage codex). Codex CLI
+  //      authenticates via ChatGPT login, so its tokens are billed through the
+  //      subscription and are NOT in the admin-API report — additive, no overlap.
+  //   3. manual.openai in projects.yml (TypingMind prepaid, etc.)
   const oaiApi = oai.ok ? oai.total : 0;
+  const oaiAgent = agentOpenAI?.total || 0;
   const oaiManual = manual.openai || 0;
-  breakdown.openai = oaiApi + oaiManual;
-  if (oai.ok && oaiManual > 0) sources.openai = 'api+manual';
-  else if (oai.ok) sources.openai = 'api';
-  else if (oaiManual > 0) sources.openai = 'manual';
-  else sources.openai = 'unavailable';
+  breakdown.openai = oaiApi + oaiAgent + oaiManual;
+  const oaiSourceParts = [];
+  if (oai.ok) oaiSourceParts.push('api');
+  if (oaiAgent > 0) oaiSourceParts.push('agent');
+  if (oaiManual > 0) oaiSourceParts.push('manual');
+  sources.openai = sourceMix(oaiSourceParts);
   if (!oai.ok) errors.push(`openai: ${oai.reason}`);
 
   // Prorated entries — provider-keyed { since, monthlyRate }. Stacks on top
@@ -237,7 +259,7 @@ export async function aggregateTokens(cfg = {}) {
   }
 
   const verified = anthApi + oaiApi;
-  const agentTotal = anthAgent + geminiAgent + antigravityAgent;
+  const agentTotal = anthAgent + oaiAgent + geminiAgent + antigravityAgent;
   const manualTotal = anthManual + oaiManual + (manual.copilot || 0) + (manual.cursor || 0) + geminiManual + antigravityManual;
   const total = verified + agentTotal + manualTotal + proratedTotal;
 
@@ -253,6 +275,9 @@ export async function aggregateTokens(cfg = {}) {
     agentMeta: {
       anthropic: agentAnthropic
         ? { byMachine: agentAnthropic.byMachine, fetchedAt: agentAnthropic.fetchedAt }
+        : null,
+      openai: agentOpenAI
+        ? { byMachine: agentOpenAI.byMachine, fetchedAt: agentOpenAI.fetchedAt }
         : null,
       gemini: agentGemini
         ? { source: agentGemini.source, fetchedAt: agentGemini.fetchedAt }
