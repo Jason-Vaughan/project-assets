@@ -26,6 +26,16 @@ includeForks: []
 slugs:
   OnDeck-V9: ondeck
 
+# Release tags shown as version chips on the portfolio. INDEPENDENT of the
+# `exclude` list above: notse-releases is excluded from stats (release artifacts
+# only) but its latest STABLE release (releases/latest — no drafts/pre-releases)
+# is the Notse version shown on the site. slug -> owner/repo. Written to
+# _collect-meta.json under `versions`, the single source the portfolio reads.
+versions:
+  notse: Jason-Vaughan/notse-releases
+  tangleclaw: Jason-Vaughan/TangleClaw
+  tanglebrain: Jason-Vaughan/TangleBrain
+
 # Per-project counter / LOC profile / branch overrides.
 # Key is the repo name (case-insensitive). Without an entry, defaults apply
 # (default branch from the GitHub API, standard LOC profile, no custom counters).

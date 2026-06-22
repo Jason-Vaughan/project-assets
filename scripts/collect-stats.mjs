@@ -11,6 +11,7 @@ import { load as yamlLoad } from 'js-yaml';
 
 import { coreStats, countFixCommits, countLinesRefactored, countLinesAuthored } from './lib/git-stats.mjs';
 import { fetchMergedPRCount } from './lib/github-prs.mjs';
+import { fetchLatestRelease } from './lib/github-release.mjs';
 import { aggregateTokens } from './lib/tokens.mjs';
 import tangleclaw from './counters/tangleclaw.mjs';
 import tilt from './counters/tilt.mjs';
@@ -279,6 +280,27 @@ async function main() {
     } catch (err) {
       console.error(`Token aggregation FAILED: ${err.message}`);
       meta.aggregateTokens = { error: err.message };
+    }
+  }
+
+  // Latest release tags for the version chips shown on the portfolio. Fetched
+  // INDEPENDENTLY of the per-repo stats loop above, so it works even for repos
+  // in the stats `exclude` list — e.g. notse-releases is excluded from stats
+  // (release artifacts only) but its tag is the Notse version shown on the site.
+  // releases/latest returns the latest STABLE release (no drafts/pre-releases),
+  // so an unpublished 0.5.20-rc never shows. slug -> tag string (or null).
+  if (!onlyRepo && cfg.versions) {
+    console.log(`\n=== fetching release tags ===`);
+    const token = process.env.STATS_COLLECTOR_TOKEN || process.env.GITHUB_TOKEN;
+    meta.versions = {};
+    for (const [slug, fullName] of Object.entries(cfg.versions)) {
+      try {
+        meta.versions[slug] = await fetchLatestRelease(fullName, token);
+        console.log(`[version] ${slug} (${fullName}): ${meta.versions[slug] ?? 'none'}`);
+      } catch (err) {
+        console.warn(`[version] ${slug} (${fullName}) failed: ${err.message}`);
+        meta.versions[slug] = null;
+      }
     }
   }
 
