@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-23T05:33:09Z",
+  "updatedAt": "2026-06-23T05:48:20Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -12,17 +12,17 @@
     "note": "served on demand"
   },
   "currentModel": {
-    "name": "Qwen2.5 14B 1M",
-    "size": "25 GB",
-    "precision": "Q6_K",
-    "role": "chat"
+    "name": "GPT-OSS 120B",
+    "size": "66 GB",
+    "precision": "MXFP4",
+    "role": "agent"
   },
   "currentModels": [
     {
-      "name": "Qwen2.5 14B 1M",
-      "size": "25 GB",
-      "precision": "Q6_K",
-      "role": "chat"
+      "name": "GPT-OSS 120B",
+      "size": "66 GB",
+      "precision": "MXFP4",
+      "role": "agent"
     },
     {
       "name": "Qwen2.5 32B",
@@ -40,10 +40,10 @@
     },
     {
       "name": "GPT-OSS 120B",
-      "size": "65 GB",
+      "size": "66 GB",
       "precision": "MXFP4",
       "role": "agent",
-      "resident": false
+      "resident": true
     },
     {
       "name": "Gemma4 26B",
@@ -73,10 +73,10 @@
     },
     {
       "name": "Qwen2.5 14B 1M",
-      "size": "25 GB",
+      "size": "12 GB",
       "precision": "Q6_K",
       "role": "chat",
-      "resident": true
+      "resident": false
     },
     {
       "name": "Qwen2.5 32B",
@@ -132,14 +132,14 @@
     "plannedDowntimeSeconds": 23291
   },
   "gpu": {
-    "temp": 40,
+    "temp": 55,
     "utilization": 0,
-    "powerDraw": 10
+    "powerDraw": 20
   },
   "tokens": {
-    "total": 225727389,
-    "last24h": 17775120,
-    "last7d": 71599652
+    "total": 225906888,
+    "last24h": 17954619,
+    "last7d": 71779151
   },
   "costSaved": {
     "estimated": 188.0984,
@@ -190,9 +190,9 @@
     "litellm": {
       "available": true,
       "tokens": {
-        "total": 164290698,
-        "last24h": 17775120,
-        "last7d": 71599652
+        "total": 164470197,
+        "last24h": 17954619,
+        "last7d": 71779151
       },
       "costSaved": null,
       "throughputTokensPerSec": null
