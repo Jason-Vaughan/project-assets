@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-23T10:22:20Z",
+  "updatedAt": "2026-06-23T10:37:32Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -25,10 +25,10 @@
       "role": "agent"
     },
     {
-      "name": "Qwen2.5 32B",
-      "size": "30 GB",
-      "precision": "Q4_K_M",
-      "role": "general"
+      "name": "Qwen2.5 14B 1M",
+      "size": "25 GB",
+      "precision": "Q6_K",
+      "role": "chat"
     }
   ],
   "availableModels": [
@@ -73,17 +73,17 @@
     },
     {
       "name": "Qwen2.5 14B 1M",
-      "size": "12 GB",
+      "size": "25 GB",
       "precision": "Q6_K",
       "role": "chat",
-      "resident": false
+      "resident": true
     },
     {
       "name": "Qwen2.5 32B",
-      "size": "30 GB",
+      "size": "19 GB",
       "precision": "Q4_K_M",
       "role": "general",
-      "resident": true
+      "resident": false
     },
     {
       "name": "Qwen2.5 72B",
@@ -102,7 +102,7 @@
   ],
   "residency24h": {
     "mostResident": "GPT-OSS 120B",
-    "hotSwaps": 69
+    "hotSwaps": 70
   },
   "stack": [
     "Ollama 0.24.0",
@@ -137,9 +137,9 @@
     "powerDraw": 10
   },
   "tokens": {
-    "total": 227553894,
-    "last24h": 19601625,
-    "last7d": 73426157
+    "total": 227602956,
+    "last24h": 19650687,
+    "last7d": 73475219
   },
   "costSaved": {
     "estimated": 188.0984,
@@ -190,9 +190,9 @@
     "litellm": {
       "available": true,
       "tokens": {
-        "total": 166117203,
-        "last24h": 19601625,
-        "last7d": 73426157
+        "total": 166166265,
+        "last24h": 19650687,
+        "last7d": 73475219
       },
       "costSaved": null,
       "throughputTokensPerSec": null
