@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-23T16:11:37Z",
+  "updatedAt": "2026-06-23T16:27:06Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -102,7 +102,7 @@
   ],
   "residency24h": {
     "mostResident": "GPT-OSS 120B",
-    "hotSwaps": 60
+    "hotSwaps": 59
   },
   "stack": [
     "Ollama 0.24.0",
@@ -132,14 +132,14 @@
     "plannedDowntimeSeconds": 23291
   },
   "gpu": {
-    "temp": 45,
+    "temp": 35,
     "utilization": 0,
     "powerDraw": 10
   },
   "tokens": {
-    "total": 230285247,
-    "last24h": 22332978,
-    "last7d": 76157510
+    "total": 230302412,
+    "last24h": 22350143,
+    "last7d": 76174675
   },
   "costSaved": {
     "estimated": 188.0984,
@@ -190,9 +190,9 @@
     "litellm": {
       "available": true,
       "tokens": {
-        "total": 168848556,
-        "last24h": 22332978,
-        "last7d": 76157510
+        "total": 168865721,
+        "last24h": 22350143,
+        "last7d": 76174675
       },
       "costSaved": null,
       "throughputTokensPerSec": null
