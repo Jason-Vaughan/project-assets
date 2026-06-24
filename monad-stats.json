@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-24T05:48:30Z",
+  "updatedAt": "2026-06-24T06:03:43Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -25,10 +25,10 @@
       "role": "agent"
     },
     {
-      "name": "Qwen2.5 32B",
-      "size": "30 GB",
-      "precision": "Q4_K_M",
-      "role": "general"
+      "name": "Qwen2.5 14B 1M",
+      "size": "25 GB",
+      "precision": "Q6_K",
+      "role": "chat"
     }
   ],
   "availableModels": [
@@ -73,17 +73,17 @@
     },
     {
       "name": "Qwen2.5 14B 1M",
-      "size": "12 GB",
+      "size": "25 GB",
       "precision": "Q6_K",
       "role": "chat",
-      "resident": false
+      "resident": true
     },
     {
       "name": "Qwen2.5 32B",
-      "size": "30 GB",
+      "size": "19 GB",
       "precision": "Q4_K_M",
       "role": "general",
-      "resident": true
+      "resident": false
     },
     {
       "name": "Qwen2.5 72B",
@@ -132,17 +132,17 @@
     "plannedDowntimeSeconds": 23291
   },
   "gpu": {
-    "temp": 50,
+    "temp": 40,
     "utilization": 0,
-    "powerDraw": 20
+    "powerDraw": 10
   },
   "tokens": {
-    "total": 234437079,
-    "last24h": 17478364,
-    "last7d": 70077908
+    "total": 234507115,
+    "last24h": 17548400,
+    "last7d": 70147944
   },
   "costSaved": {
-    "estimated": 723.5752,
+    "estimated": 723.8055,
     "basis": "Estimated cloud cost avoided at Claude Sonnet rates ($3/$15 per MTok); local compute free (see basisDetail)",
     "basisDetail": [
       {
@@ -184,18 +184,18 @@
     ]
   },
   "throughput": {
-    "tokensPerSec": 46.9
+    "tokensPerSec": 47.0
   },
   "sources": {
     "litellm": {
       "available": true,
       "tokens": {
-        "total": 173000388,
-        "last24h": 17478364,
-        "last7d": 70077908
+        "total": 173070424,
+        "last24h": 17548400,
+        "last7d": 70147944
       },
-      "costSaved": 535.4768,
-      "throughputTokensPerSec": 46.9
+      "costSaved": 535.7071,
+      "throughputTokensPerSec": 47.0
     },
     "directOllama": {
       "available": true,
