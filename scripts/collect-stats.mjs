@@ -364,12 +364,13 @@ async function main() {
           cwd: REPO_ROOT, encoding: 'utf8',
         });
         const oldMeta = JSON.parse(oldRaw);
-        let oldLoc = 0, oldCommits = 0, oldTests = 0;
+        let oldLoc = 0, oldCommits = 0, oldTests = 0, oldProjects = 0;
         for (const p of Object.values(oldMeta.projects || {})) {
           if (!p.ok || !p.stats) continue;
           oldLoc += p.stats.loc || 0;
           oldCommits += p.stats.commits || 0;
           oldTests += p.stats.tests || 0;
+          oldProjects++;
         }
         meta.aggregateDeltas = {
           windowDays: 7,
@@ -387,13 +388,30 @@ async function main() {
           authored: oldMeta.aggregateAuthored
             ? aggAuthored - oldMeta.aggregateAuthored.count
             : null,
+          // Net change in the number of tracked repos. Always computable (every
+          // manifest has `projects`); the frontend hides the badge when it's 0,
+          // so this only surfaces in weeks a repo was actually added/dropped.
+          projects: repoCount - oldProjects,
+          // Cloud-provider token growth over the window. NOTE: this is the
+          // delta of the *cloud* total only — local inference (Monad-1 / the
+          // OpenClaw fleet) is fetched live by the frontend and isn't in the
+          // manifest, so it has no weekly baseline. The headline AI Tokens tile
+          // shows cloud+local, so this badge tracks cloud momentum, not the
+          // exact composite. Null until both manifests carry a numeric total.
+          tokens:
+            oldMeta.aggregateTokens && typeof oldMeta.aggregateTokens.total === 'number'
+            && meta.aggregateTokens && typeof meta.aggregateTokens.total === 'number'
+              ? meta.aggregateTokens.total - oldMeta.aggregateTokens.total
+              : null,
         };
         console.log(
           `Deltas (7d): loc=${meta.aggregateDeltas.loc.toLocaleString()} ` +
           `commits=${meta.aggregateDeltas.commits} tests=${meta.aggregateDeltas.tests} ` +
           `fixes=${meta.aggregateDeltas.fixes} prs=${meta.aggregateDeltas.prs} ` +
           `refactored=${meta.aggregateDeltas.refactored.toLocaleString()} ` +
-          `authored=${meta.aggregateDeltas.authored === null ? 'n/a (no baseline)' : meta.aggregateDeltas.authored.toLocaleString()}`,
+          `authored=${meta.aggregateDeltas.authored === null ? 'n/a (no baseline)' : meta.aggregateDeltas.authored.toLocaleString()} ` +
+          `projects=${meta.aggregateDeltas.projects} ` +
+          `tokens=${meta.aggregateDeltas.tokens === null ? 'n/a (no baseline)' : meta.aggregateDeltas.tokens.toLocaleString()}`,
         );
       } else {
         console.log('No manifest history older than 7 days — skipping aggregateDeltas.');
