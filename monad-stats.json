@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-25T04:17:31Z",
+  "updatedAt": "2026-06-25T04:32:31Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -25,10 +25,10 @@
       "role": "agent"
     },
     {
-      "name": "Qwen2.5 32B",
-      "size": "30 GB",
-      "precision": "Q4_K_M",
-      "role": "general"
+      "name": "Qwen2.5 14B 1M",
+      "size": "25 GB",
+      "precision": "Q6_K",
+      "role": "chat"
     }
   ],
   "availableModels": [
@@ -73,17 +73,17 @@
     },
     {
       "name": "Qwen2.5 14B 1M",
-      "size": "12 GB",
+      "size": "25 GB",
       "precision": "Q6_K",
       "role": "chat",
-      "resident": false
+      "resident": true
     },
     {
       "name": "Qwen2.5 32B",
-      "size": "30 GB",
+      "size": "19 GB",
       "precision": "Q4_K_M",
       "role": "general",
-      "resident": true
+      "resident": false
     },
     {
       "name": "Qwen2.5 72B",
@@ -132,17 +132,17 @@
     "plannedDowntimeSeconds": 23291
   },
   "gpu": {
-    "temp": 45,
+    "temp": 40,
     "utilization": 0,
     "powerDraw": 10
   },
   "tokens": {
-    "total": 242671268,
-    "last24h": 10191087,
-    "last7d": 68330491
+    "total": 242712892,
+    "last24h": 10232711,
+    "last7d": 68372115
   },
   "costSaved": {
-    "estimated": 749.3127,
+    "estimated": 749.4419,
     "basis": "Estimated cloud cost avoided at Claude Sonnet rates ($3/$15 per MTok); local compute free (see basisDetail)",
     "basisDetail": [
       {
@@ -184,18 +184,18 @@
     ]
   },
   "throughput": {
-    "tokensPerSec": 75.4
+    "tokensPerSec": 74.1
   },
   "sources": {
     "litellm": {
       "available": true,
       "tokens": {
-        "total": 181234577,
-        "last24h": 10191087,
-        "last7d": 68330491
+        "total": 181276201,
+        "last24h": 10232711,
+        "last7d": 68372115
       },
-      "costSaved": 561.2143,
-      "throughputTokensPerSec": 75.4
+      "costSaved": 561.3435,
+      "throughputTokensPerSec": 74.1
     },
     "directOllama": {
       "available": true,
