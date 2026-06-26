@@ -1,9 +1,92 @@
 {
-  "runStartedAt": "2026-06-26T13:11:34.888Z",
+  "runStartedAt": "2026-06-26T16:17:01.699Z",
   "owner": "Jason-Vaughan",
   "discoveredCount": 35,
   "eligibleCount": 25,
   "projects": {
+    "monad-1": {
+      "ok": true,
+      "repo": "Jason-Vaughan/Monad-1",
+      "branch": "main",
+      "source": "git",
+      "private": true,
+      "stats": {
+        "loc": 16528,
+        "tests": 355,
+        "testFiles": 8,
+        "commits": 91,
+        "contributors": 2,
+        "firstCommit": "2026-05-17",
+        "languages": [
+          {
+            "name": "Python",
+            "bytes": 354195,
+            "percent": 96
+          }
+        ],
+        "fixes": {
+          "count": 13
+        },
+        "linesRefactored": {
+          "count": 10120
+        },
+        "linesAuthored": {
+          "count": 26648
+        },
+        "prs": {
+          "merged": 66
+        },
+        "repo": "Jason-Vaughan/Monad-1",
+        "branch": "main",
+        "source": "git",
+        "private": true,
+        "archived": false,
+        "updatedAt": "2026-06-26T16:17:03.437Z"
+      }
+    },
+    "tangleclaw": {
+      "ok": true,
+      "repo": "Jason-Vaughan/TangleClaw",
+      "branch": "main",
+      "source": "git",
+      "private": false,
+      "stats": {
+        "loc": 99057,
+        "tests": 3560,
+        "testFiles": 121,
+        "commits": 342,
+        "contributors": 3,
+        "firstCommit": "2026-03-11",
+        "engines": 4,
+        "routes": 462,
+        "npmDeps": 0,
+        "languages": [
+          {
+            "name": "JavaScript",
+            "bytes": 3473323,
+            "percent": 95
+          }
+        ],
+        "fixes": {
+          "count": 61
+        },
+        "linesRefactored": {
+          "count": 16809
+        },
+        "linesAuthored": {
+          "count": 115585
+        },
+        "prs": {
+          "merged": 197
+        },
+        "repo": "Jason-Vaughan/TangleClaw",
+        "branch": "main",
+        "source": "git",
+        "private": false,
+        "archived": false,
+        "updatedAt": "2026-06-26T16:17:07.236Z"
+      }
+    },
     "notse": {
       "ok": true,
       "repo": "Jason-Vaughan/Notse",
@@ -11,10 +94,10 @@
       "source": "git",
       "private": true,
       "stats": {
-        "loc": 34818,
-        "tests": 1036,
+        "loc": 34929,
+        "tests": 1042,
         "testFiles": 53,
-        "commits": 239,
+        "commits": 240,
         "contributors": 2,
         "firstCommit": "2026-03-07",
         "languages": [
@@ -25,7 +108,7 @@
           },
           {
             "name": "Python",
-            "bytes": 523747,
+            "bytes": 528781,
             "percent": 38
           },
           {
@@ -38,103 +121,60 @@
           "count": 47
         },
         "linesRefactored": {
-          "count": 5131
+          "count": 5152
         },
         "linesAuthored": {
-          "count": 39949
+          "count": 40081
         },
         "prs": {
-          "merged": 119
+          "merged": 120
         },
         "repo": "Jason-Vaughan/Notse",
         "branch": "main",
         "source": "git",
         "private": true,
         "archived": false,
-        "updatedAt": "2026-06-26T13:11:37.251Z"
+        "updatedAt": "2026-06-26T16:17:09.790Z"
       }
     },
-    "tangleclaw": {
+    "uci": {
       "ok": true,
-      "repo": "Jason-Vaughan/TangleClaw",
-      "branch": "main",
-      "source": "git",
-      "private": false,
-      "stats": {
-        "loc": 98686,
-        "tests": 3528,
-        "testFiles": 119,
-        "commits": 341,
-        "contributors": 3,
-        "firstCommit": "2026-03-11",
-        "engines": 4,
-        "routes": 462,
-        "npmDeps": 0,
-        "languages": [
-          {
-            "name": "JavaScript",
-            "bytes": 3441949,
-            "percent": 95
-          }
-        ],
-        "fixes": {
-          "count": 61
-        },
-        "linesRefactored": {
-          "count": 16792
-        },
-        "linesAuthored": {
-          "count": 115197
-        },
-        "prs": {
-          "merged": 196
-        },
-        "repo": "Jason-Vaughan/TangleClaw",
-        "branch": "main",
-        "source": "git",
-        "private": false,
-        "archived": false,
-        "updatedAt": "2026-06-26T13:11:40.827Z"
-      }
-    },
-    "monad-1": {
-      "ok": true,
-      "repo": "Jason-Vaughan/Monad-1",
+      "repo": "Jason-Vaughan/UCI",
       "branch": "main",
       "source": "git",
       "private": true,
       "stats": {
-        "loc": 16169,
-        "tests": 347,
-        "testFiles": 8,
-        "commits": 89,
+        "loc": 61387,
+        "tests": 896,
+        "testFiles": 72,
+        "commits": 36,
         "contributors": 2,
-        "firstCommit": "2026-05-17",
+        "firstCommit": "2026-04-27",
         "languages": [
           {
-            "name": "Python",
-            "bytes": 338088,
-            "percent": 96
+            "name": "TypeScript",
+            "bytes": 1749837,
+            "percent": 97
           }
         ],
         "fixes": {
-          "count": 12
+          "count": 0
         },
         "linesRefactored": {
-          "count": 10035
+          "count": 1499
         },
         "linesAuthored": {
-          "count": 26204
+          "count": 62893
         },
         "prs": {
-          "merged": 64
+          "merged": 5
         },
-        "repo": "Jason-Vaughan/Monad-1",
+        "repo": "Jason-Vaughan/UCI",
         "branch": "main",
         "source": "git",
         "private": true,
         "archived": false,
-        "updatedAt": "2026-06-26T13:11:42.267Z"
+        "updatedAt": "2026-06-26T16:17:11.315Z"
       }
     },
     "tilt": {
@@ -175,7 +215,7 @@
         "source": "git",
         "private": true,
         "archived": false,
-        "updatedAt": "2026-06-26T13:11:54.859Z"
+        "updatedAt": "2026-06-26T16:17:24.670Z"
       }
     },
     "jasonvaughan.com": {
@@ -225,47 +265,7 @@
         "source": "git",
         "private": false,
         "archived": false,
-        "updatedAt": "2026-06-26T13:11:56.884Z"
-      }
-    },
-    "uci": {
-      "ok": true,
-      "repo": "Jason-Vaughan/UCI",
-      "branch": "main",
-      "source": "git",
-      "private": true,
-      "stats": {
-        "loc": 61387,
-        "tests": 896,
-        "testFiles": 72,
-        "commits": 36,
-        "contributors": 2,
-        "firstCommit": "2026-04-27",
-        "languages": [
-          {
-            "name": "TypeScript",
-            "bytes": 1749837,
-            "percent": 97
-          }
-        ],
-        "fixes": {
-          "count": 0
-        },
-        "linesRefactored": {
-          "count": 1499
-        },
-        "linesAuthored": {
-          "count": 62893
-        },
-        "prs": {
-          "merged": 5
-        },
-        "repo": "Jason-Vaughan/UCI",
-        "branch": "main",
-        "source": "git",
-        "private": true,
-        "archived": false,
-        "updatedAt": "2026-06-26T13:11:58.247Z"
+        "updatedAt": "2026-06-26T16:17:26.970Z"
       }
     },
     "tanglebrain": {
@@ -310,7 +310,7 @@
         "source": "git",
         "private": false,
         "archived": false,
-        "updatedAt": "2026-06-26T13:11:59.322Z"
+        "updatedAt": "2026-06-26T16:17:28.162Z"
       }
     },
     "clawbridge": {
@@ -350,7 +350,7 @@
         "source": "git",
         "private": false,
         "archived": false,
-        "updatedAt": "2026-06-26T13:12:00.243Z"
+        "updatedAt": "2026-06-26T16:17:29.214Z"
       }
     },
     "openclaw-ebay-research": {
@@ -390,7 +390,7 @@
         "source": "git",
         "private": false,
         "archived": false,
-        "updatedAt": "2026-06-26T13:12:01.340Z"
+        "updatedAt": "2026-06-26T16:17:30.032Z"
       }
     },
     "openclaw-ebay-seller": {
@@ -430,7 +430,7 @@
         "source": "git",
         "private": false,
         "archived": false,
-        "updatedAt": "2026-06-26T13:12:02.070Z"
+        "updatedAt": "2026-06-26T16:17:30.760Z"
       }
     },
     "openclaw-google-oauth": {
@@ -470,7 +470,7 @@
         "source": "git",
         "private": false,
         "archived": false,
-        "updatedAt": "2026-06-26T13:12:02.908Z"
+        "updatedAt": "2026-06-26T16:17:31.757Z"
       }
     },
     "rentalclaw-project": {
@@ -525,7 +525,7 @@
         "source": "git",
         "private": true,
         "archived": false,
-        "updatedAt": "2026-06-26T13:12:04.124Z"
+        "updatedAt": "2026-06-26T16:17:33.348Z"
       }
     },
     "tangleweb": {
@@ -565,7 +565,7 @@
         "source": "git",
         "private": true,
         "archived": false,
-        "updatedAt": "2026-06-26T13:12:06.001Z"
+        "updatedAt": "2026-06-26T16:17:34.468Z"
       }
     },
     "tilt-claw": {
@@ -599,7 +599,7 @@
         "source": "git",
         "private": true,
         "archived": false,
-        "updatedAt": "2026-06-26T13:12:06.823Z"
+        "updatedAt": "2026-06-26T16:17:35.376Z"
       }
     },
     "kobold": {
@@ -633,7 +633,7 @@
         "source": "git",
         "private": true,
         "archived": false,
-        "updatedAt": "2026-06-26T13:12:07.640Z"
+        "updatedAt": "2026-06-26T16:17:36.196Z"
       }
     },
     "medusa": {
@@ -678,7 +678,7 @@
         "source": "git",
         "private": false,
         "archived": false,
-        "updatedAt": "2026-06-26T13:12:08.871Z"
+        "updatedAt": "2026-06-26T16:17:37.603Z"
       }
     },
     "whitepapers": {
@@ -718,7 +718,7 @@
         "source": "git",
         "private": true,
         "archived": false,
-        "updatedAt": "2026-06-26T13:12:09.895Z"
+        "updatedAt": "2026-06-26T16:17:38.763Z"
       }
     },
     "licensing-workers": {
@@ -758,7 +758,7 @@
         "source": "git",
         "private": true,
         "archived": false,
-        "updatedAt": "2026-06-26T13:12:10.682Z"
+        "updatedAt": "2026-06-26T16:17:39.621Z"
       }
     },
     "scrapegoat": {
@@ -803,7 +803,7 @@
         "source": "git",
         "private": false,
         "archived": false,
-        "updatedAt": "2026-06-26T13:12:11.456Z"
+        "updatedAt": "2026-06-26T16:17:40.480Z"
       }
     },
     "porthub": {
@@ -848,7 +848,7 @@
         "source": "git",
         "private": false,
         "archived": false,
-        "updatedAt": "2026-06-26T13:12:12.466Z"
+        "updatedAt": "2026-06-26T16:17:41.728Z"
       }
     },
     "ondeck": {
@@ -898,7 +898,7 @@
         "source": "git",
         "private": true,
         "archived": false,
-        "updatedAt": "2026-06-26T13:12:15.504Z"
+        "updatedAt": "2026-06-26T16:17:44.922Z"
       }
     },
     "refuctor": {
@@ -943,7 +943,7 @@
         "source": "git",
         "private": false,
         "archived": true,
-        "updatedAt": "2026-06-26T13:12:18.844Z"
+        "updatedAt": "2026-06-26T16:17:48.058Z"
       }
     },
     "tilt-showcase": {
@@ -977,7 +977,7 @@
         "source": "git",
         "private": false,
         "archived": false,
-        "updatedAt": "2026-06-26T13:12:19.468Z"
+        "updatedAt": "2026-06-26T16:17:48.704Z"
       }
     },
     "clits": {
@@ -1022,7 +1022,7 @@
         "source": "git",
         "private": false,
         "archived": true,
-        "updatedAt": "2026-06-26T13:12:20.413Z"
+        "updatedAt": "2026-06-26T16:17:49.989Z"
       }
     },
     "cierre-sensei": {
@@ -1038,7 +1038,7 @@
         "commits": 94,
         "contributors": 1,
         "firstCommit": "2024-09-01",
-        "updatedAt": "2026-06-26T13:12:21.236Z",
+        "updatedAt": "2026-06-26T16:17:50.851Z",
         "repo": "Jason-Vaughan/cierre-sensei",
         "branch": null,
         "source": "remote",
@@ -1049,15 +1049,15 @@
     }
   },
   "aggregateTokens": {
-    "total": 15707060093,
+    "total": 15707064325,
     "verified": 24580236,
     "agent": 8261717964,
     "manual": 7416899866,
-    "prorated": 3862027,
+    "prorated": 3866259,
     "breakdown": {
       "anthropic": 8301071282,
       "openai": 74106528,
-      "copilot": 3862027,
+      "copilot": 3866259,
       "cursor": 7016899866,
       "gemini": 305000000,
       "antigravity": 6120390
@@ -1097,7 +1097,7 @@
         "fetchedAt": "2026-06-26T12:30:10Z"
       }
     },
-    "fetchedAt": "2026-06-26T13:12:38.299Z"
+    "fetchedAt": "2026-06-26T16:18:08.505Z"
   },
   "versions": {
     "notse": "v0.5.20",
@@ -1123,30 +1123,30 @@
     ]
   },
   "aggregateFixes": {
-    "count": 416
+    "count": 417
   },
   "aggregatePRs": {
-    "merged": 611
+    "merged": 615
   },
   "aggregateRefactored": {
-    "count": 546037
+    "count": 546160
   },
   "aggregateAuthored": {
-    "count": 1363817
+    "count": 1364781
   },
   "aggregateDeltas": {
     "windowDays": 7,
-    "fromSha": "4fe6536369ee32944a2df13d07c79a20cb9678ef",
-    "loc": 11239,
-    "commits": 105,
-    "tests": 328,
-    "fixes": 24,
-    "prs": 84,
-    "refactored": 10416,
-    "authored": 21655,
+    "fromSha": "c16a1c337c7c8e1cd3ceaa07d7c84c1967d336ad",
+    "loc": 12080,
+    "commits": 109,
+    "tests": 374,
+    "fixes": 25,
+    "prs": 88,
+    "refactored": 10539,
+    "authored": 22619,
     "projects": 0,
-    "tokens": 6414742457
+    "tokens": 6414741315
   },
-  "runFinishedAt": "2026-06-26T13:12:39.320Z",
+  "runFinishedAt": "2026-06-26T16:18:09.625Z",
   "okCount": 25
 }
