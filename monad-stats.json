@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-30T01:07:38Z",
+  "updatedAt": "2026-06-30T01:22:49Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -12,17 +12,17 @@
     "note": "served on demand"
   },
   "currentModel": {
-    "name": "Qwen2.5 32B",
-    "size": "24 GB",
-    "precision": "Q4_K_M",
-    "role": "general"
+    "name": "GPT-OSS 120B",
+    "size": "64 GB",
+    "precision": "MXFP4",
+    "role": "agent"
   },
   "currentModels": [
     {
-      "name": "Qwen2.5 32B",
-      "size": "24 GB",
-      "precision": "Q4_K_M",
-      "role": "general"
+      "name": "GPT-OSS 120B",
+      "size": "64 GB",
+      "precision": "MXFP4",
+      "role": "agent"
     }
   ],
   "availableModels": [
@@ -34,10 +34,10 @@
     },
     {
       "name": "GPT-OSS 120B",
-      "size": "65 GB",
+      "size": "64 GB",
       "precision": "MXFP4",
       "role": "agent",
-      "resident": false
+      "resident": true
     },
     {
       "name": "Gemma4 26B",
@@ -74,10 +74,10 @@
     },
     {
       "name": "Qwen2.5 32B",
-      "size": "24 GB",
+      "size": "19 GB",
       "precision": "Q4_K_M",
       "role": "general",
-      "resident": true
+      "resident": false
     },
     {
       "name": "Qwen2.5 72B",
@@ -96,7 +96,7 @@
   ],
   "residency24h": {
     "mostResident": "GPT-OSS 120B",
-    "hotSwaps": 20
+    "hotSwaps": 21
   },
   "stack": [
     "Ollama 0.30.11",
@@ -132,17 +132,17 @@
     "plannedDowntimeSeconds": 194490
   },
   "gpu": {
-    "temp": 45,
+    "temp": 35,
     "utilization": 0,
     "powerDraw": 10
   },
   "tokens": {
-    "total": 268739835,
-    "last24h": 2417529,
-    "last7d": 51781120
+    "total": 268757716,
+    "last24h": 2435410,
+    "last7d": 51799001
   },
   "costSaved": {
-    "estimated": 830.3929,
+    "estimated": 830.4584,
     "basis": "Estimated cloud cost avoided at Claude Sonnet rates ($3/$15 per MTok); local compute free (see basisDetail)",
     "basisDetail": [
       {
@@ -184,18 +184,18 @@
     ]
   },
   "throughput": {
-    "tokensPerSec": 57.9
+    "tokensPerSec": 58.5
   },
   "sources": {
     "litellm": {
       "available": true,
       "tokens": {
-        "total": 207303103,
-        "last24h": 2417529,
-        "last7d": 51781079
+        "total": 207320984,
+        "last24h": 2435410,
+        "last7d": 51798960
       },
-      "costSaved": 642.2942,
-      "throughputTokensPerSec": 57.9
+      "costSaved": 642.3597,
+      "throughputTokensPerSec": 58.5
     },
     "directOllama": {
       "available": true,
