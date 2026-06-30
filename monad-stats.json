@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-30T05:55:56Z",
+  "updatedAt": "2026-06-30T23:52:13Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -23,12 +23,6 @@
       "size": "64 GB",
       "precision": "MXFP4",
       "role": "agent"
-    },
-    {
-      "name": "Qwen2.5 32B",
-      "size": "24 GB",
-      "precision": "Q4_K_M",
-      "role": "general"
     }
   ],
   "availableModels": [
@@ -80,10 +74,10 @@
     },
     {
       "name": "Qwen2.5 32B",
-      "size": "24 GB",
+      "size": "19 GB",
       "precision": "Q4_K_M",
       "role": "general",
-      "resident": true
+      "resident": false
     },
     {
       "name": "Qwen2.5 72B",
@@ -102,7 +96,7 @@
   ],
   "residency24h": {
     "mostResident": "GPT-OSS 120B",
-    "hotSwaps": 35
+    "hotSwaps": 19
   },
   "stack": [
     "Ollama 0.30.11",
@@ -113,7 +107,7 @@
   ],
   "uptime": {
     "daysOnline": 0,
-    "lastReboot": "2026-06-29T17:48:18Z",
+    "lastReboot": "2026-06-30T23:49:57Z",
     "trackedSince": "2026-05-15T15:08:00Z",
     "plannedOutages": [
       {
