@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-01T00:15:12Z",
+  "updatedAt": "2026-07-01T00:30:22Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -12,12 +12,18 @@
     "note": "served on demand"
   },
   "currentModel": {
-    "name": "Qwen2.5 32B",
-    "size": "24 GB",
-    "precision": "Q4_K_M",
-    "role": "general"
+    "name": "Qwen2.5 14B 1M",
+    "size": "17 GB",
+    "precision": "Q6_K",
+    "role": "chat"
   },
   "currentModels": [
+    {
+      "name": "Qwen2.5 14B 1M",
+      "size": "17 GB",
+      "precision": "Q6_K",
+      "role": "chat"
+    },
     {
       "name": "Qwen2.5 32B",
       "size": "24 GB",
@@ -67,10 +73,10 @@
     },
     {
       "name": "Qwen2.5 14B 1M",
-      "size": "12 GB",
+      "size": "17 GB",
       "precision": "Q6_K",
       "role": "chat",
-      "resident": false
+      "resident": true
     },
     {
       "name": "Qwen2.5 32B",
@@ -132,17 +138,17 @@
     "plannedDowntimeSeconds": 194490
   },
   "gpu": {
-    "temp": 35,
+    "temp": 40,
     "utilization": 0,
     "powerDraw": 10
   },
   "tokens": {
-    "total": 269808686,
-    "last24h": 1606775,
-    "last7d": 37328505
+    "total": 269824869,
+    "last24h": 1622958,
+    "last7d": 37344688
   },
   "costSaved": {
-    "estimated": 833.7435,
+    "estimated": 833.7926,
     "basis": "Estimated cloud cost avoided at Claude Sonnet rates ($3/$15 per MTok); local compute free (see basisDetail)",
     "basisDetail": [
       {
@@ -184,18 +190,18 @@
     ]
   },
   "throughput": {
-    "tokensPerSec": 51.6
+    "tokensPerSec": 51.5
   },
   "sources": {
     "litellm": {
       "available": true,
       "tokens": {
-        "total": 208371954,
-        "last24h": 1606775,
-        "last7d": 37328464
+        "total": 208388137,
+        "last24h": 1622958,
+        "last7d": 37344647
       },
-      "costSaved": 645.6448,
-      "throughputTokensPerSec": 51.6
+      "costSaved": 645.6939,
+      "throughputTokensPerSec": 51.5
     },
     "directOllama": {
       "available": true,
