@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-03T15:27:54Z",
+  "updatedAt": "2026-07-03T15:43:04Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -12,17 +12,17 @@
     "note": "served on demand"
   },
   "currentModel": {
-    "name": "Qwen2.5 32B",
-    "size": "24 GB",
-    "precision": "Q4_K_M",
-    "role": "general"
+    "name": "GPT-OSS 120B",
+    "size": "64 GB",
+    "precision": "MXFP4",
+    "role": "agent"
   },
   "currentModels": [
     {
-      "name": "Qwen2.5 32B",
-      "size": "24 GB",
-      "precision": "Q4_K_M",
-      "role": "general"
+      "name": "GPT-OSS 120B",
+      "size": "64 GB",
+      "precision": "MXFP4",
+      "role": "agent"
     }
   ],
   "availableModels": [
@@ -34,10 +34,10 @@
     },
     {
       "name": "GPT-OSS 120B",
-      "size": "65 GB",
+      "size": "64 GB",
       "precision": "MXFP4",
       "role": "agent",
-      "resident": false
+      "resident": true
     },
     {
       "name": "Gemma4 26B",
@@ -74,10 +74,10 @@
     },
     {
       "name": "Qwen2.5 32B",
-      "size": "24 GB",
+      "size": "19 GB",
       "precision": "Q4_K_M",
       "role": "general",
-      "resident": true
+      "resident": false
     },
     {
       "name": "Qwen2.5 72B",
@@ -137,12 +137,12 @@
     "powerDraw": 10
   },
   "tokens": {
-    "total": 285278149,
-    "last24h": 10409961,
-    "last7d": 35609855
+    "total": 285392728,
+    "last24h": 10524540,
+    "last7d": 35724434
   },
   "costSaved": {
-    "estimated": 881.8173,
+    "estimated": 882.1771,
     "basis": "Estimated cloud cost avoided at Claude Sonnet rates ($3/$15 per MTok); local compute free (see basisDetail)",
     "basisDetail": [
       {
@@ -184,18 +184,18 @@
     ]
   },
   "throughput": {
-    "tokensPerSec": 45.2
+    "tokensPerSec": 45.4
   },
   "sources": {
     "litellm": {
       "available": true,
       "tokens": {
-        "total": 223841417,
-        "last24h": 10409961,
-        "last7d": 35609855
+        "total": 223955996,
+        "last24h": 10524540,
+        "last7d": 35724434
       },
-      "costSaved": 693.7186,
-      "throughputTokensPerSec": 45.2
+      "costSaved": 694.0784,
+      "throughputTokensPerSec": 45.4
     },
     "directOllama": {
       "available": true,
