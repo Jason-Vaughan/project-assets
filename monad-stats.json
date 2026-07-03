@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-03T11:39:44Z",
+  "updatedAt": "2026-07-03T11:55:13Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -12,12 +12,18 @@
     "note": "served on demand"
   },
   "currentModel": {
-    "name": "Qwen2.5 32B",
-    "size": "24 GB",
-    "precision": "Q4_K_M",
-    "role": "general"
+    "name": "GPT-OSS 120B",
+    "size": "64 GB",
+    "precision": "MXFP4",
+    "role": "agent"
   },
   "currentModels": [
+    {
+      "name": "GPT-OSS 120B",
+      "size": "64 GB",
+      "precision": "MXFP4",
+      "role": "agent"
+    },
     {
       "name": "Qwen2.5 32B",
       "size": "24 GB",
@@ -34,10 +40,10 @@
     },
     {
       "name": "GPT-OSS 120B",
-      "size": "65 GB",
+      "size": "64 GB",
       "precision": "MXFP4",
       "role": "agent",
-      "resident": false
+      "resident": true
     },
     {
       "name": "Gemma4 26B",
@@ -96,7 +102,7 @@
   ],
   "residency24h": {
     "mostResident": "GPT-OSS 120B",
-    "hotSwaps": 24
+    "hotSwaps": 25
   },
   "stack": [
     "Ollama 0.30.11",
@@ -137,12 +143,12 @@
     "powerDraw": 10
   },
   "tokens": {
-    "total": 284121684,
-    "last24h": 9253496,
-    "last7d": 34453390
+    "total": 284201125,
+    "last24h": 9332937,
+    "last7d": 34532831
   },
   "costSaved": {
-    "estimated": 878.2466,
+    "estimated": 878.4887,
     "basis": "Estimated cloud cost avoided at Claude Sonnet rates ($3/$15 per MTok); local compute free (see basisDetail)",
     "basisDetail": [
       {
@@ -184,18 +190,18 @@
     ]
   },
   "throughput": {
-    "tokensPerSec": 53.0
+    "tokensPerSec": 51.9
   },
   "sources": {
     "litellm": {
       "available": true,
       "tokens": {
-        "total": 222684952,
-        "last24h": 9253496,
-        "last7d": 34453390
+        "total": 222764393,
+        "last24h": 9332937,
+        "last7d": 34532831
       },
-      "costSaved": 690.1479,
-      "throughputTokensPerSec": 53.0
+      "costSaved": 690.39,
+      "throughputTokensPerSec": 51.9
     },
     "directOllama": {
       "available": true,
