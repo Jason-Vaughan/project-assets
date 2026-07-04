@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-04T01:20:10Z",
+  "updatedAt": "2026-07-04T01:35:13Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -12,18 +12,12 @@
     "note": "served on demand"
   },
   "currentModel": {
-    "name": "GPT-OSS 120B",
-    "size": "64 GB",
-    "precision": "MXFP4",
-    "role": "agent"
+    "name": "Qwen2.5 32B",
+    "size": "24 GB",
+    "precision": "Q4_K_M",
+    "role": "general"
   },
   "currentModels": [
-    {
-      "name": "GPT-OSS 120B",
-      "size": "64 GB",
-      "precision": "MXFP4",
-      "role": "agent"
-    },
     {
       "name": "Qwen2.5 32B",
       "size": "24 GB",
@@ -40,10 +34,10 @@
     },
     {
       "name": "GPT-OSS 120B",
-      "size": "64 GB",
+      "size": "65 GB",
       "precision": "MXFP4",
       "role": "agent",
-      "resident": true
+      "resident": false
     },
     {
       "name": "Gemma4 26B",
@@ -138,17 +132,17 @@
     "plannedDowntimeSeconds": 194490
   },
   "gpu": {
-    "temp": 35,
+    "temp": 40,
     "utilization": 0,
     "powerDraw": 10
   },
   "tokens": {
-    "total": 288673626,
-    "last24h": 9405052,
-    "last7d": 29679898
+    "total": 288734735,
+    "last24h": 9466161,
+    "last7d": 29741007
   },
   "costSaved": {
-    "estimated": 892.3435,
+    "estimated": 892.5308,
     "basis": "Estimated cloud cost avoided at Claude Sonnet rates ($3/$15 per MTok); local compute free (see basisDetail)",
     "basisDetail": [
       {
@@ -190,18 +184,18 @@
     ]
   },
   "throughput": {
-    "tokensPerSec": 53.5
+    "tokensPerSec": 53.0
   },
   "sources": {
     "litellm": {
       "available": true,
       "tokens": {
-        "total": 227236894,
-        "last24h": 9405052,
-        "last7d": 29679898
+        "total": 227298003,
+        "last24h": 9466161,
+        "last7d": 29741007
       },
-      "costSaved": 704.2448,
-      "throughputTokensPerSec": 53.5
+      "costSaved": 704.4321,
+      "throughputTokensPerSec": 53.0
     },
     "directOllama": {
       "available": true,
