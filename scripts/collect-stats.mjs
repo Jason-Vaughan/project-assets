@@ -136,6 +136,23 @@ async function fetchLanguages(fullName) {
 }
 
 async function main() {
+  const manifestPath = path.join(REPO_ROOT, '_collect-meta.json');
+  let prevOkCount = 0;
+  let prevLoc = 0;
+  if (fs.existsSync(manifestPath)) {
+    try {
+      const prevMeta = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+      prevOkCount = prevMeta.okCount || 0;
+      if (prevMeta.projects) {
+        prevLoc = Object.values(prevMeta.projects)
+          .filter((p) => p.ok && p.stats)
+          .reduce((sum, p) => sum + (p.stats.loc || 0), 0);
+      }
+    } catch (e) {
+      console.warn('Could not read previous _collect-meta.json for drop guard:', e.message);
+    }
+  }
+
   const allRepos = await discoverRepos();
   const filtered = onlyRepo
     ? allRepos.filter((r) => r.name.toLowerCase() === (onlyRepo.split('/').pop()).toLowerCase())
@@ -312,21 +329,22 @@ async function main() {
     }
   }
 
+  let aggLoc = 0;
+  let aggCommits = 0;
+  let aggTests = 0;
+  let aggFixes = 0;
+  let aggPRs = 0;
+  let aggRefactored = 0;
+  let aggAuthored = 0;
+  let prsCollected = 0;
+  let prsNull = 0;
+  let repoCount = 0;
+
   // Aggregate fix-commits + merged-PRs across all successfully collected repos.
   // Treat null PR counts as 0 in the aggregate so a single permission failure
   // doesn't poison the headline number; per-repo `null` is preserved separately
   // for debugging.
   if (!onlyRepo) {
-    let aggLoc = 0;
-    let aggCommits = 0;
-    let aggTests = 0;
-    let aggFixes = 0;
-    let aggPRs = 0;
-    let aggRefactored = 0;
-    let aggAuthored = 0;
-    let prsCollected = 0;
-    let prsNull = 0;
-    let repoCount = 0;
     for (const slug of Object.keys(meta.projects)) {
       const p = meta.projects[slug];
       if (!p.ok || !p.stats) continue;
@@ -446,8 +464,28 @@ async function main() {
   meta.okCount = okCount;
 
   if (!onlyRepo) {
+    const force = args.includes('--force');
+    if (prevOkCount > 0 && !force) {
+      const okCountDropPct = ((prevOkCount - okCount) / prevOkCount) * 100;
+      const locDropPct = prevLoc > 0 ? ((prevLoc - aggLoc) / prevLoc) * 100 : 0;
+      
+      // Drop threshold: 10%
+      if (okCountDropPct > 10 || locDropPct > 10) {
+        console.error(`\n❌ FATAL REGRESSION DETECTED:`);
+        if (okCountDropPct > 10) {
+          console.error(`   - Repository success count dropped from ${prevOkCount} to ${okCount} (${okCountDropPct.toFixed(1)}% drop)`);
+        }
+        if (locDropPct > 10) {
+          console.error(`   - Aggregated LOC dropped from ${prevLoc.toLocaleString()} to ${aggLoc.toLocaleString()} (${locDropPct.toFixed(1)}% drop)`);
+        }
+        console.error(`   Abort: This drop usually means a credentials or permission issue is causing repositories to be skipped.`);
+        console.error(`   To overwrite this safety guard, run with the --force flag.`);
+        process.exit(3);
+      }
+    }
+
     fs.writeFileSync(
-      path.join(REPO_ROOT, '_collect-meta.json'),
+      manifestPath,
       JSON.stringify(meta, null, 2) + '\n',
     );
   }
