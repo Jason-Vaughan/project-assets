@@ -141,22 +141,25 @@ async function fetchContributions(username, token) {
     return null;
   }
   const currentYear = new Date().getFullYear();
-  const from = `${currentYear}-01-01T00:00:00Z`;
-  const to = `${currentYear}-12-31T23:59:59Z`;
+  const years = [];
+  for (let y = 2025; y <= currentYear; y++) {
+    years.push(y);
+  }
 
-  const query = `
-    query($login: String!, $from: DateTime!, $to: DateTime!) {
-      user(login: $login) {
-        contributionsCollection(from: $from, to: $to) {
-          contributionCalendar {
-            totalContributions
+  const fetchYear = async (y) => {
+    const from = `${y}-01-01T00:00:00Z`;
+    const to = `${y}-12-31T23:59:59Z`;
+    const query = `
+      query($login: String!, $from: DateTime!, $to: DateTime!) {
+        user(login: $login) {
+          contributionsCollection(from: $from, to: $to) {
+            contributionCalendar {
+              totalContributions
+            }
           }
         }
       }
-    }
-  `;
-
-  try {
+    `;
     const res = await fetch('https://api.github.com/graphql', {
       method: 'POST',
       headers: {
@@ -166,24 +169,26 @@ async function fetchContributions(username, token) {
       },
       body: JSON.stringify({ query, variables: { login: username, from, to } }),
     });
-
     if (!res.ok) {
-      console.warn(`[contributions] GraphQL API failed: ${res.status} ${res.statusText}`);
-      return null;
+      throw new Error(`GraphQL API failed: ${res.status}`);
     }
-
     const data = await res.json();
     if (data.errors) {
-      console.warn(`[contributions] GraphQL errors:`, data.errors);
-      return null;
+      throw new Error(`GraphQL errors: ${JSON.stringify(data.errors)}`);
     }
-
     return data?.data?.user?.contributionsCollection?.contributionCalendar?.totalContributions || 0;
+  };
+
+  try {
+    const counts = await Promise.all(years.map(y => fetchYear(y)));
+    const total = counts.reduce((sum, val) => sum + val, 0);
+    return total;
   } catch (err) {
     console.warn(`[contributions] failed to fetch contributions: ${err.message}`);
     return null;
   }
 }
+
 
 async function main() {
   const manifestPath = path.join(REPO_ROOT, '_collect-meta.json');
@@ -379,14 +384,14 @@ async function main() {
     }
   }
 
-  // Fetch overall GitHub contributions for the current calendar year
+  // Fetch overall GitHub contributions (all-time / lifetime total since 2025)
   if (!onlyRepo) {
     console.log(`\n=== fetching GitHub contributions ===`);
     const token = process.env.STATS_COLLECTOR_TOKEN || process.env.GITHUB_TOKEN;
     const contributions = await fetchContributions(owner, token);
     if (contributions !== null) {
       meta.aggregateContributions = { total: contributions };
-      console.log(`Contributions in ${new Date().getFullYear()}: ${contributions}`);
+      console.log(`Lifetime contributions: ${contributions}`);
     }
   }
 
