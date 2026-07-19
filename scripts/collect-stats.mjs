@@ -181,8 +181,18 @@ async function fetchContributions(username, token) {
 
   try {
     const counts = await Promise.all(years.map(y => fetchYear(y)));
-    const total = counts.reduce((sum, val) => sum + val, 0);
-    return total;
+    const breakdown = {};
+    let total = 0;
+    years.forEach((y, i) => {
+      breakdown[y] = counts[i];
+      total += counts[i];
+    });
+
+    return {
+      total,
+      currentYear: breakdown[currentYear] || 0,
+      breakdown,
+    };
   } catch (err) {
     console.warn(`[contributions] failed to fetch contributions: ${err.message}`);
     return null;
@@ -390,8 +400,8 @@ async function main() {
     const token = process.env.STATS_COLLECTOR_TOKEN || process.env.GITHUB_TOKEN;
     const contributions = await fetchContributions(owner, token);
     if (contributions !== null) {
-      meta.aggregateContributions = { total: contributions };
-      console.log(`Lifetime contributions: ${contributions}`);
+      meta.aggregateContributions = contributions;
+      console.log(`Contributions breakdown:`, JSON.stringify(contributions));
     }
   }
 
@@ -488,9 +498,9 @@ async function main() {
               ? meta.aggregateTokens.total - oldMeta.aggregateTokens.total
               : null,
           contributions:
-            oldMeta.aggregateContributions && typeof oldMeta.aggregateContributions.total === 'number'
-            && meta.aggregateContributions && typeof meta.aggregateContributions.total === 'number'
-              ? meta.aggregateContributions.total - oldMeta.aggregateContributions.total
+            oldMeta.aggregateContributions && (typeof oldMeta.aggregateContributions.currentYear === 'number' || typeof oldMeta.aggregateContributions.total === 'number')
+            && meta.aggregateContributions && typeof meta.aggregateContributions.currentYear === 'number'
+              ? meta.aggregateContributions.currentYear - (typeof oldMeta.aggregateContributions.currentYear === 'number' ? oldMeta.aggregateContributions.currentYear : oldMeta.aggregateContributions.total)
               : null,
         };
         console.log(
