@@ -135,6 +135,56 @@ async function fetchLanguages(fullName) {
   }
 }
 
+async function fetchContributions(username, token) {
+  if (!token) {
+    console.warn(`[contributions] no GitHub token; skipping contributions count`);
+    return null;
+  }
+  const currentYear = new Date().getFullYear();
+  const from = `${currentYear}-01-01T00:00:00Z`;
+  const to = `${currentYear}-12-31T23:59:59Z`;
+
+  const query = `
+    query($login: String!, $from: DateTime!, $to: DateTime!) {
+      user(login: $login) {
+        contributionsCollection(from: $from, to: $to) {
+          contributionCalendar {
+            totalContributions
+          }
+        }
+      }
+    }
+  `;
+
+  try {
+    const res = await fetch('https://api.github.com/graphql', {
+      method: 'POST',
+      headers: {
+        'User-Agent': 'collect-stats',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ query, variables: { login: username, from, to } }),
+    });
+
+    if (!res.ok) {
+      console.warn(`[contributions] GraphQL API failed: ${res.status} ${res.statusText}`);
+      return null;
+    }
+
+    const data = await res.json();
+    if (data.errors) {
+      console.warn(`[contributions] GraphQL errors:`, data.errors);
+      return null;
+    }
+
+    return data?.data?.user?.contributionsCollection?.contributionCalendar?.totalContributions || 0;
+  } catch (err) {
+    console.warn(`[contributions] failed to fetch contributions: ${err.message}`);
+    return null;
+  }
+}
+
 async function main() {
   const manifestPath = path.join(REPO_ROOT, '_collect-meta.json');
   let prevOkCount = 0;
@@ -329,6 +379,17 @@ async function main() {
     }
   }
 
+  // Fetch overall GitHub contributions for the current calendar year
+  if (!onlyRepo) {
+    console.log(`\n=== fetching GitHub contributions ===`);
+    const token = process.env.STATS_COLLECTOR_TOKEN || process.env.GITHUB_TOKEN;
+    const contributions = await fetchContributions(owner, token);
+    if (contributions !== null) {
+      meta.aggregateContributions = { total: contributions };
+      console.log(`Contributions in ${new Date().getFullYear()}: ${contributions}`);
+    }
+  }
+
   let aggLoc = 0;
   let aggCommits = 0;
   let aggTests = 0;
@@ -421,6 +482,11 @@ async function main() {
             && meta.aggregateTokens && typeof meta.aggregateTokens.total === 'number'
               ? meta.aggregateTokens.total - oldMeta.aggregateTokens.total
               : null,
+          contributions:
+            oldMeta.aggregateContributions && typeof oldMeta.aggregateContributions.total === 'number'
+            && meta.aggregateContributions && typeof meta.aggregateContributions.total === 'number'
+              ? meta.aggregateContributions.total - oldMeta.aggregateContributions.total
+              : null,
         };
         console.log(
           `Deltas (7d): loc=${meta.aggregateDeltas.loc.toLocaleString()} ` +
@@ -429,7 +495,8 @@ async function main() {
           `refactored=${meta.aggregateDeltas.refactored.toLocaleString()} ` +
           `authored=${meta.aggregateDeltas.authored === null ? 'n/a (no baseline)' : meta.aggregateDeltas.authored.toLocaleString()} ` +
           `projects=${meta.aggregateDeltas.projects} ` +
-          `tokens=${meta.aggregateDeltas.tokens === null ? 'n/a (no baseline)' : meta.aggregateDeltas.tokens.toLocaleString()}`,
+          `tokens=${meta.aggregateDeltas.tokens === null ? 'n/a (no baseline)' : meta.aggregateDeltas.tokens.toLocaleString()} ` +
+          `contributions=${meta.aggregateDeltas.contributions === null ? 'n/a (no baseline)' : meta.aggregateDeltas.contributions.toLocaleString()}`,
         );
       } else {
         console.log('No manifest history older than 7 days — skipping aggregateDeltas.');
