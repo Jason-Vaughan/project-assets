@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-22T05:14:34Z",
+  "updatedAt": "2026-07-22T05:29:45Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -23,12 +23,6 @@
       "size": "64 GB",
       "precision": "MXFP4",
       "role": "agent"
-    },
-    {
-      "name": "Qwen2.5 14B 1M",
-      "size": "17 GB",
-      "precision": "Q6_K",
-      "role": "chat"
     }
   ],
   "availableModels": [
@@ -73,10 +67,10 @@
     },
     {
       "name": "Qwen2.5 14B 1M",
-      "size": "17 GB",
+      "size": "12 GB",
       "precision": "Q6_K",
       "role": "chat",
-      "resident": true
+      "resident": false
     },
     {
       "name": "Qwen2.5 32B",
@@ -98,11 +92,16 @@
       "precision": "FP16",
       "role": "code",
       "resident": false
+    },
+    {
+      "name": "Qwen3.6 35B",
+      "size": "23 GB",
+      "resident": false
     }
   ],
   "residency24h": {
     "mostResident": "GPT-OSS 120B",
-    "hotSwaps": 6
+    "hotSwaps": 7
   },
   "stack": [
     "Ollama 0.30.11",
@@ -143,12 +142,12 @@
     "powerDraw": 10
   },
   "tokens": {
-    "total": 508109458,
-    "last24h": 9587734,
-    "last7d": 77739258
+    "total": 508125047,
+    "last24h": 9603323,
+    "last7d": 77754847
   },
   "costSaved": {
-    "estimated": 1576.6404,
+    "estimated": 1576.6937,
     "basis": "Estimated cloud cost avoided at Claude Sonnet rates ($3/$15 per MTok); local compute free (see basisDetail)",
     "basisDetail": [
       {
@@ -190,18 +189,18 @@
     ]
   },
   "throughput": {
-    "tokensPerSec": 54.8
+    "tokensPerSec": 55.4
   },
   "sources": {
     "litellm": {
       "available": true,
       "tokens": {
-        "total": 446672726,
-        "last24h": 9587734,
-        "last7d": 77739258
+        "total": 446688315,
+        "last24h": 9603323,
+        "last7d": 77754847
       },
-      "costSaved": 1388.5417,
-      "throughputTokensPerSec": 54.8
+      "costSaved": 1388.595,
+      "throughputTokensPerSec": 55.4
     },
     "directOllama": {
       "available": true,
