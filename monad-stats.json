@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-19T22:55:19Z",
+  "updatedAt": "2026-08-19T23:10:47Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -12,16 +12,16 @@
     "note": "served on demand"
   },
   "currentModel": {
-    "name": "Qwen2.5 14B 1M",
-    "size": "17 GB",
-    "precision": "Q6_K",
+    "name": "Qwen2.5 14B",
+    "size": "12 GB",
+    "precision": "Q4_K_M",
     "role": "chat"
   },
   "currentModels": [
     {
-      "name": "Qwen2.5 14B 1M",
-      "size": "17 GB",
-      "precision": "Q6_K",
+      "name": "Qwen2.5 14B",
+      "size": "12 GB",
+      "precision": "Q4_K_M",
       "role": "chat"
     },
     {
@@ -66,17 +66,17 @@
     },
     {
       "name": "Qwen2.5 14B",
-      "size": "9.0 GB",
+      "size": "12 GB",
       "precision": "Q4_K_M",
       "role": "chat",
-      "resident": false
+      "resident": true
     },
     {
       "name": "Qwen2.5 14B 1M",
-      "size": "17 GB",
+      "size": "12 GB",
       "precision": "Q6_K",
       "role": "chat",
-      "resident": true
+      "resident": false
     },
     {
       "name": "Qwen2.5 32B",
@@ -145,15 +145,15 @@
   "gpu": {
     "temp": 35,
     "utilization": 0,
-    "powerDraw": 20
+    "powerDraw": 10
   },
   "tokens": {
-    "total": 600001613,
-    "last24h": 2546544,
-    "last7d": 16363180
+    "total": 600017854,
+    "last24h": 2546520,
+    "last7d": 16379421
   },
   "costSaved": {
-    "estimated": 1862.9645,
+    "estimated": 1863.0137,
     "basis": "Estimated cloud cost avoided at Claude Sonnet rates ($3/$15 per MTok); local compute free (see basisDetail)",
     "basisDetail": [
       {
@@ -211,12 +211,12 @@
     "directOllama": {
       "available": true,
       "tokens": {
-        "total": 61953349,
-        "last24h": 115475,
-        "last7d": 516617
+        "total": 61969590,
+        "last24h": 115451,
+        "last7d": 532858
       },
-      "costSaved": 189.6879,
-      "throughputTokensPerSec": 15.0
+      "costSaved": 189.7371,
+      "throughputTokensPerSec": 14.7
     }
   }
 }
