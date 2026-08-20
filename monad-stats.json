@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-20T22:58:16Z",
+  "updatedAt": "2026-08-20T23:13:20Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -12,12 +12,18 @@
     "note": "served on demand"
   },
   "currentModel": {
-    "name": "Qwen2.5 32B",
-    "size": "24 GB",
+    "name": "Qwen2.5 14B",
+    "size": "12 GB",
     "precision": "Q4_K_M",
-    "role": "general"
+    "role": "chat"
   },
   "currentModels": [
+    {
+      "name": "Qwen2.5 14B",
+      "size": "12 GB",
+      "precision": "Q4_K_M",
+      "role": "chat"
+    },
     {
       "name": "Qwen2.5 32B",
       "size": "24 GB",
@@ -60,10 +66,10 @@
     },
     {
       "name": "Qwen2.5 14B",
-      "size": "9.0 GB",
+      "size": "12 GB",
       "precision": "Q4_K_M",
       "role": "chat",
-      "resident": false
+      "resident": true
     },
     {
       "name": "Qwen2.5 14B 1M",
@@ -101,7 +107,7 @@
   ],
   "residency24h": {
     "mostResident": "Qwen2.5 14B",
-    "hotSwaps": 3
+    "hotSwaps": 4
   },
   "stack": [
     "Ollama 0.30.11",
@@ -137,17 +143,17 @@
     "plannedDowntimeSeconds": 194490
   },
   "gpu": {
-    "temp": 45,
+    "temp": 35,
     "utilization": 0,
-    "powerDraw": 70
+    "powerDraw": 10
   },
   "tokens": {
-    "total": 600187006,
-    "last24h": 967279,
-    "last7d": 13484776
+    "total": 600203271,
+    "last24h": 967303,
+    "last7d": 13501041
   },
   "costSaved": {
-    "estimated": 1863.5339,
+    "estimated": 1863.5832,
     "basis": "Estimated cloud cost avoided at Claude Sonnet rates ($3/$15 per MTok); local compute free (see basisDetail)",
     "basisDetail": [
       {
@@ -205,12 +211,12 @@
     "directOllama": {
       "available": true,
       "tokens": {
-        "total": 62068820,
-        "last24h": 115471,
-        "last7d": 632088
+        "total": 62085085,
+        "last24h": 115495,
+        "last7d": 648353
       },
-      "costSaved": 190.0379,
-      "throughputTokensPerSec": 17.1
+      "costSaved": 190.0872,
+      "throughputTokensPerSec": 16.9
     }
   }
 }
