@@ -40,40 +40,23 @@ echo "=== Claude Code stats refresh: $(date -u +%FT%TZ) ==="
 # silent 0 from a ccusage schema change is distinguishable from genuine no-usage —
 # stderr is captured in the run log via the `tee` redirect above.
 parse_total() {
-  python3 -c "
-import sys, json, re
-raw = sys.stdin.read()
-clean = re.sub(r'\x1b\[[0-9;]*m', '', raw)
-start = clean.find('{')
-end = clean.rfind('}')
-if start == -1:
-    print(0); sys.exit(0)
-try:
-    data = json.loads(clean[start:end+1])
-    months = data.get('monthly')
-    if months is None:
-        sys.stderr.write('[parse_total] WARN: JSON has no \"monthly\" key — ccusage output schema may have changed\n')
-        print(0); sys.exit(0)
-    total = sum(m.get('totalTokens', 0) for m in months)
-    if total == 0:
-        sys.stderr.write('[parse_total] WARN: parsed JSON but summed to 0 tokens (genuine no-usage, or totalTokens shape changed)\n')
-    print(total)
-except Exception as e:
-    sys.stderr.write('[parse_total] WARN: JSON parse failed: %s\n' % e)
-    print(0)
-"
+  local machine=$1
+  local usage_file=$2
+  local provider=$(basename "$usage_file" .json)
+  local state_file="$LOG_DIR/${provider}-${machine}-state.json"
+  python3 "$PROJECT_ASSETS/local-agent/incremental-ccusage.py" "$machine" "$usage_file" "$state_file"
 }
 
 # Cursatory (local)
 echo "[cursatory] running ccusage..."
-CURSATORY_TOTAL=$(ccusage monthly --since 20200101 --json 2>/dev/null | parse_total)
+CURSATORY_TOTAL=$(ccusage --json 2>/dev/null | parse_total "cursatory" "$USAGE_FILE")
 echo "[cursatory] total: $CURSATORY_TOTAL"
 
 # habitat (via SSH; uses npx since ccusage isn't installed globally there)
 echo "[habitat] running ccusage via SSH..."
 HABITAT_TOTAL=$(ssh -o ConnectTimeout=15 -o BatchMode=yes habitat \
-  'export PATH="/usr/local/bin:$PATH"; npx -y ccusage@latest monthly --since 20200101 --json' 2>/dev/null \
-  | parse_total) || HABITAT_TOTAL=0
+  'export PATH="/usr/local/bin:$PATH"; npx -y ccusage@latest --json' 2>/dev/null \
+  | parse_total "habitat" "$USAGE_FILE") || HABITAT_TOTAL=0
 echo "[habitat] total: $HABITAT_TOTAL"
 
 TOTAL=$((CURSATORY_TOTAL + HABITAT_TOTAL))
@@ -141,7 +124,7 @@ except Exception:
 echo "[codex/cursatory] running ccusage codex..."
 CODEX_CURSATORY=0
 if [[ "$(codex_auth_mode "$HOME/.codex/auth.json")" == "chatgpt" ]]; then
-  CODEX_CURSATORY=$(npx -y ccusage@latest codex monthly --since 20200101 --json 2>/dev/null | parse_total) || CODEX_CURSATORY=0
+  CODEX_CURSATORY=$(npx -y ccusage@latest codex --json 2>/dev/null | parse_total "cursatory" "$CODEX_USAGE_FILE") || CODEX_CURSATORY=0
   CODEX_CURSATORY=${CODEX_CURSATORY:-0}
 else
   echo "[codex/cursatory] auth_mode != chatgpt (or no Codex) — skipping to avoid admin-API double-count"
@@ -159,8 +142,8 @@ CODEX_HABITAT=0
 if [[ "$HABITAT_CODEX_AUTH" == "chatgpt" ]]; then
   echo "[codex/habitat] running ccusage codex via SSH..."
   CODEX_HABITAT=$(ssh -o ConnectTimeout=15 -o BatchMode=yes habitat \
-    'export PATH="/usr/local/bin:$PATH"; npx -y ccusage@latest codex monthly --since 20200101 --json' 2>/dev/null \
-    | parse_total) || CODEX_HABITAT=0
+    'export PATH="/usr/local/bin:$PATH"; npx -y ccusage@latest codex --json' 2>/dev/null \
+    | parse_total "habitat" "$CODEX_USAGE_FILE") || CODEX_HABITAT=0
   CODEX_HABITAT=${CODEX_HABITAT:-0}
 else
   echo "[codex/habitat] auth_mode='$HABITAT_CODEX_AUTH' != chatgpt (or no Codex/unreachable) — skipping"

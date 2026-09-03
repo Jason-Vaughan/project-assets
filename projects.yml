@@ -86,7 +86,7 @@ defaultLoc:
 # total here. Re-run + update periodically.
 tokens:
   manual:
-    anthropic: 60000000     # JUST TypingMind 2024 prepaid (~$600 / ~$10 per 1M = 60M). ccusage portion lives in anthropic-usage.json (auto-refreshed by ~/.claude-stats/refresh.sh on Cursatory daily).
+    anthropic: 3060000000   # 60M (TypingMind) + 3B (Estimated local agent usage lost from Claude Code DB purges before the incremental fix was deployed).
     openai:    35000000     # TypingMind 2024 prepaid est ~$355 / ~$10 per 1M = 35,000,000 (additive on top of admin API total). Captured 2026-04-27.
     copilot:   0   # see prorated.copilot below — Copilot Free, no per-user API
     cursor:    7016899866   # Cursor lifetime via cursor.com export CSV (May 2025 - Apr 2026), captured 2026-04-27
