@@ -66,13 +66,13 @@ except Exception as e:
 
 # Cursatory (local)
 echo "[cursatory] running ccusage..."
-CURSATORY_TOTAL=$(ccusage monthly --json 2>/dev/null | parse_total)
+CURSATORY_TOTAL=$(ccusage monthly --since 20200101 --json 2>/dev/null | parse_total)
 echo "[cursatory] total: $CURSATORY_TOTAL"
 
 # habitat (via SSH; uses npx since ccusage isn't installed globally there)
 echo "[habitat] running ccusage via SSH..."
 HABITAT_TOTAL=$(ssh -o ConnectTimeout=15 -o BatchMode=yes habitat \
-  'export PATH="/usr/local/bin:$PATH"; npx -y ccusage@latest monthly --json' 2>/dev/null \
+  'export PATH="/usr/local/bin:$PATH"; npx -y ccusage@latest monthly --since 20200101 --json' 2>/dev/null \
   | parse_total) || HABITAT_TOTAL=0
 echo "[habitat] total: $HABITAT_TOTAL"
 
@@ -84,19 +84,17 @@ if [[ "$TOTAL" -eq 0 ]]; then
   exit 1
 fi
 
-# Regression guard: if either machine was unreachable, the partial total
-# would silently regress the live number. Compare to last successful run.
+# Regression guard: Claude Code locally truncates its SQLite DB periodically,
+# which causes ccusage to silently drop billions of tokens over time.
+# We must carry forward the highest recorded total to prevent the stats from regressing.
 PREV_TOTAL=0
 if [[ -f "$USAGE_FILE" ]]; then
   PREV_TOTAL=$(python3 -c "import json,sys; print(json.load(open('$USAGE_FILE')).get('total', 0))" 2>/dev/null || echo 0)
 fi
-if [[ "$PREV_TOTAL" -gt 0 ]]; then
-  THRESHOLD=$((PREV_TOTAL * 95 / 100))
-  if [[ "$TOTAL" -lt "$THRESHOLD" ]]; then
-    echo "ERROR: new total $TOTAL is >5% below previous $PREV_TOTAL — likely a machine was unreachable."
-    echo "  Refusing to overwrite. Will retry on the next scheduled run."
-    exit 2
-  fi
+if [[ "$TOTAL" -lt "$PREV_TOTAL" ]]; then
+  echo "WARN: new total $TOTAL is < previous $PREV_TOTAL (likely Claude Code purged local history)."
+  echo "  Carrying forward previous high-water mark."
+  TOTAL=$PREV_TOTAL
 fi
 
 NOW=$(date -u +%Y-%m-%dT%H:%M:%SZ)
@@ -143,7 +141,7 @@ except Exception:
 echo "[codex/cursatory] running ccusage codex..."
 CODEX_CURSATORY=0
 if [[ "$(codex_auth_mode "$HOME/.codex/auth.json")" == "chatgpt" ]]; then
-  CODEX_CURSATORY=$(npx -y ccusage@latest codex monthly --json 2>/dev/null | parse_total) || CODEX_CURSATORY=0
+  CODEX_CURSATORY=$(npx -y ccusage@latest codex monthly --since 20200101 --json 2>/dev/null | parse_total) || CODEX_CURSATORY=0
   CODEX_CURSATORY=${CODEX_CURSATORY:-0}
 else
   echo "[codex/cursatory] auth_mode != chatgpt (or no Codex) — skipping to avoid admin-API double-count"
@@ -161,7 +159,7 @@ CODEX_HABITAT=0
 if [[ "$HABITAT_CODEX_AUTH" == "chatgpt" ]]; then
   echo "[codex/habitat] running ccusage codex via SSH..."
   CODEX_HABITAT=$(ssh -o ConnectTimeout=15 -o BatchMode=yes habitat \
-    'export PATH="/usr/local/bin:$PATH"; npx -y ccusage@latest codex monthly --json' 2>/dev/null \
+    'export PATH="/usr/local/bin:$PATH"; npx -y ccusage@latest codex monthly --since 20200101 --json' 2>/dev/null \
     | parse_total) || CODEX_HABITAT=0
   CODEX_HABITAT=${CODEX_HABITAT:-0}
 else
