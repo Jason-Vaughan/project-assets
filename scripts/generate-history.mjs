@@ -41,6 +41,9 @@ for (const date of dates) {
     }
     
     let tokens = manifest.aggregateTokens?.total || 0;
+    let fixes = manifest.aggregateFixes?.count || 0;
+    let refactored = manifest.aggregateRefactored?.count || 0;
+    let prs = manifest.aggregatePRs?.merged || 0;
     
     // Fallback to recalculating tokens if older schema
     if (!tokens && manifest.aggregateTokens) {
@@ -52,7 +55,10 @@ for (const date of dates) {
       loc,
       tests,
       commits,
-      tokens
+      tokens,
+      fixes,
+      refactored,
+      prs
     });
   } catch (err) {
     console.error(`Failed to process ${date} (${hash}):`, err.message);
