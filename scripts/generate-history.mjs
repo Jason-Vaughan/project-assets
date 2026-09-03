@@ -65,5 +65,17 @@ for (const date of dates) {
   }
 }
 
+// Post-process: smooth out cumulative stats so they never drop
+// (Handles upstream telemetry bugs where history was temporarily truncated)
+const cumulativeKeys = ['commits', 'tokens', 'fixes', 'prs', 'refactored'];
+for (let i = 1; i < history.length; i++) {
+  for (const key of cumulativeKeys) {
+    if (history[i][key] < history[i - 1][key]) {
+      // Force it to stay flat instead of dipping
+      history[i][key] = history[i - 1][key];
+    }
+  }
+}
+
 writeFileSync('history.json', JSON.stringify(history, null, 2));
 console.log("Wrote history.json with", history.length, "data points.");
