@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-05T23:45:22Z",
+  "updatedAt": "2026-09-05T23:47:39Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -35,6 +35,7 @@
     {
       "name": "Command R+",
       "size": "59 GB",
+      "precision": "Q4_0",
       "role": "rag",
       "resident": false
     },
@@ -48,12 +49,14 @@
     {
       "name": "Gemma4 26B",
       "size": "17 GB",
+      "precision": "Q4_K_M",
       "role": "general",
       "resident": false
     },
     {
       "name": "Gemma4 31B",
       "size": "19 GB",
+      "precision": "Q4_K_M",
       "role": "general",
       "resident": false
     },
@@ -100,9 +103,112 @@
       "resident": false
     },
     {
-      "name": "Qwen3.6 35B",
+      "name": "Qwen3.6 35B-A3B",
       "size": "23 GB",
+      "precision": "Q4_K_M",
+      "role": "agent",
       "resident": false
+    }
+  ],
+  "testedModels": [
+    {
+      "name": "Command R+",
+      "size": "59 GB",
+      "precision": "Q4_0",
+      "role": "rag",
+      "outcome": "rejected",
+      "verdict": "An excellent retrieval model, but CC-BY-NC licensing rules it out of commercial serving. Not carried forward.",
+      "evaluated": "2026-09-05"
+    },
+    {
+      "name": "GPT-OSS 120B",
+      "size": "65 GB",
+      "precision": "MXFP4",
+      "role": "agent",
+      "outcome": "adopted",
+      "verdict": "The agent tier, and the busiest model on the box by a wide margin: it answers the fleet's tool-use traffic.",
+      "evaluated": "2026-09-05"
+    },
+    {
+      "name": "Gemma4 26B",
+      "size": "17 GB",
+      "precision": "Q4_K_M",
+      "role": "general",
+      "outcome": "superseded",
+      "verdict": "The smaller Gemma 4 sibling. Never wired into the serving path, and redundant with the chat tier already running.",
+      "evaluated": "2026-09-05"
+    },
+    {
+      "name": "Gemma4 31B",
+      "size": "19 GB",
+      "precision": "Q4_K_M",
+      "role": "general",
+      "outcome": "superseded",
+      "verdict": "A capable long-context generalist, tried for a day and never routed: the Qwen tiers already cover this ground.",
+      "evaluated": "2026-09-05"
+    },
+    {
+      "name": "Llama 3.3 70B",
+      "size": "74 GB",
+      "precision": "Q8_0",
+      "role": "reasoning",
+      "outcome": "superseded",
+      "verdict": "Strong reasoning, but 74 GB is a whole warm tier's worth of room. Superseded on value for the space it takes.",
+      "evaluated": "2026-09-05"
+    },
+    {
+      "name": "Qwen2.5 14B",
+      "size": "9.0 GB",
+      "precision": "Q4_K_M",
+      "role": "chat",
+      "outcome": "adopted",
+      "verdict": "The quantized chat sibling: light enough to answer directly, and the chat tier's automatic fallback.",
+      "evaluated": "2026-09-05"
+    },
+    {
+      "name": "Qwen2.5 14B 1M",
+      "size": "12 GB",
+      "precision": "Q6_K",
+      "role": "chat",
+      "outcome": "adopted",
+      "verdict": "A one-million-token context window in 12 GB, kept warm as the chat tier. Highest request count here.",
+      "evaluated": "2026-09-05"
+    },
+    {
+      "name": "Qwen2.5 32B",
+      "size": "19 GB",
+      "precision": "Q4_K_M",
+      "role": "general",
+      "outcome": "adopted",
+      "verdict": "A mid-size general-purpose workhorse: unglamorous, routed, and still answering real requests every day.",
+      "evaluated": "2026-09-05"
+    },
+    {
+      "name": "Qwen2.5 72B",
+      "size": "47 GB",
+      "precision": "Q4_K_M",
+      "role": "reasoning",
+      "outcome": "rejected",
+      "verdict": "Not carried forward: a research-only licence forbids commercial serving. A licence call, not a quality one.",
+      "evaluated": "2026-09-05"
+    },
+    {
+      "name": "Qwen2.5-Coder 32B",
+      "size": "65 GB",
+      "precision": "FP16",
+      "role": "code",
+      "outcome": "adopted",
+      "verdict": "Full-precision code weights held as the dedicated code tier; the agent tier has absorbed most coding work since.",
+      "evaluated": "2026-09-05"
+    },
+    {
+      "name": "Qwen3.6 35B-A3B",
+      "size": "23 GB",
+      "precision": "Q4_K_M",
+      "role": "agent",
+      "outcome": "adopted",
+      "verdict": "A sparse 3B-active mixture-of-experts: near-dense quality at a third of the memory. On trial against the agent tier.",
+      "evaluated": "2026-09-05"
     }
   ],
   "residency24h": {
@@ -188,6 +294,12 @@
       },
       {
         "alias": "llama3.3-70b-instruct-q8_0",
+        "anchor": "Claude Sonnet",
+        "input": "$3/MTok",
+        "output": "$15/MTok"
+      },
+      {
+        "alias": "qwen3.6-35b-a3b",
         "anchor": "Claude Sonnet",
         "input": "$3/MTok",
         "output": "$15/MTok"
