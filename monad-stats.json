@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-06T03:11:52Z",
+  "updatedAt": "2026-09-06T03:42:01Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -12,23 +12,17 @@
     "note": "served on demand"
   },
   "currentModel": {
-    "name": "Qwen2.5 14B 1M",
-    "size": "17 GB",
-    "precision": "Q6_K",
-    "role": "chat"
+    "name": "Qwen2.5-Coder 32B",
+    "size": "69 GB",
+    "precision": "FP16",
+    "role": "code"
   },
   "currentModels": [
     {
-      "name": "Qwen2.5 14B 1M",
-      "size": "17 GB",
-      "precision": "Q6_K",
-      "role": "chat"
-    },
-    {
-      "name": "Qwen2.5 32B",
-      "size": "24 GB",
-      "precision": "Q4_K_M",
-      "role": "general"
+      "name": "Qwen2.5-Coder 32B",
+      "size": "69 GB",
+      "precision": "FP16",
+      "role": "code"
     }
   ],
   "availableModels": [
@@ -48,24 +42,24 @@
     },
     {
       "name": "Qwen2.5 14B 1M",
-      "size": "17 GB",
+      "size": "12 GB",
       "precision": "Q6_K",
       "role": "chat",
-      "resident": true
+      "resident": false
     },
     {
       "name": "Qwen2.5 32B",
-      "size": "24 GB",
+      "size": "19 GB",
       "precision": "Q4_K_M",
       "role": "general",
-      "resident": true
+      "resident": false
     },
     {
       "name": "Qwen2.5-Coder 32B",
-      "size": "65 GB",
+      "size": "69 GB",
       "precision": "FP16",
       "role": "code",
-      "resident": false
+      "resident": true
     },
     {
       "name": "Qwen3.6 35B-A3B",
@@ -178,7 +172,7 @@
   ],
   "residency24h": {
     "mostResident": "Qwen2.5 14B 1M",
-    "hotSwaps": 11
+    "hotSwaps": 12
   },
   "stack": [
     "Ollama 0.30.11",
@@ -214,17 +208,17 @@
     "plannedDowntimeSeconds": 194490
   },
   "gpu": {
-    "temp": 35,
+    "temp": 60,
     "utilization": 0,
-    "powerDraw": 10
+    "powerDraw": 210
   },
   "tokens": {
-    "total": 628899394,
-    "last24h": 1663555,
-    "last7d": 12264436
+    "total": 628917494,
+    "last24h": 1681655,
+    "last7d": 12282536
   },
   "costSaved": {
-    "estimated": 1950.9147,
+    "estimated": 1950.9808,
     "basis": "Estimated cloud cost avoided at Claude Sonnet rates ($3/$15 per MTok); local compute free (see basisDetail)",
     "basisDetail": [
       {
@@ -272,18 +266,18 @@
     ]
   },
   "throughput": {
-    "tokensPerSec": 31.2
+    "tokensPerSec": 30.5
   },
   "sources": {
     "litellm": {
       "available": true,
       "tokens": {
-        "total": 564950949,
-        "last24h": 1548393,
-        "last7d": 11456564
+        "total": 564969049,
+        "last24h": 1566493,
+        "last7d": 11474664
       },
-      "costSaved": 1755.1794,
-      "throughputTokensPerSec": 32.9
+      "costSaved": 1755.2455,
+      "throughputTokensPerSec": 32.2
     },
     "directOllama": {
       "available": true,
