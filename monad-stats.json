@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-06T03:02:08Z",
+  "updatedAt": "2026-09-06T03:11:52Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -172,7 +172,7 @@
       "precision": "Q4_K_M",
       "role": "agent",
       "outcome": "adopted",
-      "verdict": "A sparse 3B-active mixture-of-experts: near-dense quality at a third of the memory. On trial against the agent tier.",
+      "verdict": "In the serving path but still on trial against the agent tier: a sparse 3B-active MoE, near-dense at a third the memory.",
       "evaluated": "2026-09-05"
     }
   ],
@@ -214,7 +214,7 @@
     "plannedDowntimeSeconds": 194490
   },
   "gpu": {
-    "temp": 40,
+    "temp": 35,
     "utilization": 0,
     "powerDraw": 10
   },
