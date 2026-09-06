@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-06T04:27:22Z",
+  "updatedAt": "2026-09-06T04:28:28Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -86,12 +86,24 @@
       "evaluated": "2026-09-05"
     },
     {
+      "name": "GLM-5.2",
+      "size": "239 GB",
+      "precision": "UD-IQ2_M",
+      "role": "code",
+      "notes": "Top-ranked among open-weight coding models and genuinely out of reach here. At 756B parameters the smallest quantization anyone runs in practice wants roughly 239-245 GB of combined memory, and even a 1-bit build lands near 223 GB, against 96 GiB of VRAM. The only packaged option is a cloud-hosted endpoint, which is a hosted API rather than a local model and so falls outside what this machine exists to do. Recorded rather than re-tested because the answer is arithmetic: no leaderboard movement changes the footprint.",
+      "outcome": "rejected",
+      "verdict": "A 756B model: the smallest usable quantization needs ~2.5x this machine's 96 GiB. Ruled out on size, not quality.",
+      "evaluated": "2026-09-05"
+    },
+    {
       "name": "GPT-OSS 120B",
       "size": "65 GB",
       "precision": "MXFP4",
       "role": "agent",
+      "notes": "Measured 2026-09-05 against qwen3.6 35B-A3B on a six-task reasoning set: both answered every task correctly, so the comparison turned on cost rather than quality. GPT-OSS is the more concise of the two \u2014 3,378 completion tokens against 15,131 \u2014 and answers a typical prompt in about 3.5 seconds. It keeps the agent tier because that tier is chosen for multi-step tool use, which this task set does not exercise.",
+      "evalTokPerSec": 161.2,
       "outcome": "adopted",
-      "verdict": "The agent tier, and the busiest model on the box by a wide margin: it answers the fleet's tool-use traffic.",
+      "verdict": "The agent tier: 120B of mixture-of-experts weights at 161 tok/s, and where the fleet's tool-calling work runs.",
       "evaluated": "2026-09-05"
     },
     {
@@ -126,6 +138,7 @@
       "size": "9.0 GB",
       "precision": "Q4_K_M",
       "role": "chat",
+      "evalTokPerSec": 80.7,
       "outcome": "adopted",
       "verdict": "The quantized chat sibling: light enough to answer directly, and the chat tier's automatic fallback.",
       "evaluated": "2026-09-05"
@@ -135,6 +148,7 @@
       "size": "12 GB",
       "precision": "Q6_K",
       "role": "chat",
+      "evalTokPerSec": 64.0,
       "outcome": "adopted",
       "verdict": "A one-million-token context window in 12 GB, kept warm as the chat tier. Highest request count here.",
       "evaluated": "2026-09-05"
@@ -144,6 +158,8 @@
       "size": "19 GB",
       "precision": "Q4_K_M",
       "role": "general",
+      "notes": "A general-purpose 32B kept as a middle rung between the 14B chat tier and the agent tier: 55 tok/s, correct on every task in the reasoning set.",
+      "evalTokPerSec": 54.8,
       "outcome": "adopted",
       "verdict": "A mid-size general-purpose workhorse: unglamorous, routed, and still answering real requests every day.",
       "evaluated": "2026-09-05"
@@ -162,8 +178,10 @@
       "size": "65 GB",
       "precision": "FP16",
       "role": "code",
+      "notes": "Unquantized 32B weights \u2014 the reason it is both the highest-fidelity code model on the box and the slowest, roughly seven times slower per token than the agent tier at the same 65 GB footprint. Retained as the dedicated code tier after the agent tier absorbed most day-to-day coding; the trade is fidelity for speed, made knowingly rather than by default.",
+      "evalTokPerSec": 22.5,
       "outcome": "adopted",
-      "verdict": "Full-precision code weights held as the dedicated code tier; the agent tier has absorbed most coding work since.",
+      "verdict": "Full-precision code weights, kept deliberately: the most accurate coding model here and the slowest, at 22 tok/s.",
       "evaluated": "2026-09-05"
     },
     {
@@ -171,8 +189,10 @@
       "size": "23 GB",
       "precision": "Q4_K_M",
       "role": "agent",
+      "notes": "35B total parameters with 3B active, served two ways: thinking on for interactive work, off for scheduled batch work. Measured 2026-09-05 on a six-task reasoning set, both modes answered everything correctly \u2014 and thinking cost 5.9x the output tokens to reach the same answers, turning a 2.3-second reply into a 7.8-second one. On work this size the reasoning trace is pure overhead, which is what the two modes exist to let a caller choose.",
+      "evalTokPerSec": 211.9,
       "outcome": "adopted",
-      "verdict": "In the serving path but still on trial against the agent tier: a sparse 3B-active MoE, near-dense at a third the memory.",
+      "verdict": "Fastest model on the box at 212 tok/s from 23 GB, and the reason the batch tier runs it with thinking switched off.",
       "evaluated": "2026-09-05"
     }
   ],
