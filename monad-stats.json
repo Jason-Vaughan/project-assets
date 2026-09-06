@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-06T00:43:55Z",
+  "updatedAt": "2026-09-06T00:45:33Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -259,6 +259,12 @@
       },
       {
         "alias": "qwen3.6-35b-a3b",
+        "anchor": "Claude Sonnet",
+        "input": "$3/MTok",
+        "output": "$15/MTok"
+      },
+      {
+        "alias": "qwen3.6-35b-a3b-batch",
         "anchor": "Claude Sonnet",
         "input": "$3/MTok",
         "output": "$15/MTok"
