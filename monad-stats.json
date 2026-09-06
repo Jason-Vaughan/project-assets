@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-06T15:57:21Z",
+  "updatedAt": "2026-09-06T16:12:22Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -22,6 +22,12 @@
       "name": "GPT-OSS 120B",
       "size": "64 GB",
       "precision": "MXFP4",
+      "role": "agent"
+    },
+    {
+      "name": "Qwen3.6 35B-A3B",
+      "size": "23 GB",
+      "precision": "Q4_K_M",
       "role": "agent"
     }
   ],
@@ -66,7 +72,7 @@
       "size": "23 GB",
       "precision": "Q4_K_M",
       "role": "agent",
-      "resident": false
+      "resident": true
     }
   ],
   "testedModels": [
@@ -192,7 +198,7 @@
   ],
   "residency24h": {
     "mostResident": "Qwen2.5 14B 1M",
-    "hotSwaps": 31
+    "hotSwaps": 32
   },
   "stack": [
     "Ollama 0.30.11",
@@ -233,12 +239,12 @@
     "powerDraw": 10
   },
   "tokens": {
-    "total": 630105695,
-    "last24h": 2837328,
-    "last7d": 13438205
+    "total": 630872985,
+    "last24h": 3587020,
+    "last7d": 14187586
   },
   "costSaved": {
-    "estimated": 1955.2357,
+    "estimated": 1957.6096,
     "basis": "Estimated cloud cost avoided at Claude Sonnet rates ($3/$15 per MTok); local compute free (see basisDetail)",
     "basisDetail": [
       {
@@ -286,28 +292,28 @@
     ]
   },
   "throughput": {
-    "tokensPerSec": 46.2
+    "tokensPerSec": 46.3
   },
   "sources": {
     "litellm": {
       "available": true,
       "tokens": {
-        "total": 566124730,
-        "last24h": 2722174,
-        "last7d": 12630345
+        "total": 566874418,
+        "last24h": 3471862,
+        "last7d": 13380033
       },
-      "costSaved": 1759.4019,
+      "costSaved": 1761.7221,
       "throughputTokensPerSec": 48.7
     },
     "directOllama": {
       "available": true,
       "tokens": {
-        "total": 63980965,
-        "last24h": 115154,
-        "last7d": 807860
+        "total": 63998567,
+        "last24h": 115158,
+        "last7d": 807553
       },
-      "costSaved": 195.8338,
-      "throughputTokensPerSec": 6.5
+      "costSaved": 195.8875,
+      "throughputTokensPerSec": 6.6
     }
   }
 }
