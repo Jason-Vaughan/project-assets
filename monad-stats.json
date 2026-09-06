@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-06T02:47:01Z",
+  "updatedAt": "2026-09-06T03:02:08Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -12,23 +12,23 @@
     "note": "served on demand"
   },
   "currentModel": {
-    "name": "Qwen2.5 14B",
-    "size": "12 GB",
-    "precision": "Q4_K_M",
+    "name": "Qwen2.5 14B 1M",
+    "size": "17 GB",
+    "precision": "Q6_K",
     "role": "chat"
   },
   "currentModels": [
-    {
-      "name": "Qwen2.5 14B",
-      "size": "12 GB",
-      "precision": "Q4_K_M",
-      "role": "chat"
-    },
     {
       "name": "Qwen2.5 14B 1M",
       "size": "17 GB",
       "precision": "Q6_K",
       "role": "chat"
+    },
+    {
+      "name": "Qwen2.5 32B",
+      "size": "24 GB",
+      "precision": "Q4_K_M",
+      "role": "general"
     }
   ],
   "availableModels": [
@@ -41,10 +41,10 @@
     },
     {
       "name": "Qwen2.5 14B",
-      "size": "12 GB",
+      "size": "9.0 GB",
       "precision": "Q4_K_M",
       "role": "chat",
-      "resident": true
+      "resident": false
     },
     {
       "name": "Qwen2.5 14B 1M",
@@ -55,10 +55,10 @@
     },
     {
       "name": "Qwen2.5 32B",
-      "size": "19 GB",
+      "size": "24 GB",
       "precision": "Q4_K_M",
       "role": "general",
-      "resident": false
+      "resident": true
     },
     {
       "name": "Qwen2.5-Coder 32B",
@@ -178,7 +178,7 @@
   ],
   "residency24h": {
     "mostResident": "Qwen2.5 14B 1M",
-    "hotSwaps": 10
+    "hotSwaps": 11
   },
   "stack": [
     "Ollama 0.30.11",
@@ -214,17 +214,17 @@
     "plannedDowntimeSeconds": 194490
   },
   "gpu": {
-    "temp": 35,
+    "temp": 40,
     "utilization": 0,
     "powerDraw": 10
   },
   "tokens": {
-    "total": 628859032,
-    "last24h": 1623193,
-    "last7d": 12224074
+    "total": 628899394,
+    "last24h": 1663555,
+    "last7d": 12264436
   },
   "costSaved": {
-    "estimated": 1950.7929,
+    "estimated": 1950.9147,
     "basis": "Estimated cloud cost avoided at Claude Sonnet rates ($3/$15 per MTok); local compute free (see basisDetail)",
     "basisDetail": [
       {
@@ -278,11 +278,11 @@
     "litellm": {
       "available": true,
       "tokens": {
-        "total": 564910587,
-        "last24h": 1508031,
-        "last7d": 11416202
+        "total": 564950949,
+        "last24h": 1548393,
+        "last7d": 11456564
       },
-      "costSaved": 1755.0576,
+      "costSaved": 1755.1794,
       "throughputTokensPerSec": 32.9
     },
     "directOllama": {
