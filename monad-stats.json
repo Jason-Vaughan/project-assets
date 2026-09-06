@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-06T05:26:25Z",
+  "updatedAt": "2026-09-06T05:35:14Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -23,6 +23,12 @@
       "size": "64 GB",
       "precision": "MXFP4",
       "role": "agent"
+    },
+    {
+      "name": "Qwen2.5 14B 1M",
+      "size": "17 GB",
+      "precision": "Q6_K",
+      "role": "chat"
     }
   ],
   "availableModels": [
@@ -42,10 +48,10 @@
     },
     {
       "name": "Qwen2.5 14B 1M",
-      "size": "12 GB",
+      "size": "17 GB",
       "precision": "Q6_K",
       "role": "chat",
-      "resident": false
+      "resident": true
     },
     {
       "name": "Qwen2.5 32B",
@@ -186,13 +192,13 @@
       "notes": "35B total parameters with 3B active, served two ways: thinking on for interactive work, off for scheduled batch work. Measured 2026-09-05 on a six-task reasoning set, both modes answered everything correctly \u2014 and thinking cost 5.9x the output tokens to reach the same answers, turning a 2.3-second reply into a 7.8-second one. On work this size the reasoning trace is pure overhead, which is what the two modes exist to let a caller choose.",
       "evalTokPerSec": 211.9,
       "outcome": "adopted",
-      "verdict": "Fastest model on the box at 212 tok/s from 23 GB, and the reason the batch tier runs it with thinking switched off.",
+      "verdict": "Fastest generator here \u2014 212 tok/s from 23 GB \u2014 and the slowest to answer, until thinking is switched off.",
       "evaluated": "2026-09-05"
     }
   ],
   "residency24h": {
     "mostResident": "Qwen2.5 14B 1M",
-    "hotSwaps": 18
+    "hotSwaps": 19
   },
   "stack": [
     "Ollama 0.30.11",
@@ -233,12 +239,12 @@
     "powerDraw": 10
   },
   "tokens": {
-    "total": 629082865,
-    "last24h": 1830765,
-    "last7d": 12431648
+    "total": 629099513,
+    "last24h": 1847413,
+    "last7d": 12448296
   },
   "costSaved": {
-    "estimated": 1952.1125,
+    "estimated": 1952.1631,
     "basis": "Estimated cloud cost avoided at Claude Sonnet rates ($3/$15 per MTok); local compute free (see basisDetail)",
     "basisDetail": [
       {
@@ -286,18 +292,18 @@
     ]
   },
   "throughput": {
-    "tokensPerSec": 89.9
+    "tokensPerSec": 89.5
   },
   "sources": {
     "litellm": {
       "available": true,
       "tokens": {
-        "total": 565118159,
-        "last24h": 1715603,
-        "last7d": 11623774
+        "total": 565134807,
+        "last24h": 1732251,
+        "last7d": 11640422
       },
-      "costSaved": 1756.328,
-      "throughputTokensPerSec": 95.7
+      "costSaved": 1756.3786,
+      "throughputTokensPerSec": 95.2
     },
     "directOllama": {
       "available": true,
