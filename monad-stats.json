@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-07T04:35:01Z",
+  "updatedAt": "2026-09-07T04:50:24Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -12,32 +12,26 @@
     "note": "served on demand"
   },
   "currentModel": {
-    "name": "GPT-OSS 120B",
-    "size": "64 GB",
-    "precision": "MXFP4",
+    "name": "Qwen3.6 35B-A3B",
+    "size": "23 GB",
+    "precision": "Q4_K_M",
     "role": "agent"
   },
   "currentModels": [
     {
-      "name": "GPT-OSS 120B",
-      "size": "64 GB",
-      "precision": "MXFP4",
-      "role": "agent"
-    },
-    {
-      "name": "Qwen2.5 32B",
-      "size": "24 GB",
+      "name": "Qwen3.6 35B-A3B",
+      "size": "23 GB",
       "precision": "Q4_K_M",
-      "role": "general"
+      "role": "agent"
     }
   ],
   "availableModels": [
     {
       "name": "GPT-OSS 120B",
-      "size": "64 GB",
+      "size": "65 GB",
       "precision": "MXFP4",
       "role": "agent",
-      "resident": true
+      "resident": false
     },
     {
       "name": "Qwen2.5 14B",
@@ -55,10 +49,10 @@
     },
     {
       "name": "Qwen2.5 32B",
-      "size": "24 GB",
+      "size": "19 GB",
       "precision": "Q4_K_M",
       "role": "general",
-      "resident": true
+      "resident": false
     },
     {
       "name": "Qwen3-Coder-Next 80B-A3B",
@@ -72,7 +66,7 @@
       "size": "23 GB",
       "precision": "Q4_K_M",
       "role": "agent",
-      "resident": false
+      "resident": true
     }
   ],
   "testedModels": [
@@ -319,17 +313,17 @@
     "plannedDowntimeSeconds": 194490
   },
   "gpu": {
-    "temp": 55,
+    "temp": 35,
     "utilization": 0,
-    "powerDraw": 80
+    "powerDraw": 10
   },
   "tokens": {
-    "total": 633211160,
-    "last24h": 4484491,
-    "last7d": 14980185
+    "total": 633317922,
+    "last24h": 4591253,
+    "last7d": 15086947
   },
   "costSaved": {
-    "estimated": 1964.8395,
+    "estimated": 1965.1711,
     "basis": "Estimated cloud cost avoided at Claude Sonnet rates ($3/$15 per MTok); local compute free (see basisDetail)",
     "basisDetail": [
       {
@@ -377,18 +371,18 @@
     ]
   },
   "throughput": {
-    "tokensPerSec": 36.2
+    "tokensPerSec": 37.3
   },
   "sources": {
     "litellm": {
       "available": true,
       "tokens": {
-        "total": 569147547,
-        "last24h": 4369323,
-        "last7d": 14172640
+        "total": 569254309,
+        "last24h": 4476085,
+        "last7d": 14279402
       },
-      "costSaved": 1768.7551,
-      "throughputTokensPerSec": 37.9
+      "costSaved": 1769.0867,
+      "throughputTokensPerSec": 39.1
     },
     "directOllama": {
       "available": true,
