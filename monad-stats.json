@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-07T00:19:01Z",
+  "updatedAt": "2026-09-07T02:20:21Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -61,9 +61,9 @@
       "resident": false
     },
     {
-      "name": "Qwen2.5-Coder 32B",
-      "size": "65 GB",
-      "precision": "FP16",
+      "name": "Qwen3-Coder-Next 80B-A3B",
+      "size": "51 GB",
+      "precision": "Q4_K_M",
       "role": "code",
       "resident": false
     },
@@ -84,6 +84,26 @@
       "outcome": "rejected",
       "verdict": "An excellent retrieval model, but CC-BY-NC licensing rules it out of commercial serving. Not carried forward.",
       "evaluated": "2026-09-05"
+    },
+    {
+      "name": "DeepSeek V4 Flash",
+      "size": "97 GB",
+      "precision": "UD-Q2_K_XL",
+      "role": "agent",
+      "notes": "The closest any DeepSeek model comes to running here, and it still does not. At 284-305B parameters the smallest quantization in the usable range wants about 97 GB against 95.6 GiB of usable VRAM, so it misses by roughly a gigabyte. The one build that does fit is a one-bit quantization at 82.5 GB, which leaves too little room for a second model and takes a real quality cost to get there. This machine keeps two models resident at once by design, so a model that can only run alone is a worse fit than its size alone suggests. MIT-licensed, and available locally only through a community conversion rather than an official build.",
+      "outcome": "rejected",
+      "verdict": "The near miss \u2014 its smallest usable build wants 97 GB against the 96 this machine has to give.",
+      "evaluated": "2026-09-06"
+    },
+    {
+      "name": "DeepSeek V4 Pro",
+      "size": "850 GB",
+      "precision": "UD-Q4_K_XL",
+      "role": "agent",
+      "notes": "MIT-licensed and strong on published agentic benchmarks, so the rejection is about this machine rather than the model. At 1.6-1.7T parameters the smallest community quantization runs about 850 GB against 96 GiB of VRAM, and no lower bit depth closes a nine-fold gap. Ollama publishes it only as a hosted endpoint, which is a remote API rather than a local model and so falls outside what this machine exists to do. Recorded rather than re-tested because the answer is arithmetic, and no leaderboard movement changes a footprint.",
+      "outcome": "rejected",
+      "verdict": "1.7 trillion parameters: its smallest quantization needs about nine times this machine's memory.",
+      "evaluated": "2026-09-06"
     },
     {
       "name": "GLM-5.2",
@@ -125,6 +145,17 @@
       "evaluated": "2026-09-05"
     },
     {
+      "name": "Laguna XS 2.1",
+      "size": "20 GB",
+      "precision": "Q4_K_M",
+      "role": "code",
+      "notes": "The most interesting model in the sweep and the closest call. Thirty-three billion parameters with three active, a genuinely permissive licence, correct tool calling, and the fastest generation of any model measured on the coding tasks. It was not adopted because the role it would fill is already filled: the code tier went to a model that scored the same and answers in a sixth of the time. Sampled four times, it answered between seven and eight of the eight tasks correctly, failing a different one each time \u2014 which says the task set cannot separate models at this level rather than saying anything about the model. Worth revisiting when there is a role for it. Throughput measured end-to-end against the model's own endpoint on the harder eight-task set, which is a different measurement from the figures recorded in September for the models already in service \u2014 those went through the gateway on the lighter set. Compare these six candidates with each other, not against the older column.",
+      "evalTokPerSec": 247.0,
+      "outcome": "superseded",
+      "verdict": "A purpose-built coding agent in twenty gigabytes, and the fastest generator tested. Held back by having no vacant role.",
+      "evaluated": "2026-09-06"
+    },
+    {
       "name": "Llama 3.3 70B",
       "size": "74 GB",
       "precision": "Q8_0",
@@ -132,6 +163,28 @@
       "outcome": "superseded",
       "verdict": "Strong reasoning, but 74 GB is a whole warm tier's worth of room. Superseded on value for the space it takes.",
       "evaluated": "2026-09-05"
+    },
+    {
+      "name": "Muse Glimmer 30B",
+      "size": "18 GB",
+      "precision": "Q4_K_M",
+      "role": "agent",
+      "notes": "The efficiency result of the sweep: it answered all eight of the harder tasks correctly in the smallest footprint of anything tested, roughly a quarter of the agent tier it would have to displace, and it calls tools correctly. It was not adopted because displacing the agent tier needs evidence this evaluation cannot produce \u2014 the agent tier is chosen for multi-step tool use, and nothing here measures more than a single tool call and a single reply. Apache 2.0. A strong candidate the day that evidence exists. Throughput measured end-to-end against the model's own endpoint on the harder eight-task set, which is a different measurement from the figures recorded in September for the models already in service \u2014 those went through the gateway on the lighter set. Compare these six candidates with each other, not against the older column.",
+      "evalTokPerSec": 67.3,
+      "outcome": "superseded",
+      "verdict": "Answers everything correctly in eighteen gigabytes \u2014 the smallest model here to do so. No vacant tier to put it in.",
+      "evaluated": "2026-09-06"
+    },
+    {
+      "name": "Nemotron 3.5 Lightning 30B-A3B",
+      "size": "25 GB",
+      "precision": "Q4_K_M",
+      "role": "agent",
+      "notes": "Generated faster than anything else tested while answering all eight tasks correctly, in twenty-five gigabytes, with correct tool calling and a permissive licence. Not adopted for the same reason as the others: the tiers it would fit are occupied, and the multi-step evidence that would justify displacing the agent tier does not exist yet. One practical trap worth recording for anyone who pulls this model: the build whose name suggests NVIDIA hardware is in fact an Apple-only build and refuses to load on this machine. The ordinary quantized build is the one that runs. Throughput measured end-to-end against the model's own endpoint on the harder eight-task set, which is a different measurement from the figures recorded in September for the models already in service \u2014 those went through the gateway on the lighter set. Compare these six candidates with each other, not against the older column.",
+      "evalTokPerSec": 258.5,
+      "outcome": "superseded",
+      "verdict": "The fastest model measured on this machine, and correct on every task. Not adopted for want of a role.",
+      "evaluated": "2026-09-06"
     },
     {
       "name": "Qwen2.5 14B",
@@ -178,11 +231,22 @@
       "size": "65 GB",
       "precision": "FP16",
       "role": "code",
-      "notes": "Unquantized 32B weights \u2014 the reason it is both the highest-fidelity code model on the box and the slowest, roughly seven times slower per token than the agent tier at the same 65 GB footprint. Retained as the dedicated code tier after the agent tier absorbed most day-to-day coding; the trade is fidelity for speed, made knowingly rather than by default.",
+      "notes": "Served as the code tier for three months and was retired on measurement rather than age. It answered seven of the harder eight tasks correctly, which is respectable, but it generated at roughly a tenth the speed of its replacement while occupying fourteen more gigabytes. The decisive finding was tool calling: asked to use a tool, it writes the tool call out as ordinary message text instead of returning it in the structured field, so nothing downstream can act on it. That rules it out of agent work regardless of how well it writes code. Kept in this log because a full-precision build remains a useful reference point for what quantization costs.",
       "evalTokPerSec": 22.5,
+      "outcome": "superseded",
+      "verdict": "Full-precision and thorough, but the slowest model here and unable to call a tool. Replaced by Qwen3-Coder-Next.",
+      "evaluated": "2026-09-06"
+    },
+    {
+      "name": "Qwen3-Coder-Next 80B-A3B",
+      "size": "51 GB",
+      "precision": "Q4_K_M",
+      "role": "code",
+      "notes": "Replaces Qwen2.5-Coder 32B as the code tier, and wins on every axis that could be measured: it answered all eight of the harder tasks correctly across two runs where the model it replaces answered seven, it generates about eleven times faster, and it is fourteen gigabytes smaller. It also calls tools correctly, which the outgoing coder does not do at all \u2014 that model emits the tool call as ordinary message text, so it cannot participate in an agent loop. A mixture-of-experts design is what buys the speed: eighty billion parameters are stored but only about three billion do work on any given token. Apache 2.0. Throughput measured end-to-end against the model's own endpoint on the harder eight-task set, which is a different measurement from the figures recorded in September for the models already in service \u2014 those went through the gateway on the lighter set. Compare these six candidates with each other, not against the older column.",
+      "evalTokPerSec": 151.5,
       "outcome": "adopted",
-      "verdict": "Full-precision code weights, kept deliberately: the most accurate coding model here and the slowest, at 22 tok/s.",
-      "evaluated": "2026-09-05"
+      "verdict": "The new code tier: eighty billion parameters with three active, answering eleven times faster than the outgoing model.",
+      "evaluated": "2026-09-06"
     },
     {
       "name": "Qwen3.6 35B-A3B",
@@ -194,14 +258,35 @@
       "outcome": "adopted",
       "verdict": "Fastest generator here \u2014 212 tok/s from 23 GB \u2014 and the slowest to answer, until thinking is switched off.",
       "evaluated": "2026-09-05"
+    },
+    {
+      "name": "Qwen3.8 27B",
+      "size": "17 GB",
+      "precision": "Q4_K_M",
+      "role": "general",
+      "notes": "The smallest model tested and it still answered all eight of the harder tasks correctly, with working tool calling and Apache 2.0 terms. A dense model rather than a mixture of experts, which makes it slower per token than the sparse candidates but simpler to reason about. Not adopted because the general and chat tiers are already served and nothing measured here argues for replacing them. The natural first candidate if a small, permissively licensed tier is ever wanted. Throughput measured end-to-end against the model's own endpoint on the harder eight-task set, which is a different measurement from the figures recorded in September for the models already in service \u2014 those went through the gateway on the lighter set. Compare these six candidates with each other, not against the older column.",
+      "evalTokPerSec": 64.3,
+      "outcome": "superseded",
+      "verdict": "Correct on every task in the smallest footprint of the whole sweep, with a fully permissive licence. No role to fill.",
+      "evaluated": "2026-09-06"
+    },
+    {
+      "name": "Qwen3.8 Flash-Next 125B-A6B",
+      "size": "120 GB",
+      "precision": "Q4_K_M",
+      "role": "general",
+      "notes": "Framed by its authors as an architecture preview rather than a flagship, and the smallest genuine build is 120 GB against 95.6 GiB of usable VRAM, so it does not fit at any published quantization. Its licence is the Qwen Community licence rather than the Apache terms the 27B sibling carries, which is a distinction worth keeping straight across models sharing a family name. Worth revisiting only if a substantially smaller quantization appears.",
+      "outcome": "rejected",
+      "verdict": "A preview of Alibaba's next architecture, and 120 GB in its smallest real build. It does not fit.",
+      "evaluated": "2026-09-06"
     }
   ],
   "residency24h": {
     "mostResident": "Qwen2.5 14B 1M",
-    "hotSwaps": 45
+    "hotSwaps": 42
   },
   "stack": [
-    "Ollama 0.30.11",
+    "Ollama 0.32.13",
     "LiteLLM 1.85.0",
     "Tailscale (tailnet-bound)",
     "Ubuntu 24.04.4 LTS",
@@ -234,27 +319,21 @@
     "plannedDowntimeSeconds": 194490
   },
   "gpu": {
-    "temp": 35,
+    "temp": 50,
     "utilization": 0,
-    "powerDraw": 20
+    "powerDraw": 70
   },
   "tokens": {
-    "total": 631926995,
-    "last24h": 3216569,
-    "last7d": 13712281
+    "total": 633007914,
+    "last24h": 4281245,
+    "last7d": 14776939
   },
   "costSaved": {
-    "estimated": 1960.8533,
+    "estimated": 1964.2201,
     "basis": "Estimated cloud cost avoided at Claude Sonnet rates ($3/$15 per MTok); local compute free (see basisDetail)",
     "basisDetail": [
       {
         "alias": "qwen2.5-14b-instruct-1m-q6_K",
-        "anchor": "Claude Sonnet",
-        "input": "$3/MTok",
-        "output": "$15/MTok"
-      },
-      {
-        "alias": "qwen2.5-coder-32b-fp16",
         "anchor": "Claude Sonnet",
         "input": "$3/MTok",
         "output": "$15/MTok"
@@ -288,32 +367,38 @@
         "anchor": "Claude Sonnet",
         "input": "$3/MTok",
         "output": "$15/MTok"
+      },
+      {
+        "alias": "qwen3-coder-next-80b-a3b",
+        "anchor": "Claude Sonnet",
+        "input": "$3/MTok",
+        "output": "$15/MTok"
       }
     ]
   },
   "throughput": {
-    "tokensPerSec": 47.3
+    "tokensPerSec": 34.9
   },
   "sources": {
     "litellm": {
       "available": true,
       "tokens": {
-        "total": 567879653,
-        "last24h": 3101429,
-        "last7d": 12904746
+        "total": 568944301,
+        "last24h": 4166077,
+        "last7d": 13969394
       },
-      "costSaved": 1764.8181,
-      "throughputTokensPerSec": 49.8
+      "costSaved": 1768.1357,
+      "throughputTokensPerSec": 36.5
     },
     "directOllama": {
       "available": true,
       "tokens": {
-        "total": 64047342,
-        "last24h": 115140,
-        "last7d": 807535
+        "total": 64063613,
+        "last24h": 115168,
+        "last7d": 807545
       },
-      "costSaved": 196.0352,
-      "throughputTokensPerSec": 6.5
+      "costSaved": 196.0844,
+      "throughputTokensPerSec": 6.4
     }
   }
 }
