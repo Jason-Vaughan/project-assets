@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-07T02:35:30Z",
+  "updatedAt": "2026-09-07T02:41:02Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -232,7 +232,7 @@
       "precision": "FP16",
       "role": "code",
       "notes": "Served as the code tier for three months and was retired on measurement rather than age. It answered seven of the harder eight tasks correctly, which is respectable, but it generated at roughly a tenth the speed of its replacement while occupying fourteen more gigabytes. The decisive finding was tool calling: asked to use a tool, it writes the tool call out as ordinary message text instead of returning it in the structured field, so nothing downstream can act on it. That rules it out of agent work regardless of how well it writes code. Kept in this log because a full-precision build remains a useful reference point for what quantization costs.",
-      "evalTokPerSec": 22.5,
+      "evalTokPerSec": 13.7,
       "outcome": "superseded",
       "verdict": "Full-precision and thorough, but the slowest model here and unable to call a tool. Replaced by Qwen3-Coder-Next.",
       "evaluated": "2026-09-06"
@@ -242,7 +242,7 @@
       "size": "51 GB",
       "precision": "Q4_K_M",
       "role": "code",
-      "notes": "Replaces Qwen2.5-Coder 32B as the code tier, and wins on every axis that could be measured: it answered all eight of the harder tasks correctly across two runs where the model it replaces answered seven, it generates about eleven times faster, and it is fourteen gigabytes smaller. It also calls tools correctly, which the outgoing coder does not do at all \u2014 that model emits the tool call as ordinary message text, so it cannot participate in an agent loop. A mixture-of-experts design is what buys the speed: eighty billion parameters are stored but only about three billion do work on any given token. Apache 2.0. Throughput measured end-to-end against the model's own endpoint on the harder eight-task set, which is a different measurement from the figures recorded in September for the models already in service \u2014 those went through the gateway on the lighter set. Compare these six candidates with each other, not against the older column.",
+      "notes": "Replaces Qwen2.5-Coder 32B as the code tier, and wins on every axis that could be measured: it answered all eight of the harder tasks correctly across two runs where the model it replaces answered seven, it generates about eleven times faster, and it is fourteen gigabytes smaller. It also calls tools correctly, which the outgoing coder does not do at all \u2014 that model emits the tool call as ordinary message text, so it cannot participate in an agent loop. A mixture-of-experts design is what buys the speed: eighty billion parameters are stored but only about three billion do work on any given token. Apache 2.0, and that was read out of the shipped artifact rather than taken from a model card \u2014 201 lines of the plain Apache text, no research or non-commercial clause. Worth doing per-model in this family: a sibling released weeks earlier carries a bespoke community licence instead, so the family name is not a licence. Throughput measured end-to-end against the model's own endpoint on the harder eight-task set, which is a different measurement from the figures recorded in September for the models already in service \u2014 those went through the gateway on the lighter set. Compare these six candidates with each other, not against the older column.",
       "evalTokPerSec": 151.5,
       "outcome": "adopted",
       "verdict": "The new code tier: eighty billion parameters with three active, answering eleven times faster than the outgoing model.",
