@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-07T03:28:52Z",
+  "updatedAt": "2026-09-07T03:34:51Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -169,10 +169,10 @@
       "size": "18 GB",
       "precision": "Q4_K_M",
       "role": "agent",
-      "notes": "The efficiency result of the sweep: it answered all eight of the harder tasks correctly in the smallest footprint of anything tested, roughly a quarter of the agent tier it would have to displace, and it calls tools correctly. It was not adopted because displacing the agent tier needs evidence this evaluation cannot produce \u2014 the agent tier is chosen for multi-step tool use, and nothing here measures more than a single tool call and a single reply. Apache 2.0. A strong candidate the day that evidence exists. Throughput measured end-to-end against the model's own endpoint on the harder eight-task set, which is a different measurement from the figures recorded in September for the models already in service \u2014 those went through the gateway on the lighter set. Compare these six candidates with each other, not against the older column: these were measured on Ollama 0.32.13 and the older figures on 0.30.11, and the engine changed a sampling default between the two, which moves a rate on its own.",
+      "notes": "The efficiency result of the sweep: it answered all eight of the harder tasks correctly in roughly a quarter of the footprint of the agent tier it would have to displace, and it calls tools correctly. It was not adopted because displacing the agent tier needs evidence this evaluation cannot produce \u2014 the agent tier is chosen for multi-step tool use, and nothing here measures more than a single tool call and a single reply. Apache 2.0. A strong candidate the day that evidence exists. Throughput measured end-to-end against the model's own endpoint on the harder eight-task set, which is a different measurement from the figures recorded in September for the models already in service \u2014 those went through the gateway on the lighter set. Compare these six candidates with each other, not against the older column: these were measured on Ollama 0.32.13 and the older figures on 0.30.11, and the engine changed a sampling default between the two, which moves a rate on its own.",
       "evalTokPerSec": 67.3,
       "outcome": "superseded",
-      "verdict": "Answers everything correctly in eighteen gigabytes \u2014 the smallest model here to do so. No vacant tier to put it in.",
+      "verdict": "Answers every task correctly in eighteen gigabytes, a quarter of the tier it would displace. No vacant tier for it.",
       "evaluated": "2026-09-06"
     },
     {
@@ -319,17 +319,17 @@
     "plannedDowntimeSeconds": 194490
   },
   "gpu": {
-    "temp": 35,
+    "temp": 40,
     "utilization": 0,
     "powerDraw": 10
   },
   "tokens": {
-    "total": 633081914,
-    "last24h": 4355245,
-    "last7d": 14850939
+    "total": 633107054,
+    "last24h": 4380385,
+    "last7d": 14876079
   },
   "costSaved": {
-    "estimated": 1964.4441,
+    "estimated": 1964.5204,
     "basis": "Estimated cloud cost avoided at Claude Sonnet rates ($3/$15 per MTok); local compute free (see basisDetail)",
     "basisDetail": [
       {
@@ -377,18 +377,18 @@
     ]
   },
   "throughput": {
-    "tokensPerSec": 35.5
+    "tokensPerSec": 35.9
   },
   "sources": {
     "litellm": {
       "available": true,
       "tokens": {
-        "total": 569018301,
-        "last24h": 4240077,
-        "last7d": 14043394
+        "total": 569043441,
+        "last24h": 4265217,
+        "last7d": 14068534
       },
-      "costSaved": 1768.3597,
-      "throughputTokensPerSec": 37.2
+      "costSaved": 1768.436,
+      "throughputTokensPerSec": 37.6
     },
     "directOllama": {
       "available": true,
