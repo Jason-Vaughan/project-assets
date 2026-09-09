@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-09T06:42:23Z",
+  "updatedAt": "2026-09-09T06:57:54Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -283,7 +283,7 @@
   ],
   "residency24h": {
     "mostResident": "Qwen2.5 14B 1M",
-    "hotSwaps": 37
+    "hotSwaps": 36
   },
   "stack": [
     "Ollama 0.32.13",
@@ -319,9 +319,9 @@
     "plannedDowntimeSeconds": 194490
   },
   "gpu": {
-    "temp": 40,
-    "utilization": 0,
-    "powerDraw": 10
+    "temp": 50,
+    "utilization": 100,
+    "powerDraw": 300
   },
   "tokens": {
     "total": 640601447,
