@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-09T14:02:58Z",
+  "updatedAt": "2026-09-09T14:17:59Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -12,23 +12,23 @@
     "note": "served on demand"
   },
   "currentModel": {
-    "name": "Qwen2.5 14B",
-    "size": "12 GB",
-    "precision": "Q4_K_M",
+    "name": "Qwen2.5 14B 1M",
+    "size": "17 GB",
+    "precision": "Q6_K",
     "role": "chat"
   },
   "currentModels": [
-    {
-      "name": "Qwen2.5 14B",
-      "size": "12 GB",
-      "precision": "Q4_K_M",
-      "role": "chat"
-    },
     {
       "name": "Qwen2.5 14B 1M",
       "size": "17 GB",
       "precision": "Q6_K",
       "role": "chat"
+    },
+    {
+      "name": "Qwen3.6 35B-A3B",
+      "size": "23 GB",
+      "precision": "Q4_K_M",
+      "role": "agent"
     }
   ],
   "availableModels": [
@@ -41,10 +41,10 @@
     },
     {
       "name": "Qwen2.5 14B",
-      "size": "12 GB",
+      "size": "9.0 GB",
       "precision": "Q4_K_M",
       "role": "chat",
-      "resident": true
+      "resident": false
     },
     {
       "name": "Qwen2.5 14B 1M",
@@ -72,7 +72,7 @@
       "size": "23 GB",
       "precision": "Q4_K_M",
       "role": "agent",
-      "resident": false
+      "resident": true
     }
   ],
   "testedModels": [
@@ -283,7 +283,7 @@
   ],
   "residency24h": {
     "mostResident": "Qwen2.5 14B 1M",
-    "hotSwaps": 39
+    "hotSwaps": 40
   },
   "stack": [
     "Ollama 0.32.13",
@@ -324,12 +324,12 @@
     "powerDraw": 10
   },
   "tokens": {
-    "total": 641507295,
-    "last24h": 4650021,
-    "last7d": 19969951
+    "total": 641535107,
+    "last24h": 4677833,
+    "last7d": 19997763
   },
   "costSaved": {
-    "estimated": 1990.6104,
+    "estimated": 1990.6951,
     "basis": "Estimated cloud cost avoided at Claude Sonnet rates ($3/$15 per MTok); local compute free (see basisDetail)",
     "basisDetail": [
       {
@@ -377,18 +377,18 @@
     ]
   },
   "throughput": {
-    "tokensPerSec": 42.9
+    "tokensPerSec": 42.5
   },
   "sources": {
     "litellm": {
       "available": true,
       "tokens": {
-        "total": 577180894,
-        "last24h": 4534865,
-        "last7d": 19162994
+        "total": 577208706,
+        "last24h": 4562677,
+        "last7d": 19190806
       },
-      "costSaved": 1793.7295,
-      "throughputTokensPerSec": 44.4
+      "costSaved": 1793.8142,
+      "throughputTokensPerSec": 44.0
     },
     "directOllama": {
       "available": true,
