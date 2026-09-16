@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-16T19:11:04Z",
+  "updatedAt": "2026-09-16T19:26:23Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -12,23 +12,23 @@
     "note": "served on demand"
   },
   "currentModel": {
-    "name": "Qwen2.5 14B",
-    "size": "12 GB",
-    "precision": "Q4_K_M",
-    "role": "chat"
+    "name": "Qwen3 Embedding 0.6B",
+    "size": "4.0 GB",
+    "precision": "Q8_0",
+    "role": "embedding"
   },
   "currentModels": [
     {
-      "name": "Qwen2.5 14B",
-      "size": "12 GB",
-      "precision": "Q4_K_M",
-      "role": "chat"
+      "name": "Qwen3 Embedding 0.6B",
+      "size": "4.0 GB",
+      "precision": "Q8_0",
+      "role": "embedding"
     },
     {
-      "name": "Qwen2.5 14B 1M",
-      "size": "17 GB",
-      "precision": "Q6_K",
-      "role": "chat"
+      "name": "Qwen3.6 35B-A3B",
+      "size": "23 GB",
+      "precision": "Q4_K_M",
+      "role": "agent"
     }
   ],
   "availableModels": [
@@ -41,17 +41,17 @@
     },
     {
       "name": "Qwen2.5 14B",
-      "size": "12 GB",
+      "size": "9.0 GB",
       "precision": "Q4_K_M",
       "role": "chat",
-      "resident": true
+      "resident": false
     },
     {
       "name": "Qwen2.5 14B 1M",
-      "size": "17 GB",
+      "size": "12 GB",
       "precision": "Q6_K",
       "role": "chat",
-      "resident": true
+      "resident": false
     },
     {
       "name": "Qwen2.5 32B",
@@ -59,6 +59,13 @@
       "precision": "Q4_K_M",
       "role": "general",
       "resident": false
+    },
+    {
+      "name": "Qwen3 Embedding 0.6B",
+      "size": "4.0 GB",
+      "precision": "Q8_0",
+      "role": "embedding",
+      "resident": true
     },
     {
       "name": "Qwen3-Coder-Next 80B-A3B",
@@ -72,7 +79,7 @@
       "size": "23 GB",
       "precision": "Q4_K_M",
       "role": "agent",
-      "resident": false
+      "resident": true
     }
   ],
   "testedModels": [
@@ -238,6 +245,16 @@
       "evaluated": "2026-09-06"
     },
     {
+      "name": "Qwen3 Embedding 0.6B",
+      "size": "639 MB",
+      "precision": "Q8_0",
+      "role": "embedding",
+      "notes": "Added for MetaLLM's test deploy, which sends dimensions=1024 on every OpenAI-style embeddings call. 1024 is the model's native width, so the field is a no-op here; verified through Ollama 0.32.13's /v1/embeddings. Served with the ollama/ provider prefix, not ollama_chat/, because the chat handler has no embeddings route.",
+      "outcome": "adopted",
+      "verdict": "The box's first embedding model: 1024-dim vectors for MetaLLM's retrieval, small enough to sit beside chat.",
+      "evaluated": "2026-09-16"
+    },
+    {
       "name": "Qwen3-Coder-Next 80B-A3B",
       "size": "51 GB",
       "precision": "Q4_K_M",
@@ -283,7 +300,7 @@
   ],
   "residency24h": {
     "mostResident": "Qwen2.5 14B 1M",
-    "hotSwaps": 9
+    "hotSwaps": 10
   },
   "stack": [
     "Ollama 0.32.13",
@@ -319,17 +336,17 @@
     "plannedDowntimeSeconds": 194490
   },
   "gpu": {
-    "temp": 35,
+    "temp": 40,
     "utilization": 0,
     "powerDraw": 10
   },
   "tokens": {
-    "total": 648032289,
-    "last24h": 1527826,
-    "last7d": 8230968
+    "total": 648061782,
+    "last24h": 1557319,
+    "last7d": 8260461
   },
   "costSaved": {
-    "estimated": 2010.8303,
+    "estimated": 2010.954,
     "basis": "Estimated cloud cost avoided at Claude Sonnet rates ($3/$15 per MTok); local compute free (see basisDetail)",
     "basisDetail": [
       {
@@ -373,22 +390,28 @@
         "anchor": "Claude Sonnet",
         "input": "$3/MTok",
         "output": "$15/MTok"
+      },
+      {
+        "alias": "qwen3-embedding-0.6b",
+        "anchor": "Claude Sonnet",
+        "input": "$3/MTok",
+        "output": "$15/MTok"
       }
     ]
   },
   "throughput": {
-    "tokensPerSec": 62.5
+    "tokensPerSec": 64.1
   },
   "sources": {
     "litellm": {
       "available": true,
       "tokens": {
-        "total": 582865644,
-        "last24h": 1412341,
-        "last7d": 7424579
+        "total": 582895137,
+        "last24h": 1441834,
+        "last7d": 7454072
       },
-      "costSaved": 1811.4021,
-      "throughputTokensPerSec": 65.7
+      "costSaved": 1811.5258,
+      "throughputTokensPerSec": 67.5
     },
     "directOllama": {
       "available": true,
