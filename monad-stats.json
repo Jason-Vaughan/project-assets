@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-16T10:19:05Z",
+  "updatedAt": "2026-09-16T10:34:27Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -23,6 +23,12 @@
       "size": "64 GB",
       "precision": "MXFP4",
       "role": "agent"
+    },
+    {
+      "name": "Qwen2.5 14B 1M",
+      "size": "17 GB",
+      "precision": "Q6_K",
+      "role": "chat"
     }
   ],
   "availableModels": [
@@ -42,10 +48,10 @@
     },
     {
       "name": "Qwen2.5 14B 1M",
-      "size": "12 GB",
+      "size": "17 GB",
       "precision": "Q6_K",
       "role": "chat",
-      "resident": false
+      "resident": true
     },
     {
       "name": "Qwen2.5 32B",
@@ -277,7 +283,7 @@
   ],
   "residency24h": {
     "mostResident": "Qwen2.5 14B",
-    "hotSwaps": 7
+    "hotSwaps": 8
   },
   "stack": [
     "Ollama 0.32.13",
@@ -318,12 +324,12 @@
     "powerDraw": 10
   },
   "tokens": {
-    "total": 647653629,
-    "last24h": 1199286,
-    "last7d": 7902414
+    "total": 647671380,
+    "last24h": 1217037,
+    "last7d": 7920165
   },
   "costSaved": {
-    "estimated": 2009.6777,
+    "estimated": 2009.7318,
     "basis": "Estimated cloud cost avoided at Claude Sonnet rates ($3/$15 per MTok); local compute free (see basisDetail)",
     "basisDetail": [
       {
@@ -371,18 +377,18 @@
     ]
   },
   "throughput": {
-    "tokensPerSec": 57.9
+    "tokensPerSec": 58.0
   },
   "sources": {
     "litellm": {
       "available": true,
       "tokens": {
-        "total": 582537411,
-        "last24h": 1084108,
-        "last7d": 7096346
+        "total": 582555162,
+        "last24h": 1101859,
+        "last7d": 7114097
       },
-      "costSaved": 1810.4026,
-      "throughputTokensPerSec": 60.8
+      "costSaved": 1810.4567,
+      "throughputTokensPerSec": 60.9
     },
     "directOllama": {
       "available": true,
