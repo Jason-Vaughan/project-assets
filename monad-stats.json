@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-16T19:56:33Z",
+  "updatedAt": "2026-09-16T20:11:35Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -12,23 +12,23 @@
     "note": "served on demand"
   },
   "currentModel": {
-    "name": "Qwen2.5 14B 1M",
-    "size": "17 GB",
-    "precision": "Q6_K",
+    "name": "Qwen2.5 14B",
+    "size": "12 GB",
+    "precision": "Q4_K_M",
     "role": "chat"
   },
   "currentModels": [
+    {
+      "name": "Qwen2.5 14B",
+      "size": "12 GB",
+      "precision": "Q4_K_M",
+      "role": "chat"
+    },
     {
       "name": "Qwen2.5 14B 1M",
       "size": "17 GB",
       "precision": "Q6_K",
       "role": "chat"
-    },
-    {
-      "name": "Qwen3 Embedding 0.6B",
-      "size": "4.0 GB",
-      "precision": "Q8_0",
-      "role": "embedding"
     }
   ],
   "availableModels": [
@@ -41,10 +41,10 @@
     },
     {
       "name": "Qwen2.5 14B",
-      "size": "9.0 GB",
+      "size": "12 GB",
       "precision": "Q4_K_M",
       "role": "chat",
-      "resident": false
+      "resident": true
     },
     {
       "name": "Qwen2.5 14B 1M",
@@ -62,10 +62,10 @@
     },
     {
       "name": "Qwen3 Embedding 0.6B",
-      "size": "4.0 GB",
+      "size": "639 MB",
       "precision": "Q8_0",
       "role": "embedding",
-      "resident": true
+      "resident": false
     },
     {
       "name": "Qwen3-Coder-Next 80B-A3B",
@@ -300,7 +300,7 @@
   ],
   "residency24h": {
     "mostResident": "Qwen2.5 14B 1M",
-    "hotSwaps": 12
+    "hotSwaps": 13
   },
   "stack": [
     "Ollama 0.32.13",
@@ -336,17 +336,17 @@
     "plannedDowntimeSeconds": 194490
   },
   "gpu": {
-    "temp": 40,
+    "temp": 35,
     "utilization": 0,
     "powerDraw": 10
   },
   "tokens": {
-    "total": 648082768,
-    "last24h": 1578305,
-    "last7d": 8281447
+    "total": 648116788,
+    "last24h": 1596064,
+    "last7d": 8299220
   },
   "costSaved": {
-    "estimated": 2011.02,
+    "estimated": 2011.1232,
     "basis": "Estimated cloud cost avoided at Claude Sonnet rates ($3/$15 per MTok); local compute free (see basisDetail)",
     "basisDetail": [
       {
@@ -400,27 +400,27 @@
     ]
   },
   "throughput": {
-    "tokensPerSec": 64.1
+    "tokensPerSec": 64.0
   },
   "sources": {
     "litellm": {
       "available": true,
       "tokens": {
-        "total": 582916123,
-        "last24h": 1462820,
-        "last7d": 7475058
+        "total": 582933882,
+        "last24h": 1480579,
+        "last7d": 7492817
       },
-      "costSaved": 1811.5918,
-      "throughputTokensPerSec": 67.5
+      "costSaved": 1811.6458,
+      "throughputTokensPerSec": 67.4
     },
     "directOllama": {
       "available": true,
       "tokens": {
-        "total": 65166645,
+        "total": 65182906,
         "last24h": 115485,
-        "last7d": 806389
+        "last7d": 806403
       },
-      "costSaved": 199.4282,
+      "costSaved": 199.4774,
       "throughputTokensPerSec": 32.9
     }
   }
