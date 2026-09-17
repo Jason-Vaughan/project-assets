@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-17T00:13:55Z",
+  "updatedAt": "2026-09-17T00:29:00Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -25,9 +25,9 @@
       "role": "agent"
     },
     {
-      "name": "Qwen2.5 14B",
-      "size": "12 GB",
-      "precision": "Q4_K_M",
+      "name": "Qwen2.5 14B 1M",
+      "size": "17 GB",
+      "precision": "Q6_K",
       "role": "chat"
     }
   ],
@@ -41,17 +41,17 @@
     },
     {
       "name": "Qwen2.5 14B",
-      "size": "12 GB",
+      "size": "9.0 GB",
       "precision": "Q4_K_M",
       "role": "chat",
-      "resident": true
+      "resident": false
     },
     {
       "name": "Qwen2.5 14B 1M",
-      "size": "12 GB",
+      "size": "17 GB",
       "precision": "Q6_K",
       "role": "chat",
-      "resident": false
+      "resident": true
     },
     {
       "name": "Qwen2.5 32B",
@@ -172,6 +172,17 @@
       "evaluated": "2026-09-05"
     },
     {
+      "name": "Mistral Medium 3.5 128B",
+      "size": "80 GB",
+      "precision": "Q4_K_M",
+      "role": "general",
+      "notes": "Surfaced by the Agent Arena watch (#157). A 127.7B dense model, so every parameter is active per token, and it fits fully on the GPU only as the sole resident: 79,974 MiB loaded at 49K context, 10.6 s cold load, evicting both warm tiers. Scored 6/8 then 8/8 on the hard set at the model's own endpoint; both first-run misses answered correctly on re-sample, so they read as run-to-run variance. Three of three tool-call probes correct, including declining a call when none was needed. Median 12.5 tok/s across the two runs, against roughly 123 for gpt-oss:120b, which is the tier it would displace. Not adopted: the agent fleet depends on gpt-oss:120b and qwen2.5:32b staying available, and a model that must evict both to answer cannot serve beside them. The Ollama build's embedded system prompt names a different model (Mistral-Small-4-119B-2603), and the artifact carries no licence text; the model card states a modified MIT licence with a revenue threshold. Weights removed after measurement.",
+      "evalTokPerSec": 12.5,
+      "outcome": "superseded",
+      "verdict": "Correct, with clean tool calls, but a tenth the agent tier's speed and it must run alone on the card.",
+      "evaluated": "2026-09-16"
+    },
+    {
       "name": "Muse Glimmer 30B",
       "size": "18 GB",
       "precision": "Q4_K_M",
@@ -249,9 +260,9 @@
       "size": "639 MB",
       "precision": "Q8_0",
       "role": "embedding",
-      "notes": "Added for MetaLLM's test deploy, which sends dimensions=1024 on every OpenAI-style embeddings call. 1024 is the model's native width, so the field is a no-op here; verified through Ollama 0.32.13's /v1/embeddings. Served with the ollama/ provider prefix, not ollama_chat/, because the chat handler has no embeddings route.",
+      "notes": "Added for a memory-backed assistant that requests dimensions=1024 on every OpenAI-style embeddings call. 1024 is the model's native width, so the field is a no-op here; verified end to end on Ollama 0.32.13.",
       "outcome": "adopted",
-      "verdict": "The box's first embedding model: 1024-dim vectors for MetaLLM's retrieval, small enough to sit beside chat.",
+      "verdict": "The box's first embedding model: native 1024-dim vectors for retrieval, small enough to sit beside chat.",
       "evaluated": "2026-09-16"
     },
     {
@@ -336,7 +347,7 @@
     "plannedDowntimeSeconds": 194490
   },
   "gpu": {
-    "temp": 35,
+    "temp": 45,
     "utilization": 0,
     "powerDraw": 10
   },
