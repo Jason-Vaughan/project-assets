@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-18T15:11:33Z",
+  "updatedAt": "2026-09-18T15:26:32Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -12,12 +12,18 @@
     "note": "served on demand"
   },
   "currentModel": {
-    "name": "Qwen2.5 14B",
-    "size": "12 GB",
-    "precision": "Q4_K_M",
-    "role": "chat"
+    "name": "GPT-OSS 120B",
+    "size": "64 GB",
+    "precision": "MXFP4",
+    "role": "agent"
   },
   "currentModels": [
+    {
+      "name": "GPT-OSS 120B",
+      "size": "64 GB",
+      "precision": "MXFP4",
+      "role": "agent"
+    },
     {
       "name": "Qwen2.5 14B",
       "size": "12 GB",
@@ -28,10 +34,10 @@
   "availableModels": [
     {
       "name": "GPT-OSS 120B",
-      "size": "65 GB",
+      "size": "64 GB",
       "precision": "MXFP4",
       "role": "agent",
-      "resident": false
+      "resident": true
     },
     {
       "name": "Qwen2.5 14B",
@@ -305,7 +311,7 @@
   ],
   "residency24h": {
     "mostResident": "GPT-OSS 120B",
-    "hotSwaps": 2
+    "hotSwaps": 3
   },
   "stack": [
     "Ollama 0.32.13",
@@ -346,12 +352,12 @@
     "powerDraw": 10
   },
   "tokens": {
-    "total": 658244122,
-    "last24h": 6601239,
-    "last7d": 12418639
+    "total": 658307849,
+    "last24h": 6664966,
+    "last7d": 12482366
   },
   "costSaved": {
-    "estimated": 2043.1672,
+    "estimated": 2043.366,
     "basis": "Estimated cloud cost avoided at Claude Sonnet rates ($3/$15 per MTok); local compute free (see basisDetail)",
     "basisDetail": [
       {
@@ -405,18 +411,18 @@
     ]
   },
   "throughput": {
-    "tokensPerSec": 47.7
+    "tokensPerSec": 47.8
   },
   "sources": {
     "litellm": {
       "available": true,
       "tokens": {
-        "total": 592880669,
-        "last24h": 6485746,
-        "last7d": 11611907
+        "total": 592944396,
+        "last24h": 6549473,
+        "last7d": 11675634
       },
-      "costSaved": 1843.1428,
-      "throughputTokensPerSec": 48.6
+      "costSaved": 1843.3416,
+      "throughputTokensPerSec": 48.7
     },
     "directOllama": {
       "available": true,
