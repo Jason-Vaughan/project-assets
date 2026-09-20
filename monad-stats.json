@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-20T15:44:55Z",
+  "updatedAt": "2026-09-20T16:00:03Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -12,12 +12,18 @@
     "note": "served on demand"
   },
   "currentModel": {
-    "name": "Qwen3.6 35B-A3B",
-    "size": "23 GB",
+    "name": "Qwen2.5 14B",
+    "size": "12 GB",
     "precision": "Q4_K_M",
-    "role": "agent"
+    "role": "chat"
   },
   "currentModels": [
+    {
+      "name": "Qwen2.5 14B",
+      "size": "12 GB",
+      "precision": "Q4_K_M",
+      "role": "chat"
+    },
     {
       "name": "Qwen3.6 35B-A3B",
       "size": "23 GB",
@@ -35,10 +41,10 @@
     },
     {
       "name": "Qwen2.5 14B",
-      "size": "9.0 GB",
+      "size": "12 GB",
       "precision": "Q4_K_M",
       "role": "chat",
-      "resident": false
+      "resident": true
     },
     {
       "name": "Qwen2.5 14B 1M",
@@ -305,7 +311,7 @@
   ],
   "residency24h": {
     "mostResident": "GPT-OSS 120B",
-    "hotSwaps": 6
+    "hotSwaps": 7
   },
   "stack": [
     "Ollama 0.32.13",
@@ -341,17 +347,17 @@
     "plannedDowntimeSeconds": 194490
   },
   "gpu": {
-    "temp": 35,
+    "temp": 40,
     "utilization": 0,
-    "powerDraw": 10
+    "powerDraw": 60
   },
   "tokens": {
-    "total": 659410888,
-    "last24h": 779096,
-    "last7d": 13262452
+    "total": 659428173,
+    "last24h": 778793,
+    "last7d": 13262137
   },
   "costSaved": {
-    "estimated": 2046.8239,
+    "estimated": 2046.8767,
     "basis": "Estimated cloud cost avoided at Claude Sonnet rates ($3/$15 per MTok); local compute free (see basisDetail)",
     "basisDetail": [
       {
@@ -421,12 +427,12 @@
     "directOllama": {
       "available": true,
       "tokens": {
-        "total": 65673584,
-        "last24h": 194666,
-        "last7d": 886555
+        "total": 65690869,
+        "last24h": 194363,
+        "last7d": 886240
       },
-      "costSaved": 201.0082,
-      "throughputTokensPerSec": 51.3
+      "costSaved": 201.061,
+      "throughputTokensPerSec": 50.8
     }
   }
 }
