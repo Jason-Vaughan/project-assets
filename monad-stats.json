@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-23T15:08:37Z",
+  "updatedAt": "2026-09-23T15:23:44Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -12,12 +12,18 @@
     "note": "served on demand"
   },
   "currentModel": {
-    "name": "Qwen2.5 14B",
-    "size": "12 GB",
-    "precision": "Q4_K_M",
-    "role": "chat"
+    "name": "GPT-OSS 120B",
+    "size": "64 GB",
+    "precision": "MXFP4",
+    "role": "agent"
   },
   "currentModels": [
+    {
+      "name": "GPT-OSS 120B",
+      "size": "64 GB",
+      "precision": "MXFP4",
+      "role": "agent"
+    },
     {
       "name": "Qwen2.5 14B",
       "size": "12 GB",
@@ -28,10 +34,10 @@
   "availableModels": [
     {
       "name": "GPT-OSS 120B",
-      "size": "65 GB",
+      "size": "64 GB",
       "precision": "MXFP4",
       "role": "agent",
-      "resident": false
+      "resident": true
     },
     {
       "name": "Qwen2.5 14B",
@@ -305,7 +311,7 @@
   ],
   "residency24h": {
     "mostResident": "GPT-OSS 120B",
-    "hotSwaps": 4
+    "hotSwaps": 5
   },
   "stack": [
     "Ollama 0.32.13",
@@ -346,12 +352,12 @@
     "powerDraw": 10
   },
   "tokens": {
-    "total": 660706951,
-    "last24h": 638155,
-    "last7d": 14075491
+    "total": 660770335,
+    "last24h": 701539,
+    "last7d": 14138875
   },
   "costSaved": {
-    "estimated": 2050.8114,
+    "estimated": 2051.0051,
     "basis": "Estimated cloud cost avoided at Claude Sonnet rates ($3/$15 per MTok); local compute free (see basisDetail)",
     "basisDetail": [
       {
@@ -411,11 +417,11 @@
     "litellm": {
       "available": true,
       "tokens": {
-        "total": 594688236,
-        "last24h": 523009,
-        "last7d": 13189247
+        "total": 594751620,
+        "last24h": 586393,
+        "last7d": 13252631
       },
-      "costSaved": 1848.757,
+      "costSaved": 1848.9507,
       "throughputTokensPerSec": 63.8
     },
     "directOllama": {
