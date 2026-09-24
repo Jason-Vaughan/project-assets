@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-24T07:04:31Z",
+  "updatedAt": "2026-09-24T07:20:05Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -347,17 +347,17 @@
     "plannedDowntimeSeconds": 194490
   },
   "gpu": {
-    "temp": 35,
+    "temp": 40,
     "utilization": 0,
     "powerDraw": 10
   },
   "tokens": {
-    "total": 660970532,
-    "last24h": 565402,
-    "last7d": 9343914
+    "total": 661033970,
+    "last24h": 628840,
+    "last7d": 9407352
   },
   "costSaved": {
-    "estimated": 2051.6169,
+    "estimated": 2051.8113,
     "basis": "Estimated cloud cost avoided at Claude Sonnet rates ($3/$15 per MTok); local compute free (see basisDetail)",
     "basisDetail": [
       {
@@ -411,18 +411,18 @@
     ]
   },
   "throughput": {
-    "tokensPerSec": 60.3
+    "tokensPerSec": 59.3
   },
   "sources": {
     "litellm": {
       "available": true,
       "tokens": {
-        "total": 594852606,
-        "last24h": 449942,
-        "last7d": 8457683
+        "total": 594916044,
+        "last24h": 513380,
+        "last7d": 8521121
       },
-      "costSaved": 1849.2617,
-      "throughputTokensPerSec": 61.3
+      "costSaved": 1849.4561,
+      "throughputTokensPerSec": 60.2
     },
     "directOllama": {
       "available": true,
