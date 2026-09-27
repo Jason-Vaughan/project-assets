@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-27T13:16:47Z",
+  "updatedAt": "2026-09-27T14:02:06Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -12,39 +12,33 @@
     "note": "served on demand"
   },
   "currentModel": {
-    "name": "GPT-OSS 120B",
-    "size": "64 GB",
-    "precision": "MXFP4",
-    "role": "agent"
+    "name": "Qwen2.5 14B",
+    "size": "12 GB",
+    "precision": "Q4_K_M",
+    "role": "chat"
   },
   "currentModels": [
     {
-      "name": "GPT-OSS 120B",
-      "size": "64 GB",
-      "precision": "MXFP4",
-      "role": "agent"
-    },
-    {
-      "name": "Qwen2.5 32B",
-      "size": "24 GB",
+      "name": "Qwen2.5 14B",
+      "size": "12 GB",
       "precision": "Q4_K_M",
-      "role": "general"
+      "role": "chat"
     }
   ],
   "availableModels": [
     {
       "name": "GPT-OSS 120B",
-      "size": "64 GB",
+      "size": "65 GB",
       "precision": "MXFP4",
       "role": "agent",
-      "resident": true
+      "resident": false
     },
     {
       "name": "Qwen2.5 14B",
-      "size": "9.0 GB",
+      "size": "12 GB",
       "precision": "Q4_K_M",
       "role": "chat",
-      "resident": false
+      "resident": true
     },
     {
       "name": "Qwen2.5 14B 1M",
@@ -55,10 +49,10 @@
     },
     {
       "name": "Qwen2.5 32B",
-      "size": "24 GB",
+      "size": "19 GB",
       "precision": "Q4_K_M",
       "role": "general",
-      "resident": true
+      "resident": false
     },
     {
       "name": "Qwen3 Embedding 0.6B",
@@ -352,12 +346,12 @@
     "powerDraw": 10
   },
   "tokens": {
-    "total": 665293259,
-    "last24h": 3138217,
-    "last7d": 6108588
+    "total": 665309528,
+    "last24h": 3138225,
+    "last7d": 6108592
   },
   "costSaved": {
-    "estimated": 2065.1509,
+    "estimated": 2065.2001,
     "basis": "Estimated cloud cost avoided at Claude Sonnet rates ($3/$15 per MTok); local compute free (see basisDetail)",
     "basisDetail": [
       {
@@ -427,11 +421,11 @@
     "directOllama": {
       "available": true,
       "tokens": {
-        "total": 66463372,
-        "last24h": 115182,
-        "last7d": 806053
+        "total": 66479641,
+        "last24h": 115190,
+        "last7d": 806057
       },
-      "costSaved": 203.4024,
+      "costSaved": 203.4516,
       "throughputTokensPerSec": 32.0
     }
   }
