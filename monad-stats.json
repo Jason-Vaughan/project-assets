@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-04T10:14:58Z",
+  "updatedAt": "2026-10-04T10:59:58Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -12,39 +12,33 @@
     "note": "served on demand"
   },
   "currentModel": {
-    "name": "GPT-OSS 120B",
-    "size": "64 GB",
-    "precision": "MXFP4",
-    "role": "agent"
+    "name": "Qwen2.5 32B",
+    "size": "24 GB",
+    "precision": "Q4_K_M",
+    "role": "general"
   },
   "currentModels": [
     {
-      "name": "GPT-OSS 120B",
-      "size": "64 GB",
-      "precision": "MXFP4",
-      "role": "agent"
-    },
-    {
-      "name": "Qwen2.5 14B",
-      "size": "12 GB",
+      "name": "Qwen2.5 32B",
+      "size": "24 GB",
       "precision": "Q4_K_M",
-      "role": "chat"
+      "role": "general"
     }
   ],
   "availableModels": [
     {
       "name": "GPT-OSS 120B",
-      "size": "64 GB",
+      "size": "65 GB",
       "precision": "MXFP4",
       "role": "agent",
-      "resident": true
+      "resident": false
     },
     {
       "name": "Qwen2.5 14B",
-      "size": "12 GB",
+      "size": "9.0 GB",
       "precision": "Q4_K_M",
       "role": "chat",
-      "resident": true
+      "resident": false
     },
     {
       "name": "Qwen2.5 14B 1M",
@@ -55,10 +49,10 @@
     },
     {
       "name": "Qwen2.5 32B",
-      "size": "19 GB",
+      "size": "24 GB",
       "precision": "Q4_K_M",
       "role": "general",
-      "resident": false
+      "resident": true
     },
     {
       "name": "Qwen3 Embedding 0.6B",
@@ -311,7 +305,7 @@
   ],
   "residency24h": {
     "mostResident": "GPT-OSS 120B",
-    "hotSwaps": 0
+    "hotSwaps": 1
   },
   "stack": [
     "Ollama 0.32.13",
@@ -352,12 +346,12 @@
     "powerDraw": 10
   },
   "tokens": {
-    "total": 670040705,
-    "last24h": 503435,
-    "last7d": 4878116
+    "total": 670050966,
+    "last24h": 513696,
+    "last7d": 4888377
   },
   "costSaved": {
-    "estimated": 2079.7976,
+    "estimated": 2079.8294,
     "basis": "Estimated cloud cost avoided at Claude Sonnet rates ($3/$15 per MTok); local compute free (see basisDetail)",
     "basisDetail": [
       {
@@ -411,18 +405,18 @@
     ]
   },
   "throughput": {
-    "tokensPerSec": 68.2
+    "tokensPerSec": 66.9
   },
   "sources": {
     "litellm": {
       "available": true,
       "tokens": {
-        "total": 602771225,
-        "last24h": 388291,
-        "last7d": 4072008
+        "total": 602781486,
+        "last24h": 398552,
+        "last7d": 4082269
       },
-      "costSaved": 1873.9517,
-      "throughputTokensPerSec": 74.0
+      "costSaved": 1873.9835,
+      "throughputTokensPerSec": 72.4
     },
     "directOllama": {
       "available": true,
