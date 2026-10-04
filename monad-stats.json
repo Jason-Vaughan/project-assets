@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-04T13:00:04Z",
+  "updatedAt": "2026-10-04T14:00:05Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -12,12 +12,18 @@
     "note": "served on demand"
   },
   "currentModel": {
-    "name": "Qwen2.5 32B",
-    "size": "24 GB",
+    "name": "Qwen2.5 14B",
+    "size": "12 GB",
     "precision": "Q4_K_M",
-    "role": "general"
+    "role": "chat"
   },
   "currentModels": [
+    {
+      "name": "Qwen2.5 14B",
+      "size": "12 GB",
+      "precision": "Q4_K_M",
+      "role": "chat"
+    },
     {
       "name": "Qwen2.5 32B",
       "size": "24 GB",
@@ -35,10 +41,10 @@
     },
     {
       "name": "Qwen2.5 14B",
-      "size": "9.0 GB",
+      "size": "12 GB",
       "precision": "Q4_K_M",
       "role": "chat",
-      "resident": false
+      "resident": true
     },
     {
       "name": "Qwen2.5 14B 1M",
@@ -304,8 +310,8 @@
     }
   ],
   "residency24h": {
-    "mostResident": "GPT-OSS 120B",
-    "hotSwaps": 1
+    "mostResident": "Qwen2.5 14B",
+    "hotSwaps": 2
   },
   "stack": [
     "Ollama 0.32.13",
@@ -343,15 +349,15 @@
   "gpu": {
     "temp": 40,
     "utilization": 0,
-    "powerDraw": 10
+    "powerDraw": 60
   },
   "tokens": {
-    "total": 670050966,
-    "last24h": 513696,
-    "last7d": 4888377
+    "total": 670067221,
+    "last24h": 513688,
+    "last7d": 4888363
   },
   "costSaved": {
-    "estimated": 2079.8294,
+    "estimated": 2079.8786,
     "basis": "Estimated cloud cost avoided at Claude Sonnet rates ($3/$15 per MTok); local compute free (see basisDetail)",
     "basisDetail": [
       {
@@ -421,12 +427,12 @@
     "directOllama": {
       "available": true,
       "tokens": {
-        "total": 67269480,
-        "last24h": 115144,
-        "last7d": 806108
+        "total": 67285735,
+        "last24h": 115136,
+        "last7d": 806094
       },
-      "costSaved": 205.8459,
-      "throughputTokensPerSec": 38.8
+      "costSaved": 205.8951,
+      "throughputTokensPerSec": 38.9
     }
   }
 }
