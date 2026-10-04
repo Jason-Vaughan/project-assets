@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-04T23:00:23Z",
+  "updatedAt": "2026-10-04T23:30:23Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -12,12 +12,18 @@
     "note": "served on demand"
   },
   "currentModel": {
-    "name": "Qwen2.5 14B",
-    "size": "12 GB",
-    "precision": "Q4_K_M",
-    "role": "chat"
+    "name": "GPT-OSS 120B",
+    "size": "64 GB",
+    "precision": "MXFP4",
+    "role": "agent"
   },
   "currentModels": [
+    {
+      "name": "GPT-OSS 120B",
+      "size": "64 GB",
+      "precision": "MXFP4",
+      "role": "agent"
+    },
     {
       "name": "Qwen2.5 14B",
       "size": "12 GB",
@@ -28,10 +34,10 @@
   "availableModels": [
     {
       "name": "GPT-OSS 120B",
-      "size": "65 GB",
+      "size": "64 GB",
       "precision": "MXFP4",
       "role": "agent",
-      "resident": false
+      "resident": true
     },
     {
       "name": "Qwen2.5 14B",
@@ -305,7 +311,7 @@
   ],
   "residency24h": {
     "mostResident": "Qwen2.5 14B",
-    "hotSwaps": 5
+    "hotSwaps": 6
   },
   "stack": [
     "Ollama 0.32.13",
@@ -346,12 +352,12 @@
     "powerDraw": 10
   },
   "tokens": {
-    "total": 670216371,
-    "last24h": 596473,
-    "last7d": 4971124
+    "total": 670279954,
+    "last24h": 660056,
+    "last7d": 5034707
   },
   "costSaved": {
-    "estimated": 2080.3368,
+    "estimated": 2080.5333,
     "basis": "Estimated cloud cost avoided at Claude Sonnet rates ($3/$15 per MTok); local compute free (see basisDetail)",
     "basisDetail": [
       {
@@ -405,18 +411,18 @@
     ]
   },
   "throughput": {
-    "tokensPerSec": 65.3
+    "tokensPerSec": 63.8
   },
   "sources": {
     "litellm": {
       "available": true,
       "tokens": {
-        "total": 602864271,
-        "last24h": 481337,
-        "last7d": 4165054
+        "total": 602927854,
+        "last24h": 544920,
+        "last7d": 4228637
       },
-      "costSaved": 1874.2404,
-      "throughputTokensPerSec": 70.4
+      "costSaved": 1874.4369,
+      "throughputTokensPerSec": 68.6
     },
     "directOllama": {
       "available": true,
