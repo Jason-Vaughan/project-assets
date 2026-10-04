@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-04T15:45:08Z",
+  "updatedAt": "2026-10-04T16:00:08Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -12,39 +12,33 @@
     "note": "served on demand"
   },
   "currentModel": {
-    "name": "GPT-OSS 120B",
-    "size": "64 GB",
-    "precision": "MXFP4",
-    "role": "agent"
+    "name": "Qwen2.5 14B",
+    "size": "12 GB",
+    "precision": "Q4_K_M",
+    "role": "chat"
   },
   "currentModels": [
     {
-      "name": "GPT-OSS 120B",
-      "size": "64 GB",
-      "precision": "MXFP4",
-      "role": "agent"
-    },
-    {
-      "name": "Qwen3.6 35B-A3B",
-      "size": "23 GB",
+      "name": "Qwen2.5 14B",
+      "size": "12 GB",
       "precision": "Q4_K_M",
-      "role": "agent"
+      "role": "chat"
     }
   ],
   "availableModels": [
     {
       "name": "GPT-OSS 120B",
-      "size": "64 GB",
+      "size": "65 GB",
       "precision": "MXFP4",
       "role": "agent",
-      "resident": true
+      "resident": false
     },
     {
       "name": "Qwen2.5 14B",
-      "size": "9.0 GB",
+      "size": "12 GB",
       "precision": "Q4_K_M",
       "role": "chat",
-      "resident": false
+      "resident": true
     },
     {
       "name": "Qwen2.5 14B 1M",
@@ -79,7 +73,7 @@
       "size": "23 GB",
       "precision": "Q4_K_M",
       "role": "agent",
-      "resident": true
+      "resident": false
     }
   ],
   "testedModels": [
@@ -311,7 +305,7 @@
   ],
   "residency24h": {
     "mostResident": "Qwen2.5 14B",
-    "hotSwaps": 4
+    "hotSwaps": 5
   },
   "stack": [
     "Ollama 0.32.13",
@@ -349,15 +343,15 @@
   "gpu": {
     "temp": 40,
     "utilization": 0,
-    "powerDraw": 10
+    "powerDraw": 60
   },
   "tokens": {
-    "total": 670150006,
-    "last24h": 596473,
-    "last7d": 4971148
+    "total": 670167604,
+    "last24h": 596477,
+    "last7d": 4971146
   },
   "costSaved": {
-    "estimated": 2080.1355,
+    "estimated": 2080.1892,
     "basis": "Estimated cloud cost avoided at Claude Sonnet rates ($3/$15 per MTok); local compute free (see basisDetail)",
     "basisDetail": [
       {
@@ -427,12 +421,12 @@
     "directOllama": {
       "available": true,
       "tokens": {
-        "total": 67285735,
-        "last24h": 115136,
-        "last7d": 806094
+        "total": 67303333,
+        "last24h": 115140,
+        "last7d": 806092
       },
-      "costSaved": 205.8951,
-      "throughputTokensPerSec": 38.9
+      "costSaved": 205.9488,
+      "throughputTokensPerSec": 38.8
     }
   }
 }
