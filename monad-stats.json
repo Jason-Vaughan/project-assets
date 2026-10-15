@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-15T15:23:42Z",
+  "updatedAt": "2026-10-15T16:08:44Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -25,10 +25,10 @@
       "role": "agent"
     },
     {
-      "name": "Qwen3.6 35B-A3B",
-      "size": "23 GB",
+      "name": "Qwen2.5 14B",
+      "size": "12 GB",
       "precision": "Q4_K_M",
-      "role": "agent"
+      "role": "chat"
     }
   ],
   "availableModels": [
@@ -41,10 +41,10 @@
     },
     {
       "name": "Qwen2.5 14B",
-      "size": "9.0 GB",
+      "size": "12 GB",
       "precision": "Q4_K_M",
       "role": "chat",
-      "resident": false
+      "resident": true
     },
     {
       "name": "Qwen2.5 14B 1M",
@@ -79,7 +79,7 @@
       "size": "23 GB",
       "precision": "Q4_K_M",
       "role": "agent",
-      "resident": true
+      "resident": false
     }
   ],
   "testedModels": [
@@ -311,7 +311,7 @@
   ],
   "residency24h": {
     "mostResident": "GPT-OSS 120B",
-    "hotSwaps": 1
+    "hotSwaps": 2
   },
   "stack": [
     "Ollama 0.32.13",
@@ -352,12 +352,12 @@
     "powerDraw": 10
   },
   "tokens": {
-    "total": 679094895,
-    "last24h": 3652677,
-    "last7d": 7399483
+    "total": 679373267,
+    "last24h": 3913453,
+    "last7d": 7660269
   },
   "costSaved": {
-    "estimated": 2108.2606,
+    "estimated": 2109.1249,
     "basis": "Estimated cloud cost avoided at Claude Sonnet rates ($3/$15 per MTok); local compute free (see basisDetail)",
     "basisDetail": [
       {
@@ -411,28 +411,28 @@
     ]
   },
   "throughput": {
-    "tokensPerSec": 84.4
+    "tokensPerSec": 83.7
   },
   "sources": {
     "litellm": {
       "available": true,
       "tokens": {
-        "total": 610524952,
-        "last24h": 3537517,
-        "last7d": 6575803
+        "total": 610785744,
+        "last24h": 3798309,
+        "last7d": 6836595
       },
-      "costSaved": 1898.4675,
-      "throughputTokensPerSec": 89.9
+      "costSaved": 1899.2781,
+      "throughputTokensPerSec": 89.0
     },
     "directOllama": {
       "available": true,
       "tokens": {
-        "total": 68569943,
-        "last24h": 115160,
-        "last7d": 823680
+        "total": 68587523,
+        "last24h": 115144,
+        "last7d": 823674
       },
-      "costSaved": 209.7931,
-      "throughputTokensPerSec": 40.1
+      "costSaved": 209.8468,
+      "throughputTokensPerSec": 39.4
     }
   }
 }
