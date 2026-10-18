@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-18T03:45:32Z",
+  "updatedAt": "2026-10-18T04:00:33Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -22,12 +22,6 @@
       "name": "GPT-OSS 120B",
       "size": "64 GB",
       "precision": "MXFP4",
-      "role": "agent"
-    },
-    {
-      "name": "Qwen3.6 35B-A3B",
-      "size": "23 GB",
-      "precision": "Q4_K_M",
       "role": "agent"
     }
   ],
@@ -79,7 +73,7 @@
       "size": "23 GB",
       "precision": "Q4_K_M",
       "role": "agent",
-      "resident": true
+      "resident": false
     }
   ],
   "testedModels": [
@@ -311,7 +305,7 @@
   ],
   "residency24h": {
     "mostResident": "GPT-OSS 120B",
-    "hotSwaps": 0
+    "hotSwaps": 1
   },
   "stack": [
     "Ollama 0.32.13",
