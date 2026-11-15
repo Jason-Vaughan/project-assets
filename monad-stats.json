@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-05T02:44:36Z",
+  "updatedAt": "2026-11-15T22:42:38Z",
   "hardware": {
     "gpu": "NVIDIA RTX PRO 6000 Blackwell",
     "vram": "96 GiB",
@@ -23,6 +23,12 @@
       "size": "64 GB",
       "precision": "MXFP4",
       "role": "agent"
+    },
+    {
+      "name": "Qwen2.5 14B 1M",
+      "size": "17 GB",
+      "precision": "Q6_K",
+      "role": "chat"
     }
   ],
   "availableModels": [
@@ -42,10 +48,10 @@
     },
     {
       "name": "Qwen2.5 14B 1M",
-      "size": "12 GB",
+      "size": "17 GB",
       "precision": "Q6_K",
       "role": "chat",
-      "resident": false
+      "resident": true
     },
     {
       "name": "Qwen2.5 32B",
@@ -312,11 +318,11 @@
     "LiteLLM 1.85.0",
     "Tailscale (tailnet-bound)",
     "Ubuntu 24.04.4 LTS",
-    "NVIDIA driver 595.84"
+    "NVIDIA driver 595.99.02"
   ],
   "uptime": {
-    "daysOnline": 55,
-    "lastReboot": "2026-09-10T21:41:23Z",
+    "daysOnline": 5,
+    "lastReboot": "2026-11-10T17:34:59Z",
     "trackedSince": "2026-05-15T15:08:00Z",
     "plannedOutages": [
       {
@@ -336,9 +342,21 @@
         "end": "2026-06-29T17:48:24Z",
         "durationSeconds": 171199,
         "reason": "other"
+      },
+      {
+        "start": "2026-11-05T03:44:00Z",
+        "end": "2026-11-05T06:38:00Z",
+        "durationSeconds": 10440,
+        "reason": "relocation"
+      },
+      {
+        "start": "2026-11-05T20:52:55Z",
+        "end": "2026-11-05T23:12:00Z",
+        "durationSeconds": 8345,
+        "reason": "relocation"
       }
     ],
-    "plannedDowntimeSeconds": 194490
+    "plannedDowntimeSeconds": 213275
   },
   "gpu": {
     "temp": 35,
@@ -346,12 +364,12 @@
     "powerDraw": 10
   },
   "tokens": {
-    "total": 697241849,
-    "last24h": 395779,
-    "last7d": 2178676
+    "total": 697357371,
+    "last24h": 1077,
+    "last7d": 115522
   },
   "costSaved": {
-    "estimated": 2165.5527,
+    "estimated": 2166.0609,
     "basis": "Estimated cloud cost avoided at Claude Sonnet rates ($3/$15 per MTok); local compute free (see basisDetail)",
     "basisDetail": [
       {
@@ -405,15 +423,15 @@
     ]
   },
   "throughput": {
-    "tokensPerSec": 86.0
+    "tokensPerSec": 55.0
   },
   "sources": {
     "litellm": {
       "available": true,
       "tokens": {
         "total": 628350792,
-        "last24h": 395779,
-        "last7d": 2178676
+        "last24h": 0,
+        "last7d": 0
       },
       "costSaved": 1954.5874,
       "throughputTokensPerSec": 86.0
@@ -421,12 +439,12 @@
     "directOllama": {
       "available": true,
       "tokens": {
-        "total": 68891057,
-        "last24h": 0,
-        "last7d": 0
+        "total": 69006579,
+        "last24h": 1077,
+        "last7d": 115522
       },
-      "costSaved": 210.9653,
-      "throughputTokensPerSec": null
+      "costSaved": 211.4735,
+      "throughputTokensPerSec": 23.9
     }
   }
 }
